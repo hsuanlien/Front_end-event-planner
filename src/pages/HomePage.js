@@ -1,9 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 
 const HomePage = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [comments, setComments] = useState({}); // 儲存每則訊息的註解
+  const navigate = useNavigate(); // 加入這行
 
+  // 發送訊息的函式
   const sendMessage = () => {
     if (input.trim() !== "") {
       setMessages([...messages, { text: input, sender: "user" }]);
@@ -13,17 +17,17 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white overflow-hidden">
-      {/* Sidebar */}
+      {/* Sidebar 側邊欄 */}
       <aside className="w-64 bg-white/10 backdrop-blur-md border-r border-white/20 p-6 flex flex-col shadow-lg z-10">
         <h2 className="text-2xl font-bold mb-6 tracking-wide drop-shadow-md text-left">
           Menu
         </h2>
         <nav className="flex flex-col gap-4 text-lg text-left">
-          <button className="hover:text-cyan-400 transition text-left">➕ Add Event</button>
-          <button className="hover:text-cyan-400 transition text-left">📅 Upcoming Events</button>
-          <button className="hover:text-cyan-400 transition text-left">⏰ Reminders</button>
-          <button className="hover:text-cyan-400 transition text-left">📖 History</button>
-          <button className="hover:text-cyan-400 transition text-left">👤 User Profile</button>
+          <button onClick={() => navigate("/add-event")} className="hover:text-cyan-400 transition text-left">➕ Add Event</button>
+          <button onClick={() => navigate("/upcoming-events")} className="hover:text-cyan-400 transition text-left">📅 Upcoming Events</button>
+          <button onClick={() => navigate("/reminders")} className="hover:text-cyan-400 transition text-left">⏰ Reminders</button>
+          <button onClick={() => navigate("/history")} className="hover:text-cyan-400 transition text-left">📖 History</button>
+          <button onClick={() => navigate("/user-profile")} className="hover:text-cyan-400 transition text-left">👤 User Profile</button>
         </nav>
       </aside>
 
@@ -47,7 +51,21 @@ const HomePage = () => {
                     : "bg-white text-black"
                 }`}
               >
+
+
+                {/* 主訊息內容 */}
                 <strong>{msg.sender}: </strong> {msg.text}
+                {/* 註解欄位 */}
+                <div className="mt-3">
+                  <label className="block text-sm mb-1 text-white/80">💬 Comment:</label>
+                  {/* <input
+                    type="text"
+                    placeholder="Leave a comment..."
+                    value={comments[idx] || ""}
+                    onChange={(e) => handleCommentChange(idx, e.target.value)}
+                    className="w-full p-2 rounded bg-white/10 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-300"
+                  /> */}
+                </div>
               </div>
             ))
           )}

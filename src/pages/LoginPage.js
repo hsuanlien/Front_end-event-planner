@@ -7,8 +7,15 @@ function LoginPage() {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
+
     if (username && password) {
-      navigate('/home');
+      // implement here: 呼叫後端 API 檢查帳號密碼是否正確，若正確則導向首頁
+      // 需使用 fetch/axios 發送 POST 請求，並根據回傳資料決定導向或顯示錯誤訊息
+
+      navigate('/home'); // 實作完成後，這行可以放在 API 成功回應後執行
+    } else {
+      // implement here: 錯誤處理 - 顯示欄位不得為空的提示訊息
+      alert("請輸入帳號和密碼");
     }
   };
 
@@ -64,33 +71,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-
-
-
-
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-
-// function LoginPage() {
-//   const navigate = useNavigate();
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-
-//   const handleLogin = () => {
-//     if (username && password) {
-//       navigate('/home');
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h2>Login</h2>
-//       <input placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
-//       <input placeholder="Password" type="password" onChange={(e) => setPassword(e.target.value)} />
-//       <button onClick={handleLogin}>Login</button>
-//       <button onClick={() => navigate('/register')}>Go to Register</button>
-//     </div>
-//   );
-// }
-
-// export default LoginPage;

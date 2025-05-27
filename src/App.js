@@ -3,6 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
+import AddEvent from "./pages/AddEvent"; 
+import UpcomingEvents from "./pages/UpcomingEvents"; // implement here
+import Reminders from "./pages/Reminders"; // implement here
+import History from "./pages/History"; 
+import UserProfile from "./pages/UserProfile"; // implement here
 
 function App() {
   return (
@@ -11,35 +16,14 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/home" element={<HomePage />} />
+        <Route path="/add-event" element={<AddEvent />} />
+        <Route path="/upcoming-events" element={<UpcomingEvents />} />
+        <Route path="/reminders" element={<Reminders />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/user-profile" element={<UserProfile />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
-
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
