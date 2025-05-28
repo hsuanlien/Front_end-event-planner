@@ -8,6 +8,8 @@ import UpcomingEvents from "./pages/UpcomingEvents"; // implement here
 import Reminders from "./pages/Reminders"; // implement here
 import History from "./pages/History"; 
 import UserProfile from "./pages/UserProfile"; // implement here
+import EventDetailPage from "./pages/EventDetailPage";
+import EventVersionPage from "./pages/EventVersionPage";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/history" element={<History />} />
         <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/event/:id" element={<EventDetailPage />} />
+        <Route path="/event/:id/:version" element={<EventVersionPage />} />
       </Routes>
     </Router>
   );

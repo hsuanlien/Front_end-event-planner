@@ -1,0 +1,68 @@
+{
+    "users": [
+    {
+      "username": "abc",
+      "email": "example@gmail.com"
+    },
+    {
+      "username": "123",
+      "email": "123n@gmail.com"
+    }
+  ],
+  "login": {
+    "success": {
+      "status": 200,
+      "response": {
+        "token": "c072fc90dc5ac75e8c500ddc1c2cdf09ef728d6b",
+        "message": "login successfully!"
+      }
+    },
+    "fail": {
+      "status": 400,
+      "response": {
+        "error": "Invalid credentials"
+      }
+    }
+  },
+  "logout": {
+    "success": {
+      "status": 200,
+      "response": {
+        "message": "Logged out successfully."
+      }
+    },
+    "fail": {
+      "status": 401,
+      "response": {
+        "detail": "Invalid token."
+      }
+    }
+  },
+  "register": {
+    "missingFields": {
+      "status": 401,
+      "response": {
+        "error": "Username, password, and email are required."
+      }
+    },
+    "usernameExists": {
+      "status": 400,
+      "response": {
+        "error": "Username already exists."
+      }
+    },
+    "emailExists": {
+      "status": 400,
+      "response": {
+        "error": "email already exists."
+      }
+    },
+    "success": {
+      "status": 201,
+      "response": {
+        "message": "Registration successful! Please check your email to activate your account."
+      }
+    }
+  }
+  
+}
