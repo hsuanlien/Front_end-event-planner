@@ -14,7 +14,7 @@ function LoginPage() {
 
       navigate('/home'); // 實作完成後，這行可以放在 API 成功回應後執行
     } else {
-      // implement here: 錯誤處理 - 顯示欄位不得為空的提示訊息
+      // implement here: 錯誤處理 - 顯示欄位不得為空的提示訊息.....
       alert("請輸入帳號和密碼");
     }
   };
