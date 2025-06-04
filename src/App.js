@@ -9,7 +9,8 @@ import Reminders from "./pages/Reminders"; // implement here
 import History from "./pages/History"; 
 import UserProfile from "./pages/UserProfile"; // implement here
 import EventDetailPage from "./pages/EventDetailPage";
-import EventVersionPage from "./pages/EventVersionPage";
+import PosterInfo from "./pages/Poster_info";
+import PosterTemplate from "./pages/Poster_template";
 
 function App() {
   return (
@@ -23,8 +24,11 @@ function App() {
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/history" element={<History />} />
         <Route path="/user-profile" element={<UserProfile />} />
-        <Route path="/event/:id" element={<EventDetailPage />} />
-        <Route path="/event/:id/:version" element={<EventVersionPage />} />
+       
+        <Route path="/event/:id" element={<EventDetailPage />} /> 
+        <Route path="/event/:id/:version/poster-info" element={<PosterInfo />} />
+        <Route path="/event/:id/:version/poster-template" element={<PosterTemplate />} />
+
       </Routes>
     </Router>
   );
