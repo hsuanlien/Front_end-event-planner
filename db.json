@@ -1,0 +1,97 @@
+{
+  "users": [
+    {
+      "id": "7102",
+      "username": "abc",
+      "email": "abc@gmail.com",
+      "password": "abcab",
+      "first_name": "hi",
+      "last_name": "hihi",
+      "address": "Heilbronn"
+    },
+    {
+      "id": "8e28",
+      "username": "abccc",
+      "email": "abccc@gnmail.com",
+      "password": "ssss",
+      "first_name": "akakak",
+      "last_name": "ajajaja",
+      "address": "sssssssssscccccccc"
+    }
+  ],
+  "events": [
+    {
+       "name": [
+        "Synergy Social: Connect & Cultivate",
+        "The Millennial Mixer: Forge Your Future",
+        "Nexus Nights: Where Ideas Ignite",
+        "Social Spark: Plug Into Your Potential",
+        "The Vibe Vault: Unlock New Connections"
+      ],
+      "description": "A dynamic event designed to foster connections among students and young adults. It's a relaxed environment for networking, sharing ideas, and building professional relationships. Attendees can expect to meet like-minded individuals, expand their social circle, and discover potential collaborations or career opportunities. The event aims to create a sense of community and empower attendees to pursue their personal and professional goals.",
+      "expected_attendees": 150,
+      "suggested_time": "7:00 PM - 10:00 PM",
+      "suggested_event_duration": "3 hours",
+      "slogan": [
+          "Connect, Collaborate, Create!",
+          "Your Network Starts Here.",
+          "Spark Connections, Ignite Opportunities.",
+          "Building Bridges, One Connection at a Time.",
+          "Unlocking Potential Through Collaboration."
+      ],
+      "event_id": 1 }
+  ],
+  "event": {
+    "event_name": "Synergy Social: Connect & Collab",
+    "start_time": "2025-08-15T17:00:00Z",
+    "end_time": "2025-08-15T22:59:59Z",
+    "expected_attendees": 150,
+    "type": "Social / Networking"
+  },
+  
+  "task_assignments": {
+      "group_by_role": true,
+      "include_count": true,
+      "timeline_type": "absolute",
+      "output_format": "json"
+    }, 
+    "event_id": 24,
+    "task_summary_by_role": [
+        {
+            "role": "host",
+            "description": "Welcome guests and facilitate introductions.",
+            "count": 2,
+            "start_time": "2025-08-15T17:00:00Z",
+            "end_time": "2025-08-15T22:59:59Z"
+        },
+        {
+            "role": "greeter",
+            "description": "Greet attendees and provide event information.",
+            "count": 3,
+            "start_time": "2025-08-15T17:00:00Z",
+            "end_time": "2025-08-15T22:59:59Z"
+        },
+        {
+            "role": "logistics",
+            "description": "Manage event setup and smooth operation.",
+            "count": 3,
+            "start_time": "2025-08-15T17:00:00Z",
+            "end_time": "2025-08-15T22:59:59Z"
+        },
+        {
+            "role": "photographer",
+            "description": "Capture event photos and videos.",
+            "count": 1,
+            "start_time": "2025-08-15T17:00:00Z",
+            "end_time": "2025-08-15T22:59:59Z"
+        },
+        {
+            "role": "music_dj",
+            "description": "Provide music and entertainment.",
+            "count": 1,
+            "start_time": "2025-08-15T17:00:00Z",
+            "end_time": "2025-08-15T22:59:59Z"
+        }
+    ]
+
+}
