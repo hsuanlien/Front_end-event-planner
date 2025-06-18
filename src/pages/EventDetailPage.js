@@ -22,7 +22,8 @@ const EventDetailPage = () => {
     } else if (item === "文案") {
       navigate(`/event/${id}/${selectedVersion}/copywriting`);
     } else if (item === "報名表單") {
-      navigate(`/event/${id}/${selectedVersion}/registration`);
+      navigate(`/event/${id}/${selectedVersion}/check-registration`);
+      // /event/:id/:version/check-registration
     } else {
       console.log(`尚未設定 ${item} 的跳轉`);
     }
