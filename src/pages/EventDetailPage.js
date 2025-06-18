@@ -5,8 +5,9 @@ import { useParams, useNavigate } from "react-router-dom";
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const versions = ["v1", "v2", "v3", "v4"];
-  const sidebarItems = ["海報", "文案", "場地", "邀請函", "報名", "分配任務"];
+  const versions = ["v1"];
+  //const versions = ["v1", "v2", "v3", "v4"];
+  const sidebarItems = ["場地", "報名表單", "邀請函", "文案", "海報"];
 
   const [selectedVersion, setSelectedVersion] = useState("v1");
 
@@ -14,8 +15,15 @@ const EventDetailPage = () => {
     if (item === "海報") {
       // 跳轉到 Poster_info 頁面
       navigate(`/event/${id}/${selectedVersion}/poster-info`);
+    } else if (item === "場地") {
+      navigate(`/event/${id}/${selectedVersion}/venue`);
+    } else if (item === "邀請函") {
+      navigate(`/event/${id}/${selectedVersion}/invitation`);
+    } else if (item === "文案") {
+      navigate(`/event/${id}/${selectedVersion}/copywriting`);
+    } else if (item === "報名表單") {
+      navigate(`/event/${id}/${selectedVersion}/registration`);
     } else {
-      // 可擴充其他功能點擊邏輯
       console.log(`尚未設定 ${item} 的跳轉`);
     }
   };
@@ -67,8 +75,27 @@ const EventDetailPage = () => {
             🧾 Event {id} - {selectedVersion.toUpperCase()}
           </h2>
           <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl h-[400px] overflow-y-auto shadow-inner">
-            <p>這裡是 {selectedVersion} 的對話紀錄...</p>
+            <p>這裡是 {selectedVersion} Event data</p>
           </div>
+          
+          <div className="flex gap-10">
+                <button
+                  onClick={() => alert("Change clicked")}
+                  className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+                >
+                  Change
+                </button>
+                <button
+                  onClick={() => alert("Save clicked")}
+                  className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+                >
+                  Save
+                </button>          
+        </div>
+
+
+
+          
         </div>
       </div>
     </div>

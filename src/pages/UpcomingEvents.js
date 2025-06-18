@@ -11,7 +11,8 @@ const UpcomingEvents = () => {
   const navigate = useNavigate();
 
   const handleClick = (id) => {
-  navigate(`/event/${id}`);
+    navigate(`/event/${id}/choose-event-time`);
+    // navigate(`/event/${id}/${version}/poster-template`);
   };
 
   return (

@@ -18,8 +18,6 @@ const RegisterPage = () => {
       [e.target.name]: e.target.value
     });
   };
-
-
   const handleRegister = async () => {
     const { username, email, password, first_name, last_name, address } = formData;
 

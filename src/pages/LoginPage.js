@@ -1,21 +1,58 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function LoginPage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    if (username && password) {
-
-      navigate('/home'); // 實作完成後登入成功後，導向首頁
-    } else {
-      // 錯誤處理 - 顯示欄位不得為空的提示訊息
+  const handleLogin = async () => {
+    if (!username || !password) {
       alert("請輸入帳號和密碼");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:8000/accounts/login/", {
+        username,
+        password,
+      });
+    if (response.status === 200) {
+        const token = response.data.token;
+        console.log("登入成功，Token：", token);
+
+        // 儲存 token 到 localStorage
+        localStorage.setItem("token", token);
+
+        // 查詢帳號資訊
+        const profileRes = await axios.get("http://localhost:8000/accounts/", {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+
+        console.log("使用者資訊：", profileRes.data);
+
+        // 導向首頁
+        navigate('/home');
+      }
+    } catch (error) {
+      alert("⚠️ 登入失敗：" + 
+          (error.response?.data?.non_field_errors?.[0] ||
+          error.response?.data?.error ||
+          "請確認帳密"));
+
+      if (error.response && error.response.status === 400) {
+        alert("⚠️ 登入失敗：" + (error.response.data.non_field_errors || "請確認帳密"));
+      } else {
+        alert("⚠️ 登入過程發生錯誤");
+      }
     }
   };
-    // Task4
+
+    
+    // 
     // TODO 
     // implement here: 呼叫後端 API 檢查帳號密碼是否正確，若正確則導向首頁
     // 發送 POST 請求，傳送 username 和 password，並根據回傳資料決定導向或顯示錯誤訊息
@@ -73,7 +110,7 @@ function LoginPage() {
 
         <input
           type="text"
-          placeholder="使用者名稱"
+          placeholder="Email"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="w-full p-3 mb-4 bg-white/20 text-white placeholder-gray-300 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -81,7 +118,7 @@ function LoginPage() {
 
         <input
           type="password"
-          placeholder="密碼"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full p-3 mb-6 bg-white/20 text-white placeholder-gray-300 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"

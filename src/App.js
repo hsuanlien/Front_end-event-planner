@@ -16,14 +16,26 @@ import ChooseName from "./pages/ChooseName";
 import ChooseSlogan from "./pages/ChooseSlogan";
 import Event_Description from "./pages/Event_Description";
 
+import Venue from "./pages/Venue";
+import ChooseVenue from "./pages/ChooseVenue";
+import Invitation from "./pages/Invitation";
+import CheckInvitation from "./pages/CheckInvitation";
+import Copywriting from "./pages/Copywriting";
+import CheckCopywriting from "./pages/CheckCopywriting";
+import Registration from "./pages/Registration";
+import CheckRegistration from "./pages/CheckRegistration";
+import ChooseEventTime from "./pages/ChooseEventTime";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />  {/* for testing : <Route path="/" element={<LoginPage />} /> */} 
         <Route path="/home" element={<HomePage />} />
+        <Route path="/" element={<HomePage />} />   {/* for testing */}
+
+         {/*-------------------------------------- */}
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/add-event" element={<AddEvent />} />
         <Route path="/upcoming-events" element={<UpcomingEvents />} />
         <Route path="/reminders" element={<Reminders />} />
@@ -37,8 +49,23 @@ function App() {
         {/* assignment-task */}
 
         <Route path="/event/:id" element={<EventDetailPage />} /> 
+        <Route path="/event/:id/choose-event-time" element={<ChooseEventTime />} />
+        {/* ----------------- */}
         <Route path="/event/:id/:version/poster-info" element={<PosterInfo />} />
         <Route path="/event/:id/:version/poster-template" element={<PosterTemplate />} />
+        {/* ----------------- */}
+        <Route path="/event/:id/:version/venue" element={<Venue />} />
+        <Route path="/event/:id/:version/choose-venue" element={<ChooseVenue />} />
+        {/* ----------------- */}
+        <Route path="/event/:id/:version/invitation" element={<Invitation />} />
+        <Route path="/event/:id/:version/check-invitation" element={<CheckInvitation />} />
+        {/* ----------------- */}
+        <Route path="/event/:id/:version/copywriting" element={<Copywriting />} />
+        <Route path="/event/:id/:version/check-copywriting" element={<CheckCopywriting />} />
+        {/* ----------------- */}
+        <Route path="/event/:id/:version/registration" element={<Registration />} />
+        <Route path="/event/:id/:version/check-registration" element={<CheckRegistration />} />
+
 
       </Routes>
     </Router>
