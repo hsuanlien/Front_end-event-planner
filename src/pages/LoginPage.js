@@ -12,32 +12,46 @@ function LoginPage() {
       alert("請輸入帳號和密碼");
       return;
     }
+    ////debugging 
+    // try {
+    //   const response = await axios.post("http://localhost:8000/accounts/login/", {
+    //     username,
+    //     password,
+    //   });
+    // if (response.status === 200) {
+    //     const token = response.data.token;
+    //     console.log("登入成功，Token：", token);
 
-    try {
-      const response = await axios.post("http://localhost:8000/accounts/login/", {
-        username,
-        password,
-      });
-    if (response.status === 200) {
-        const token = response.data.token;
-        console.log("登入成功，Token：", token);
+    //     // 儲存 token 到 localStorage
+    //     localStorage.setItem("token", token);
 
-        // 儲存 token 到 localStorage
-        localStorage.setItem("token", token);
+    //     // 查詢帳號資訊
+    //     const profileRes = await axios.get("http://localhost:8000/accounts/", {
+    //       headers: {
+    //         Authorization: `Token ${token}`,
+    //       },
+    //     });
 
-        // 查詢帳號資訊
-        const profileRes = await axios.get("http://localhost:8000/accounts/", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
+    //     console.log("使用者資訊：", profileRes.data);
 
-        console.log("使用者資訊：", profileRes.data);
-
-        // 導向首頁
+    //     // 導向首頁
+    //     navigate('/home');
+    //   }
+    // } 
+        try {
+      // 查詢 db.json 的 users
+      const res = await axios.get(`http://localhost:3001/users?username=${username}&password=${password}`);
+      if (res.data.length > 0) {
+        // 登入成功，手動產生一個 token
+        const fakeToken = 'fake-token-123';
+        localStorage.setItem('token', fakeToken);
+        localStorage.setItem('user', JSON.stringify(res.data[0]));
         navigate('/home');
+      } else {
+        alert("帳號或密碼錯誤");
       }
-    } catch (error) {
+    }
+    catch (error) {
       alert("⚠️ 登入失敗：" + 
           (error.response?.data?.non_field_errors?.[0] ||
           error.response?.data?.error ||

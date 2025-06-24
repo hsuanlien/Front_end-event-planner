@@ -1,15 +1,137 @@
 // src/pages/EventDetailPage.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { API } from "../config"; // 新增這行
 
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const versions = ["v1"];
-  //const versions = ["v1", "v2", "v3", "v4"];
-  const sidebarItems = ["場地", "報名表單", "邀請函", "文案", "海報"];
-
+  const [eventData, setEventData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [form, setForm] = useState({});
+  const [versions, setVersions] = useState(["v1"]);
   const [selectedVersion, setSelectedVersion] = useState("v1");
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch(`${API.EVENTS}/${id}`, {
+          headers: { Authorization: `Token ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // 如果找不到資料，data 可能是 {} 或 undefined
+          if (!data || Object.keys(data).length === 0) {
+            setError("查無此活動資料");
+            setEventData(null);
+          } else {
+            setEventData(data);
+            setForm(data);
+            // 產生版本陣列
+            const vArr = [];
+            for (let i = 1; i <= (data.latest_version || 1); i++) vArr.push(`v${i}`);
+            setVersions(vArr);
+            setError(null);
+          }
+        } else {
+          setError("查無此活動資料");
+          setEventData(null);
+        }
+      } catch (e) {
+        setError("載入活動資料失敗");
+        setEventData(null);
+      }
+    };
+    fetchEvent();
+  }, [id]);
+
+  useEffect(() => {
+    if (eventData && eventData.versions) {
+      const verData = eventData.versions.find(
+        (v) => v.version === selectedVersion
+      );
+      setForm(verData ? { ...verData } : {});
+    }
+  }, [selectedVersion, eventData]);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // 欄位轉換表
+  const TYPE_MAP = {
+    "Workshop_Training": "Workshop / Training",
+    "Social_Networking": "Social / Networking",
+    "Performance_Showcase": "Performance / Showcase",
+    "Speech_Seminar": "Speech / Seminar",
+    "Recreational_Entertainment": "Recreational / Entertainment",
+    "Market_Exhibition": "Market / Exhibition",
+    "Competition_Challenge": "Competition / Challenge",
+  };
+  const AUDIENCE_MAP = {
+    "Students_Young": "Students / Young Adults",
+    "Professionals": "Professionals",
+    "Families": "Families",
+    "Local_Community": "Local Community",
+  };
+  const ATMOSPHERE_MAP = {
+    "Formal_Professional": "Formal / Professional",
+    "Casual_Friendly": "Casual / Friendly",
+    "Energetic_Fun": "Energetic / Fun",
+    "Relaxed_Calm": "Relaxed / Calm",
+    "Creative_Artistic": "Creative / Artistic",
+    "Immersive_Interactive": "Immersive / Interactive",
+  };
+
+  const handleSave = async () => {
+    const token = localStorage.getItem("token");
+    // 產生新版本號
+    const newVersionNum = eventData.versions.length + 1;
+    // 欄位轉換（送到後端前轉回原始格式）
+    const newVersion = {
+      ...form,
+      version: `v${newVersionNum}`,
+      type: Object.keys(TYPE_MAP).find(key => TYPE_MAP[key] === form.type) || form.type,
+      target_audience: Object.keys(AUDIENCE_MAP).find(key => AUDIENCE_MAP[key] === form.target_audience) || form.target_audience,
+      atmosphere: Object.keys(ATMOSPHERE_MAP).find(key => ATMOSPHERE_MAP[key] === form.atmosphere) || form.atmosphere,
+    };
+    const newEventData = {
+      ...eventData,
+      versions: [...eventData.versions, newVersion],
+      latest_version: newVersionNum,
+    };
+    // PUT 更新整個 event
+    const res = await fetch(`${API.EVENTS}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify(newEventData),
+    });
+    if (res.ok) {
+      // 儲存版本（呼叫 save-version API）
+      await fetch(`${API.EVENTS}/${id}/save-version/`, {
+        method: "POST",
+        headers: { Authorization: `Token ${token}` },
+      });
+      setEditMode(false);
+      // 資料同步：重新 fetch 最新 event
+      const updated = await fetch(`${API.EVENTS}/${id}`, {
+        headers: { Authorization: `Token ${token}` },
+      });
+      if (updated.ok) {
+        const data = await updated.json();
+        setEventData(data);
+        setVersions(data.versions.map((v) => v.version));
+        setSelectedVersion(`v${newVersionNum}`);
+      }
+    } else {
+      alert("儲存失敗");
+    }
+  };
 
   const handleFunctionClick = (item) => {
     if (item === "海報") {
@@ -28,6 +150,18 @@ const EventDetailPage = () => {
       console.log(`尚未設定 ${item} 的跳轉`);
     }
   };
+
+  // 取得當前版本內容
+  const currentVersionData = eventData?.versions?.find(
+    (v) => v.version === selectedVersion
+  );
+
+  if (!eventData) return <div>Loading...</div>;
+
+  // 顯示時欄位轉換
+  const displayType = TYPE_MAP[currentVersionData?.type] || currentVersionData?.type;
+  const displayAudience = AUDIENCE_MAP[currentVersionData?.target_audience] || currentVersionData?.target_audience;
+  const displayAtmosphere = ATMOSPHERE_MAP[currentVersionData?.atmosphere] || currentVersionData?.atmosphere;
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
@@ -58,7 +192,7 @@ const EventDetailPage = () => {
         <div className="w-64 p-6 border-r border-white/10 bg-white/5">
           <h3 className="text-xl font-bold mb-4">📌 功能選單</h3>
           <ul className="space-y-2">
-            {sidebarItems.map((item, index) => (
+            {["場地", "報名表單", "邀請函", "文案", "海報"].map((item, index) => (
               <li
                 key={index}
                 className="p-2 rounded-xl hover:bg-white/20 cursor-pointer"
@@ -76,27 +210,66 @@ const EventDetailPage = () => {
             🧾 Event {id} - {selectedVersion.toUpperCase()}
           </h2>
           <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl h-[400px] overflow-y-auto shadow-inner">
-            <p>這裡是 {selectedVersion} Event data</p>
+            {error ? (
+              <div className="text-red-400 text-lg">{error}</div>
+            ) : eventData ? (
+              editMode ? (
+                <form className="space-y-4">
+                  <input
+                    name="name"
+                    value={form.name || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 rounded text-black"
+                  />
+                  <textarea
+                    name="description"
+                    value={form.description || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 rounded text-black"
+                  />
+                  {/* 其他欄位... */}
+                </form>
+              ) : (
+                <>
+                  <h3 className="text-xl font-bold">{currentVersionData?.name}</h3>
+                  <div className="mb-2">
+                    {(currentVersionData?.description || "")
+                      // 先用 \n 分段，如果沒有就每80字切一段
+                      .split('\n').flatMap(line =>
+                        line.length > 80
+                          ? line.match(/.{1,80}/g) // 每80字切一段
+                          : [line]
+                      )
+                      .map((line, idx) => (
+                        <p key={idx} className="mb-2 break-words">{line}</p>
+                      ))}
+                  </div>
+                  <div>類型：{displayType}</div>
+                  <div>對象：{displayAudience}</div>
+                  <div>氛圍：{displayAtmosphere}</div>
+                  {/* 其他欄位... */}
+                </>
+              )
+            ) : (
+              <div className="text-gray-300">載入中...</div>
+            )}
           </div>
-          
-          <div className="flex gap-10">
-                <button
-                  onClick={() => alert("Change clicked")}
-                  className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
-                >
-                  Change
-                </button>
-                <button
-                  onClick={() => alert("Save clicked")}
-                  className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
-                >
-                  Save
-                </button>          
-        </div>
-
-
-
-          
+          <div className="flex gap-10 mt-4">
+            <button
+              onClick={() => setEditMode(true)}
+              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+              disabled={editMode || !!error}
+            >
+              Change
+            </button>
+            <button
+              onClick={handleSave}
+              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+              disabled={!editMode || !!error}
+            >
+              Save
+            </button>
+          </div>
         </div>
       </div>
     </div>

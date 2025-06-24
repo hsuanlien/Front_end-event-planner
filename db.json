@@ -1,10 +1,10 @@
 {
   "users": [
     {
-      "id": "7102",
-      "username": "abc",
+      "id": "123",
+      "username": "123",
       "email": "abc@gmail.com",
-      "password": "abcab",
+      "password": "123",
       "first_name": "hi",
       "last_name": "hihi",
       "address": "Heilbronn"
@@ -31,48 +31,145 @@
       "name": "The Vibe Vault: Unlock New Connections",
       "slogan": "Unlocking Potential Through Collaboration.",
       "description": "A dynamic event designed to foster connections among students and young adults. It's a relaxed environment for networking, sharing ideas, and building professional relationships. Attendees can expect to meet like-minded individuals, expand their social circle, and discover potential collaborations or career opportunities. The event aims to create a sense of community and empower attendees to pursue their personal and professional goals."
+    },
+    {
+      "id": "2112",
+      "name": "Synergy Social: Connect & Cultivate",
+      "slogan": "Connect, Collaborate, Create!",
+      "description": "A dynamic event designed to foster connections among students and young adults. It's a relaxed environment for networking, sharing ideas, and building professional relationships. Attendees can expect to meet like-minded individuals, expand their social circle, and discover potential collaborations or career opportunities. The event aims to create a sense of community and empower attendees to pursue their personal and professional goals."
+    },
+    {
+      "id": "f145",
+      "name": "Synergy Social: Connect & Cultivate",
+      "slogan": "Connect, Collaborate, Create!",
+      "description": "A dynamic event designed to foster connections among students and young adults."
     }
   ],
   "events": [
     {
-      "name": [
-        "Synergy Social: Connect & Cultivate",
-        "The Millennial Mixer: Forge Your Future",
-        "Nexus Nights: Where Ideas Ignite",
-        "Social Spark: Plug Into Your Potential",
-        "The Vibe Vault: Unlock New Connections"
+      "id": "ee2a",
+      "versions": [
+        {
+          "version": "v1",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "V1內容...",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v2",
+          "name": "Synergy Social: Connect & Cultivate (改版)",
+          "description": "V2內容...",
+          "date": "2025-08-16",
+          "type": "Social_Networking",
+          "budget": 6000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Energetic_Fun"
+        },
+        {
+          "version": "v3",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "V1內容...123",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v4",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "1111",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v5",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "ˇˇˇˇˇˇˇˇˇˇ",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v6",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v7",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v8",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "*****-",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        }
       ],
-      "description": "A dynamic event designed to foster connections among students and young adults. It's a relaxed environment for networking, sharing ideas, and building professional relationships. Attendees can expect to meet like-minded individuals, expand their social circle, and discover potential collaborations or career opportunities. The event aims to create a sense of community and empower attendees to pursue their personal and professional goals.",
-      "expected_attendees": 150,
-      "suggested_time": "7:00 PM - 10:00 PM",
-      "suggested_event_duration": "3 hours",
-      "slogan": [
-        "Connect, Collaborate, Create!",
-        "Your Network Starts Here.",
-        "Spark Connections, Ignite Opportunities.",
-        "Building Bridges, One Connection at a Time.",
-        "Unlocking Potential Through Collaboration."
-      ],
-      "event_id": 1,
-      "id": "ee2a"
+      "latest_version": 8,
+      "name": "8520++++33QWEQEQQWEQE3 "
     },
     {
       "id": "5019",
-      "goal": "picnic",
-      "type": "Social_Networking",
-      "date": "2025-06-19",
-      "budget": 500000,
-      "target_audience": "Families",
-      "atmosphere": "Energetic_Fun"
+      "versions": [
+        {
+          "version": "v1",
+          "name": "Family Picnic",
+          "description": "V1內容...",
+          "date": "2025-06-19",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Families",
+          "atmosphere": "Energetic_Fun"
+        }
+      ],
+      "latest_version": 1
     },
     {
       "id": "b49a",
-      "goal": "picnic",
-      "type": "Workshop_Training",
+      "name": "Student Workshop",
+      "description": "A workshop for students.",
       "date": "2025-06-19",
-      "budget": 200000,
+      "type": "Workshop_Training",
+      "budget": 2000,
       "target_audience": "Students_Young",
-      "atmosphere": "Formal_Professional"
+      "atmosphere": "Formal_Professional",
+      "latest_version": 1
+    },
+    {
+      "id": "6b0d",
+      "name": "Networking Night",
+      "description": "An evening for students to network.",
+      "date": "2025-06-11",
+      "type": "Social_Networking",
+      "budget": 5000,
+      "target_audience": "Students_Young",
+      "atmosphere": "Casual_Friendly",
+      "latest_version": 1
     }
   ],
   "event": {

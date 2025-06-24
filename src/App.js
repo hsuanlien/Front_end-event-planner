@@ -30,7 +30,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />  {/* for testing : <Route path="/" element={<LoginPage />} /> */} 
+        <Route path="/login" element={<LoginPage />} />  for testing : <Route path="/" element={<LoginPage />} /> 
         <Route path="/home" element={<HomePage />} />
         <Route path="/" element={<HomePage />} />   {/* for testing */}
 

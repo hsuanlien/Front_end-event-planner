@@ -33,7 +33,11 @@ const AddEvent = () => {
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("請先登入！");
+      return;
+    }
     const payload = {
       goal: goal.trim(),
       type,
@@ -42,35 +46,29 @@ const AddEvent = () => {
       target_audience: audience,
       atmosphere,
     };
-
     try {
-      // JSON Server 不需要 Token，正式後端才需要
-      // const token = localStorage.getItem("token");
       const res = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Token ${token}`,
+          Authorization: `Token ${token}`,
         },
         body: JSON.stringify(payload),
       });
-
       if (!res.ok) {
         const txt = await res.text();
         throw new Error(`HTTP ${res.status} – ${txt}`);
       }
-
       const data = await res.json();
-      console.log("✅ 成功送出活動：", data);
-
       navigate("/choose-name", {
         state: {
-          eventId: data.id, // JSON Server 會自動產生 id
-          names: [], // 你可以根據需求傳遞
+          eventId: data.event_id,
+          names: data.name,
+          description: data.description,
+          slogans: data.slogan,
         },
       });
     } catch (err) {
-      console.error("❌ 新增活動失敗：", err);
       alert("新增活動失敗，請稍後再試或檢查主控台錯誤。");
     }
   };
