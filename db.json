@@ -128,9 +128,19 @@
           "budget": 5000,
           "target_audience": "Students_Young",
           "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v9",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "44444",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
         }
       ],
-      "latest_version": 8,
+      "latest_version": 9,
       "name": "8520++++33QWEQEQQWEQE3 "
     },
     {
