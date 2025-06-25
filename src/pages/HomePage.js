@@ -25,9 +25,6 @@ const HomePage = () => {
         <nav className="flex flex-col gap-4 text-lg text-left">
           <button onClick={() => navigate("/add-event")} className="hover:text-cyan-400 transition text-left">➕ Add Event</button>
           <button onClick={() => navigate("/upcoming-events")} className="hover:text-cyan-400 transition text-left">📅 Upcoming Events</button>
-          <button onClick={() => navigate("/assignment-task")} className="hover:text-cyan-400 transition text-left">📌 Assignment Task</button>
-          <button onClick={() => navigate("/reminders")} className="hover:text-cyan-400 transition text-left">⏰ Reminders</button>
-          <button onClick={() => navigate("/history")} className="hover:text-cyan-400 transition text-left">📖 History</button>
           <button onClick={() => navigate("/user-profile")} className="hover:text-cyan-400 transition text-left">👤 User Profile</button>
         </nav>
       </aside>

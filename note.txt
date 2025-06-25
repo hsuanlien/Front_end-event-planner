@@ -1,0 +1,70 @@
+ChooseEventTime 舊版：
+
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+// 
+const ChooseEventTime = () => {
+  const { id, version } = useParams();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = () => {
+    console.log("送出的資料:", formData);
+    navigate(`/event/${id}/${version}/venue-template`);
+  };
+
+  return (
+    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white p-8">
+      <div className="max-w-3xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl">
+        <h2 className="text-3xl font-bold mb-6 text-cyan-300">
+          🎨 Event {id} - Choose time period
+        </h2>
+
+        
+
+      </div>
+
+    {/* Task:按鈕寫法 */}
+    {/* 底部按鈕區：flex 分左右 */}
+      <div className="mt-8 flex justify-between items-center">
+        {/* 左下角返回按鈕 */}
+        <button
+          onClick={() => navigate(-1)}    
+          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
+        >
+          ← 返回
+        </button>
+
+      {/* 右下角 Add / Change / Save 按鈕 */}
+        <div className="flex gap-10">
+          <button
+            onClick={() => alert("Change clicked")}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+          >
+            Change
+          </button>
+          <button
+            //onClick={() => alert("Save clicked")}
+            onClick={() => navigate("/event/:id")}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+
+
+
+    </div>
+  );
+};
+
+export default ChooseEventTime;

@@ -30,9 +30,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />  {/* for testing : <Route path="/" element={<LoginPage />} /> */} 
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/" element={<HomePage />} />   {/* for testing */}
+        {/* <Route path="/login" element={<LoginPage />} />   */}
+        <Route path="/" element={<LoginPage />} />  
+        <Route path="/home" element={<HomePage />} />  
+{/* <Route path="/" element={<HomePage />} />    */}
+
 
          {/*-------------------------------------- */}
         <Route path="/register" element={<RegisterPage />} />
@@ -42,15 +44,17 @@ function App() {
         <Route path="/history" element={<History />} />
         <Route path="/user-profile" element={<UserProfile />} />
         
-        <Route path="/assignment-task" element={<AssignmentTask />} /> 
+        {/* 0620 change :  <Route path="/assignment-task" element={<AssignmentTask />} />  */}
         <Route path="/choose-name" element={<ChooseName />} /> 
         <Route path="/choose-slogan" element={<ChooseSlogan />} /> 
         <Route path="/event-description" element={<Event_Description />} /> 
         {/* assignment-task */}
 
-        <Route path="/event/:id" element={<EventDetailPage />} /> 
+        <Route path="/event/:id" element={<EventDetailPage />} />  
+        
         <Route path="/event/:id/choose-event-time" element={<ChooseEventTime />} />
         {/* ----------------- */}
+        <Route path="/event/:id/:version/assignment-task" element={<AssignmentTask />} /> 
         <Route path="/event/:id/:version/poster-info" element={<PosterInfo />} />
         <Route path="/event/:id/:version/poster-template" element={<PosterTemplate />} />
         {/* ----------------- */}

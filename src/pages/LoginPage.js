@@ -18,12 +18,14 @@ function LoginPage() {
         username,
         password,
       });
+
     if (response.status === 200) {
         const token = response.data.token;
         console.log("登入成功，Token：", token);
 
         // 儲存 token 到 localStorage
         localStorage.setItem("token", token);
+        // console.log("登入 token：", token);
 
         // 查詢帳號資訊
         const profileRes = await axios.get("http://localhost:8000/accounts/", {
@@ -50,45 +52,6 @@ function LoginPage() {
       }
     }
   };
-
-    
-    // 
-    // TODO 
-    // implement here: 呼叫後端 API 檢查帳號密碼是否正確，若正確則導向首頁
-    // 發送 POST 請求，傳送 username 和 password，並根據回傳資料決定導向或顯示錯誤訊息
-
-    // const handleLogin = async () => {
-    // const response = await fetch("url", {
-    //       method: ".......,
-    //       headers: {
-    //         "Content-Type": "application/json"
-    //       },
-    //       body: JSON.stringify({ username, password })
-    //     });
-    //   .then(res => res.json())  // 將回應轉為 JSON
-//       .then(data => { // TODO 處理取得 token、儲存 token
-//        console.log(data.token);  
-//        ..........
-// })
-  //   其他做法可參考：
-  //   const data = await response.json();
-  //       if (response.ok) {
-  //          // TODO 處理取得 token、儲存 token
-  //         // 登入成功後，儲存 token 與使用者資訊
-  //         // 導向首頁 
-  //         navigate('/home');
-  //       } else {
-  //         alert("登入失敗，請確認帳號密碼是否正確"); 
-  //       }
-  //     } catch (err) {
-  //       alert("發生錯誤，請稍後再試");
-  //     }
-  //   } else {
-  //     // 欄位為空時提示
-  //     alert("請輸入帳號和密碼");
-  //   }
-  //};
-
   
  // UI介面設計 
   return (
@@ -110,7 +73,7 @@ function LoginPage() {
 
         <input
           type="text"
-          placeholder="Email"
+          placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="w-full p-3 mb-4 bg-white/20 text-white placeholder-gray-300 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"

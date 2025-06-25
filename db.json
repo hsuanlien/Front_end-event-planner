@@ -1,10 +1,10 @@
 {
   "users": [
     {
-      "id": "7102",
-      "username": "abc",
+      "id": "123",
+      "username": "123",
       "email": "abc@gmail.com",
-      "password": "abcab",
+      "password": "123",
       "first_name": "hi",
       "last_name": "hihi",
       "address": "Heilbronn"
@@ -31,48 +31,168 @@
       "name": "The Vibe Vault: Unlock New Connections",
       "slogan": "Unlocking Potential Through Collaboration.",
       "description": "A dynamic event designed to foster connections among students and young adults. It's a relaxed environment for networking, sharing ideas, and building professional relationships. Attendees can expect to meet like-minded individuals, expand their social circle, and discover potential collaborations or career opportunities. The event aims to create a sense of community and empower attendees to pursue their personal and professional goals."
+    },
+    {
+      "id": "2112",
+      "name": "Synergy Social: Connect & Cultivate",
+      "slogan": "Connect, Collaborate, Create!",
+      "description": "A dynamic event designed to foster connections among students and young adults. It's a relaxed environment for networking, sharing ideas, and building professional relationships. Attendees can expect to meet like-minded individuals, expand their social circle, and discover potential collaborations or career opportunities. The event aims to create a sense of community and empower attendees to pursue their personal and professional goals."
+    },
+    {
+      "id": "f145",
+      "name": "Synergy Social: Connect & Cultivate",
+      "slogan": "Connect, Collaborate, Create!",
+      "description": "A dynamic event designed to foster connections among students and young adults."
+    },
+    {
+      "id": "0d6f",
+      "event_id": "ee2a",
+      "venue_name": "Unity Fest"
     }
   ],
   "events": [
     {
-      "name": [
-        "Synergy Social: Connect & Cultivate",
-        "The Millennial Mixer: Forge Your Future",
-        "Nexus Nights: Where Ideas Ignite",
-        "Social Spark: Plug Into Your Potential",
-        "The Vibe Vault: Unlock New Connections"
+      "id": 1,
+      "name": "活動1",
+      "description": "說明",
+      "latest_version": 2,
+      "versions": [
+        {
+          "version": "v1",
+          "description": "初版"
+        },
+        {
+          "version": "v2",
+          "description": "第二版"
+        }
+      ]
+    }
+  ],
+  "events_test": [
+    {
+      "id": "1",
+      "versions": [
+        {
+          "version": "v1",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "V1內容...",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v2",
+          "name": "Synergy Social: Connect & Cultivate (改版)",
+          "description": "V2內容...",
+          "date": "2025-08-16",
+          "type": "Social_Networking",
+          "budget": 6000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Energetic_Fun"
+        },
+        {
+          "version": "v3",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "V1內容...123",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v4",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "1111",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v5",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "ˇˇˇˇˇˇˇˇˇˇ",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v6",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v7",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v8",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "*****-",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Students_Young",
+          "atmosphere": "Immersive_Interactive"
+        }
       ],
-      "description": "A dynamic event designed to foster connections among students and young adults. It's a relaxed environment for networking, sharing ideas, and building professional relationships. Attendees can expect to meet like-minded individuals, expand their social circle, and discover potential collaborations or career opportunities. The event aims to create a sense of community and empower attendees to pursue their personal and professional goals.",
-      "expected_attendees": 150,
-      "suggested_time": "7:00 PM - 10:00 PM",
-      "suggested_event_duration": "3 hours",
-      "slogan": [
-        "Connect, Collaborate, Create!",
-        "Your Network Starts Here.",
-        "Spark Connections, Ignite Opportunities.",
-        "Building Bridges, One Connection at a Time.",
-        "Unlocking Potential Through Collaboration."
-      ],
-      "event_id": 1,
-      "id": "ee2a"
+      "latest_version": 8,
+      "name": "8520++++33QWEQEQQWEQE3 "
     },
     {
       "id": "5019",
-      "goal": "picnic",
-      "type": "Social_Networking",
-      "date": "2025-06-19",
-      "budget": 500000,
-      "target_audience": "Families",
-      "atmosphere": "Energetic_Fun"
+      "versions": [
+        {
+          "version": "v1",
+          "name": "Family Picnic",
+          "description": "V1內容...",
+          "date": "2025-06-19",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Families",
+          "atmosphere": "Energetic_Fun"
+        }
+      ],
+      "latest_version": 1
     },
     {
       "id": "b49a",
-      "goal": "picnic",
-      "type": "Workshop_Training",
+      "name": "Student Workshop",
+      "description": "A workshop for students.",
       "date": "2025-06-19",
       "budget": 200000,
+      "type": "Workshop_Training",
       "target_audience": "Students_Young",
-      "atmosphere": "Formal_Professional"
+      "atmosphere": "Formal_Professional",
+      "latest_version": 1
+    },
+    {
+      "id": "6b0d",
+      "name": "Networking Night",
+      "description": "An evening for students to network.",
+      "date": "2025-06-11",
+      "type": "Social_Networking",
+      "budget": 5000,
+      "target_audience": "Students_Young",
+      "atmosphere": "Casual_Friendly",
+      "latest_version": 1
     }
   ],
   "event": {
@@ -101,18 +221,10 @@
     {
       "role": "greeter",
       "description": "Greet attendees and provide event information.",
-      "count": 3,
+      "count": "2",
       "start_time": "2025-08-15T17:00:00Z",
       "end_time": "2025-08-15T22:59:59Z",
       "id": "fe13"
-    },
-    {
-      "role": "logistics",
-      "description": "Manage event setup and smooth operation.",
-      "count": 3,
-      "start_time": "2025-08-15T17:00:00Z",
-      "end_time": "2025-08-15T22:59:59Z",
-      "id": "036e"
     },
     {
       "role": "photographer",
@@ -137,6 +249,197 @@
       "count": 3,
       "start_time": "2025-06-17T11:24",
       "end_time": "2025-06-18T11:24"
+    },
+    {
+      "id": "d377",
+      "role": "12312345",
+      "description": "rrrrrrrrrrr",
+      "count": 4,
+      "start_time": "2025-06-20T12:03",
+      "end_time": "2025-06-20T12:30"
+    }
+  ],
+  "generated_posts": [
+    {
+      "content": "Prepare to be amazed! The Student Showcase Expo is hitting redblue Heilbronn on August 15th! Discover insane talent & future game-changers. Unique creations, startup pitches & more! DON'T MISS it! Sign up now! 😉👉 https://docs.google.com/forms/d/1AjQIQ08ppmCX_ju1Z6sRAPfCG9e_O2DOGkPrD_ZznmY/viewform",
+      "hashtag": [
+        "#StudentEvent",
+        "#Heilbronn",
+        "#FutureIsNow",
+        "#redblue",
+        "#test"
+      ],
+      "id": "1"
+    },
+    {
+      "content": "🤣 12234565353656655442345678765432Warning: May cause extreme inspiration! Student Showcase Expo, August 15th, redblue Heilbronn. Witness the future! ALL-IN-ONE place for student talent. Creations, pitches, & networking! Don't be a FOMO-saurus! Sign up! 😂➡️ https://docs.google.com/forms/d/1AjQIQ08ppmCX_ju1Z6sRAPfCG9e_O2DOGkPrD_ZznmY/viewform",
+      "hashtag": [
+        "#test",
+        "#StudentEvent",
+        "#HeilbronnTalent",
+        "#StartupLife"
+      ],
+      "id": "2"
+    },
+    {
+      "id": "3",
+      "content": "😱 What?! Unbelievable student talent coming to redblue Heilbronn, August 15th! The Student Showcase Expo is gonna blow your mind! DON’T MISS this ALL-IN-ONE opportunity to discover future innovators! Link in bio to register! 🚀 #StudentEvent #Innovation #Heilbronn #NextGen",
+      "hashtag": [
+        "#StudentEvent",
+        "#Innovation",
+        "#Heilbronn",
+        "#NextGen"
+      ]
+    }
+  ],
+  "venue_suggestions": [
+    {
+      "name": "Harry Klein",
+      "capacity": 300,
+      "transportation_score": 5,
+      "is_outdoor": false,
+      "address": "Rue Harry A Earnshaw, Hospice St Nicolas, Vitré, Fougères-Vitré, Ille-et-Vilaine, Bretagne, France métropolitaine, 35500, France",
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1215031,-1.2264911"
+    },
+    {
+      "name": "Bahnwärter Thiel",
+      "capacity": 500,
+      "transportation_score": 5,
+      "is_outdoor": true,
+      "address": "Bahnwärter Thiel, 45, Tumblingerstraße, Am Schlachthof, Ludwigsvorstadt-Isarvorstadt, München, Bayern, 80337, Deutschland",
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1222748,11.5548426"
+    },
+    {
+      "name": "Backstage München",
+      "capacity": 1200,
+      "transportation_score": 4,
+      "is_outdoor": true,
+      "address": "Backstage, 6, Reitknechtstraße, Siedlung Neuhausen, Neuhausen, Neuhausen-Nymphenburg, München, Bayern, 80639, Deutschland",
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1449557,11.5219647"
+    },
+    {
+      "name": "Feierwerk e.V.",
+      "capacity": 200,
+      "transportation_score": 4,
+      "is_outdoor": true,
+      "address": "",
+      "map_url": null
+    },
+    {
+      "name": "Pacha Munich",
+      "capacity": 800,
+      "transportation_score": 5,
+      "is_outdoor": false,
+      "address": "Pacha, 5, Maximiliansplatz, Königsplatz, Maxvorstadt, München, Bayern, 80333, Deutschland",
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.142124,11.5697566"
+    }
+  ],
+  "venues": [
+    {
+      "id": "0219",
+      "name": "5",
+      "radius_km": 5
+    },
+    {
+      "id": "22a5",
+      "name": "9",
+      "radius_km": 9
+    },
+    {
+      "id": "d292",
+      "name": "9",
+      "radius_km": 9
+    },
+    {
+      "id": "16f6",
+      "name": "1",
+      "radius_km": 1
+    },
+    {
+      "id": "d40a",
+      "name": "1",
+      "radius_km": 1
+    },
+    {
+      "id": "1206",
+      "name": "8",
+      "radius_km": 8
+    },
+    {
+      "id": "1664",
+      "name": "1",
+      "radius_km": 1
+    },
+    {
+      "id": "2af5",
+      "name": "6",
+      "radius_km": 6
+    },
+    {
+      "id": "3859",
+      "name": "4",
+      "radius_km": 4
+    },
+    {
+      "id": "4dc4",
+      "name": "1",
+      "radius_km": 1
+    },
+    {
+      "id": "79ec",
+      "name": "1",
+      "radius_km": 1
+    },
+    {
+      "id": "c2ab",
+      "name": "dddddd",
+      "radius_km": null
+    },
+    {
+      "id": "20ef",
+      "name": "1231",
+      "radius_km": 55
+    }
+  ],
+  "registrationForms": [
+    {
+      "id": "1",
+      "registration-list": [
+        {
+          "event_intro": "修改Join Amplify: The Student Voice Summit and make your voice heard! Connect with fellow students and shape the future together at Harmonie Heilbronn.",
+          "form_title": "Register for Amplify: The Student Voice Summit",
+          "form_fields": [
+            {
+              "registration_name": "email",
+              "description": "Email"
+            },
+            {
+              "registration_name": "school",
+              "description": "School/University"
+            },
+            {
+              "registration_name": "major",
+              "description": "Major/Area of Study"
+            },
+            {
+              "registration_name": "graduation_year vvvvvvv",
+              "description": "Expected Graduation Year"
+            },
+            {
+              "registration_name": "area_of_interest",
+              "description": "Areas of Interest (e.g., Policy, Advocacy, Leadership)"
+            },
+            {
+              "registration_name": "dietary_preferences",
+              "description": "Dietary Preferences (if any)"
+            },
+            {
+              "registration_name": "222",
+              "description": "111"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
