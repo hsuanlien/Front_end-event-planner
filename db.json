@@ -102,7 +102,7 @@
         {
           "version": "v6",
           "name": "Synergy Social: Connect & Cultivate",
-          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
+          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
           "date": "2025-08-15",
           "type": "Social_Networking",
           "budget": 5000,
@@ -112,7 +112,7 @@
         {
           "version": "v7",
           "name": "Synergy Social: Connect & Cultivate",
-          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
+          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
           "date": "2025-08-15",
           "type": "Social_Networking",
           "budget": 5000,
@@ -138,9 +138,39 @@
           "budget": 5000,
           "target_audience": "Students_Young",
           "atmosphere": "Immersive_Interactive"
+        },
+        {
+          "version": "v10",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "V1內容...",
+          "date": "2025-08-15",
+          "type": "Workshop_Training",
+          "budget": 5000,
+          "target_audience": "Families",
+          "atmosphere": "Relaxed_Calm"
+        },
+        {
+          "version": "v11",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "V1內容...",
+          "date": "2025-08-15",
+          "type": "Workshop_Training",
+          "budget": 5000,
+          "target_audience": "Families",
+          "atmosphere": "Casual_Friendly"
+        },
+        {
+          "version": "v12",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "V1內容...",
+          "date": "2025-08-15",
+          "type": "Speech_Seminar",
+          "budget": 5000,
+          "target_audience": "Professionals",
+          "atmosphere": "Creative_Artistic"
         }
       ],
-      "latest_version": 9,
+      "latest_version": 12,
       "name": "8520++++33QWEQEQQWEQE3 "
     },
     {
@@ -245,5 +275,81 @@
       "start_time": "2025-06-17T11:24",
       "end_time": "2025-06-18T11:24"
     }
-  ]
+  ],
+  "event_options": {
+    "type": [
+      {
+        "value": "Workshop_Training",
+        "label": "Workshop / Training"
+      },
+      {
+        "value": "Social_Networking",
+        "label": "Social / Networking"
+      },
+      {
+        "value": "Performance_Showcase",
+        "label": "Performance / Showcase"
+      },
+      {
+        "value": "Speech_Seminar",
+        "label": "Speech / Seminar"
+      },
+      {
+        "value": "Recreational_Entertainment",
+        "label": "Recreational / Entertainment"
+      },
+      {
+        "value": "Market_Exhibition",
+        "label": "Market / Exhibition"
+      },
+      {
+        "value": "Competition_Challenge",
+        "label": "Competition / Challenge"
+      }
+    ],
+    "target_audience": [
+      {
+        "value": "Students_Young",
+        "label": "Students / Young Adults"
+      },
+      {
+        "value": "Professionals",
+        "label": "Professionals"
+      },
+      {
+        "value": "Families",
+        "label": "Families"
+      },
+      {
+        "value": "Local_Community",
+        "label": "Local Community"
+      }
+    ],
+    "atmosphere": [
+      {
+        "value": "Formal_Professional",
+        "label": "Formal / Professional"
+      },
+      {
+        "value": "Casual_Friendly",
+        "label": "Casual / Friendly"
+      },
+      {
+        "value": "Energetic_Fun",
+        "label": "Energetic / Fun"
+      },
+      {
+        "value": "Relaxed_Calm",
+        "label": "Relaxed / Calm"
+      },
+      {
+        "value": "Creative_Artistic",
+        "label": "Creative / Artistic"
+      },
+      {
+        "value": "Immersive_Interactive",
+        "label": "Immersive / Interactive"
+      }
+    ]
+  }
 }

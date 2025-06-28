@@ -84,7 +84,7 @@ const Venue = () => {
           </button>
           <button
             //onClick={() => alert("Save clicked")}
-            onClick={() => navigate("/event/:id/:version/choose-venue")}
+            onClick={() => navigate(`/event/${id}/${version}/choose-venue`)}
             className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
           >
             Save

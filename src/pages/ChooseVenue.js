@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // 0618Task4
 const ChooseVenue = () => {
   const navigate = useNavigate();
+  const { id, version } = useParams();
   const [selected, setSelected] = useState("");
   const names = [
     "Unity Fest",
@@ -46,10 +47,15 @@ const ChooseVenue = () => {
           ))}
         </div>
 
-        <div className="flex justify-end pt-6">
+        <div className="flex justify-between pt-6">
           <button
-           // Task4
-            onClick={() => navigate("/event/:id")}
+            onClick={() => navigate(`/event/${id}/${version}/venue`)}
+            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
+          >
+            ← 返回
+          </button>
+          <button
+            onClick={() => navigate(`/event/${id}/${version}/check-invitation`)}
             className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
           >
             確認

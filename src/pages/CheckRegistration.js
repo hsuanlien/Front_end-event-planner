@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // 0618Task1:
 const CheckRegistration = () => {
   const navigate = useNavigate();
+  const { id, version } = useParams();
   const [selected, setSelected] = useState("");
+  const [saved, setSaved] = useState(false);
   const names = [
     // "Unity Fest",
     // "Campus Connect",
@@ -12,9 +14,11 @@ const CheckRegistration = () => {
     // "Youth Link"
   ];
 
-    const handleConfirm = () => {
-        
-    };
+  // Save 只顯示已儲存，不跳頁
+  const handleSave = () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1500);
+  };
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white overflow-hidden">
@@ -48,44 +52,37 @@ const CheckRegistration = () => {
 
 
         <div className="mt-8 flex justify-between items-center">
-
-            {/* 左下角返回按鈕 */}
+          {/* 返回 event 主頁 */}
+          <button
+            onClick={() => navigate(`/event/${id}`)}
+            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
+          >
+            ← 返回
+          </button>
+          <div className="flex gap-10">
             <button
-                onClick={() => navigate("/event/:id")}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
+              onClick={() => navigate(`/event/${id}/${version}/registration`)}
+              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
             >
-                ← 返回
+              Change
             </button>
-
-            {/* 右下角 Add / Change / Save 按鈕 */}
-            <div className="flex gap-10">
-                <button
-                onClick={() => alert("Add clicked")}
-                // Task4 實作按下Change的功能
-                className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
-                >
-                Change
-                </button>
-                <button
-                // Task4 實作按下Save的功能
-                onClick={() => alert("Change clicked")}
-                className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
-                >
-                Save
-                </button>
-                <button
-                // Task4 實作按下Send的功能
-                onClick={() => alert("Send clicked")}
-                className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
-                >
-                Send
-                </button>
-            </div>
-
-            
+            <button
+              onClick={handleSave}
+              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => alert("Send clicked")}
+              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+            >
+              Send
+            </button>
+          </div>
         </div>
-
-
+        {saved && (
+          <div className="mt-4 text-green-400 font-bold">已儲存！</div>
+        )}
       </main>
     </div>
   );

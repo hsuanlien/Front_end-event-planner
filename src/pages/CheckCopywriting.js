@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CheckCopywriting = () => {
   const navigate = useNavigate();
+  const { id, version } = useParams();
   const [selected, setSelected] = useState("");
   const names = [
     // "Unity Fest",
@@ -15,6 +16,11 @@ const CheckCopywriting = () => {
  //0618Task2
     const handleConfirm = () => {
         
+    };
+
+    const handleSave = () => {
+      // ...儲存邏輯...
+      navigate(`/event/${id}`);
     };
 
   return (
@@ -53,10 +59,10 @@ const CheckCopywriting = () => {
         <div className="mt-8 flex justify-between items-center">
             {/* 左下角返回按鈕 */}
             <button
-                onClick={() => navigate("/event/:id")}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
+              onClick={() => navigate(`/event/${id}`)}
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
             >
-                ← 返回
+              ← 返回
             </button>
 
             {/* 右下角 Add / Change / Save 按鈕 */}
@@ -69,8 +75,7 @@ const CheckCopywriting = () => {
                     </button>
 
                     <button
-                    //onClick={() => alert("Save clicked")}
-                    onClick={() => navigate("/event/:id")}
+                    onClick={handleSave}
                     className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
                     >
                     Save

@@ -62,7 +62,7 @@ const Copywriting = () => {
     <div className="mt-8 flex justify-between items-center">
       {/* 左下角返回按鈕 */}
       <button
-        onClick={() => navigate(-1)}    
+        onClick={() => navigate(`/event/${id}/${version}/check-copywriting`)}
         className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
       >
         ← 返回
@@ -73,7 +73,7 @@ const Copywriting = () => {
         <button
           // Task 
           // onClick={() => alert("Save clicked")}
-          onClick={() => navigate("/event/:id/:version/check-copywriting")}
+          onClick={() => navigate(`/event/${id}/${version}/check-copywriting`)}
           className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
         >
           Save

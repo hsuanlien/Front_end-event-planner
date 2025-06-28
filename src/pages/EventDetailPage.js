@@ -12,6 +12,11 @@ const EventDetailPage = () => {
   const [versions, setVersions] = useState(["v1"]);
   const [selectedVersion, setSelectedVersion] = useState("v1");
   const [error, setError] = useState(null);
+  const [eventOptions, setEventOptions] = useState({
+    type: [],
+    target_audience: [],
+    atmosphere: [],
+  });
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -55,6 +60,18 @@ const EventDetailPage = () => {
       setForm(verData ? { ...verData } : {});
     }
   }, [selectedVersion, eventData]);
+
+  // 取得 event options
+  useEffect(() => {
+    const fetchOptions = async () => {
+      const res = await fetch("http://localhost:3001/event_options");
+      if (res.ok) {
+        const data = await res.json();
+        setEventOptions(data);
+      }
+    };
+    fetchOptions();
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -227,6 +244,39 @@ const EventDetailPage = () => {
                     onChange={handleChange}
                     className="w-full p-2 rounded text-black"
                   />
+                  <select
+                    name="type"
+                    value={form.type || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 rounded text-black"
+                  >
+                    <option value="" disabled>Event Type</option>
+                    {eventOptions.type.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  <select
+                    name="target_audience"
+                    value={form.target_audience || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 rounded text-black"
+                  >
+                    <option value="" disabled>Audience</option>
+                    {eventOptions.target_audience.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  <select
+                    name="atmosphere"
+                    value={form.atmosphere || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 rounded text-black"
+                  >
+                    <option value="" disabled>Atmosphere</option>
+                    {eventOptions.atmosphere.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
                   {/* 其他欄位... */}
                 </form>
               ) : (
