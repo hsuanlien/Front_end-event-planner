@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+const API_BASE = "http://localhost:8000"; // json-server base
+
+// const API_BASE = "http://127.0.0.1:8000/api"; // Django API base
 const ChooseEventTime = () => {
   const { id, version } = useParams();
   const navigate = useNavigate();
@@ -15,12 +18,8 @@ const ChooseEventTime = () => {
 
   useEffect(() => {
     const fetchEventDate = async () => {
-      const token = localStorage.getItem("token");
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/events/${id}/`, { 
-          // 這段是 GET 請求，取得該活動的詳細資料
-          headers: { Authorization: `Token ${token}` },
-        });
+        const res = await fetch(`${API_BASE}/events/${id}`);
         if (res.ok) {
           const data = await res.json();
           if (data.start_time) {
@@ -44,7 +43,6 @@ const ChooseEventTime = () => {
   };
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem("token");
     const { startTime, endTime } = formData;
 
     if (!startTime || !endTime) {
@@ -58,11 +56,11 @@ const ChooseEventTime = () => {
     }
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/events/${id}/update/`, {
+      // PATCH 可能不支援，json-server 可用 PUT
+      const res = await fetch(`${API_BASE}/events/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
         },
         body: JSON.stringify({
           start_time: `${eventDate}T${startTime}`,

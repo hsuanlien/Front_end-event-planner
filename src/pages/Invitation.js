@@ -73,7 +73,7 @@ const Invitation= () => {
         <button
           // 0618Task3
           //onClick={() => alert("Save clicked")}
-          onClick={() => navigate("/event/:id/:version/check-invitation")}
+          onClick={() => navigate(`/event/${id}/${version}/check-invitation`)}
           className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
         >
           Save

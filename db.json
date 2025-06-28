@@ -52,7 +52,7 @@
   ],
   "events": [
     {
-      "id": 1,
+      "id": "1",
       "name": "活動1",
       "description": "說明",
       "latest_version": 2,
@@ -65,7 +65,9 @@
           "version": "v2",
           "description": "第二版"
         }
-      ]
+      ],
+      "start_time": "T13:56",
+      "end_time": "T13:58"
     }
   ],
   "events_test": [
@@ -87,10 +89,10 @@
           "name": "Synergy Social: Connect & Cultivate (改版)",
           "description": "V2內容...",
           "date": "2025-08-16",
-          "type": "Social_Networking",
+          "type": "Speech_Seminar",
           "budget": 6000,
           "target_audience": "Students_Young",
-          "atmosphere": "Energetic_Fun"
+          "atmosphere": "Creative_Artistic"
         },
         {
           "version": "v3",
@@ -125,7 +127,7 @@
         {
           "version": "v6",
           "name": "Synergy Social: Connect & Cultivate",
-          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
+          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
           "date": "2025-08-15",
           "type": "Social_Networking",
           "budget": 5000,
@@ -135,12 +137,12 @@
         {
           "version": "v7",
           "name": "Synergy Social: Connect & Cultivate",
-          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
+          "description": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest",
           "date": "2025-08-15",
-          "type": "Social_Networking",
+          "type": "Workshop_Training",
           "budget": 5000,
-          "target_audience": "Students_Young",
-          "atmosphere": "Immersive_Interactive"
+          "target_audience": "Families",
+          "atmosphere": "Formal_Professional"
         },
         {
           "version": "v8",
@@ -149,11 +151,31 @@
           "date": "2025-08-15",
           "type": "Social_Networking",
           "budget": 5000,
-          "target_audience": "Students_Young",
-          "atmosphere": "Immersive_Interactive"
+          "target_audience": "Professionals",
+          "atmosphere": "Energetic_Fun"
+        },
+        {
+          "version": "v9",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "*****-",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Families",
+          "atmosphere": "Formal_Professional"
+        },
+        {
+          "version": "v10",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "*****-",
+          "date": "2025-08-15",
+          "type": "Social_Networking",
+          "budget": 5000,
+          "target_audience": "Families",
+          "atmosphere": "Formal_Professional"
         }
       ],
-      "latest_version": 8,
+      "latest_version": 10,
       "name": "8520++++33QWEQEQQWEQE3 "
     },
     {
@@ -299,7 +321,8 @@
       "transportation_score": 5,
       "is_outdoor": false,
       "address": "Rue Harry A Earnshaw, Hospice St Nicolas, Vitré, Fougères-Vitré, Ille-et-Vilaine, Bretagne, France métropolitaine, 35500, France",
-      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1215031,-1.2264911"
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1215031,-1.2264911",
+      "id": "f1f6"
     },
     {
       "name": "Bahnwärter Thiel",
@@ -307,7 +330,8 @@
       "transportation_score": 5,
       "is_outdoor": true,
       "address": "Bahnwärter Thiel, 45, Tumblingerstraße, Am Schlachthof, Ludwigsvorstadt-Isarvorstadt, München, Bayern, 80337, Deutschland",
-      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1222748,11.5548426"
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1222748,11.5548426",
+      "id": "2c97"
     },
     {
       "name": "Backstage München",
@@ -315,7 +339,8 @@
       "transportation_score": 4,
       "is_outdoor": true,
       "address": "Backstage, 6, Reitknechtstraße, Siedlung Neuhausen, Neuhausen, Neuhausen-Nymphenburg, München, Bayern, 80639, Deutschland",
-      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1449557,11.5219647"
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1449557,11.5219647",
+      "id": "1cc7"
     },
     {
       "name": "Feierwerk e.V.",
@@ -323,7 +348,8 @@
       "transportation_score": 4,
       "is_outdoor": true,
       "address": "",
-      "map_url": null
+      "map_url": null,
+      "id": "2d9a"
     },
     {
       "name": "Pacha Munich",
@@ -331,7 +357,8 @@
       "transportation_score": 5,
       "is_outdoor": false,
       "address": "Pacha, 5, Maximiliansplatz, Königsplatz, Maxvorstadt, München, Bayern, 80333, Deutschland",
-      "map_url": "https://www.google.com/maps/search/?api=1&query=48.142124,11.5697566"
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.142124,11.5697566",
+      "id": "fab1"
     }
   ],
   "venues": [
@@ -441,5 +468,81 @@
         }
       ]
     }
-  ]
+  ],
+  "event_options": {
+    "type": [
+      {
+        "value": "Workshop_Training",
+        "label": "Workshop / Training"
+      },
+      {
+        "value": "Social_Networking",
+        "label": "Social / Networking"
+      },
+      {
+        "value": "Performance_Showcase",
+        "label": "Performance / Showcase"
+      },
+      {
+        "value": "Speech_Seminar",
+        "label": "Speech / Seminar"
+      },
+      {
+        "value": "Recreational_Entertainment",
+        "label": "Recreational / Entertainment"
+      },
+      {
+        "value": "Market_Exhibition",
+        "label": "Market / Exhibition"
+      },
+      {
+        "value": "Competition_Challenge",
+        "label": "Competition / Challenge"
+      }
+    ],
+    "audience": [
+      {
+        "value": "Students_Young",
+        "label": "Students / Young Adults"
+      },
+      {
+        "value": "Professionals",
+        "label": "Professionals"
+      },
+      {
+        "value": "Families",
+        "label": "Families"
+      },
+      {
+        "value": "Local_Community",
+        "label": "Local Community"
+      }
+    ],
+    "atmosphere": [
+      {
+        "value": "Formal_Professional",
+        "label": "Formal / Professional"
+      },
+      {
+        "value": "Casual_Friendly",
+        "label": "Casual / Friendly"
+      },
+      {
+        "value": "Energetic_Fun",
+        "label": "Energetic / Fun"
+      },
+      {
+        "value": "Relaxed_Calm",
+        "label": "Relaxed / Calm"
+      },
+      {
+        "value": "Creative_Artistic",
+        "label": "Creative / Artistic"
+      },
+      {
+        "value": "Immersive_Interactive",
+        "label": "Immersive / Interactive"
+      }
+    ]
+  }
 }

@@ -1,55 +1,75 @@
 // src/pages/EventDetailPage.js 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Listbox } from '@headlessui/react'
+
+const API_BASE = "http://localhost:8000"; // json-server
 
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const versions = ["v1"];
+  const [event, setEvent] = useState(null);
   const [selectedVersion, setSelectedVersion] = useState("v1");
+  const [options, setOptions] = useState({ type: [], audience: [], atmosphere: [] });
 
-  // 前端暫存完成狀態
-  const [venueCompleted, setVenueCompleted] = useState(true);
-  const [formCompleted, setFormCompleted] = useState(true);
+  useEffect(() => {
+    fetch(`${API_BASE}/events_test/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setEvent(data);
+        if (data.versions && data.versions.length > 0) {
+          setSelectedVersion(data.versions[data.versions.length - 1].version); // 預設最新
+        }
+      });
+  }, [id]);
 
-  // 功能選單與依賴條件
-  const sidebarItems = [
-    { label: "Task assignment", key: "Task assignment", requires: [] },
-    { label: "場地", key: "場地", requires: [] },
-    { label: "報名表單", key: "報名表單", requires: [] },
-    { label: "邀請函", key: "邀請函", requires: ["場地", "報名表單"] },
-    { label: "文案", key: "文案", requires: ["場地", "報名表單"] },
-    { label: "海報", key: "海報", requires: ["場地", "報名表單"] },
-  ];
+  useEffect(() => {
+    fetch(`${API_BASE}/event_options`)
+      .then(res => res.json())
+      .then(data => setOptions(data));
+  }, []);
 
-  // 點擊功能選單的處理邏輯
-  const handleFunctionClick = (itemKey) => {
-    if (itemKey === "場地") {
-      setVenueCompleted(true); // 模擬完成
-      navigate(`/event/${id}/${selectedVersion}/venue`);
-    } else if (itemKey === "報名表單") {
-      setFormCompleted(true); // 模擬完成
-      navigate(`/event/${id}/${selectedVersion}/check-registration`);
-    } else if (itemKey === "邀請函") {
-      navigate(`/event/${id}/${selectedVersion}/invitation`);
-    } else if (itemKey === "文案") {
-      navigate(`/event/${id}/${selectedVersion}/copywriting`);
-    } else if (itemKey === "海報") {
-      navigate(`/event/${id}/${selectedVersion}/poster-info`);
-    } else if (itemKey === "Task assignment") {
-      navigate(`/event/${id}/${selectedVersion}/assignment-task`);
-    } else {
-      console.log(`尚未設定 ${itemKey} 的跳轉`);
-    }
+  if (!event) return <div>Loading...</div>;
+
+  const versions = event.versions.map((v) => v.version);
+
+  // 取得目前選擇的版本內容
+  const currentVersion = event.versions.find((v) => v.version === selectedVersion);
+
+  // 按下 Save 時，新增新版本
+  const handleSave = async (newVersionData) => {
+    const newVersionNumber = event.versions.length + 1;
+    const newVersion = {
+      ...newVersionData,
+      version: `v${newVersionNumber}`,
+    };
+    const updatedEvent = {
+      ...event,
+      versions: [...event.versions, newVersion],
+      latest_version: newVersionNumber,
+    };
+    await fetch(`${API_BASE}/events_test/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedEvent),
+    });
+    setEvent(updatedEvent);
+    setSelectedVersion(newVersion.version);
   };
 
-  // 檢查功能是否啟用
-  const isItemEnabled = (item) =>
-    item.requires.every((dep) => {
-      if (dep === "場地") return venueCompleted;
-      if (dep === "報名表單") return formCompleted;
-      return true;
+  // 按下 Change 時，編輯目前版本
+  const handleChange = async (changedData) => {
+    const updatedVersions = event.versions.map((v) =>
+      v.version === selectedVersion ? { ...v, ...changedData } : v
+    );
+    const updatedEvent = { ...event, versions: updatedVersions };
+    await fetch(`${API_BASE}/events_test/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedEvent),
     });
+    setEvent(updatedEvent);
+  };
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
@@ -112,6 +132,48 @@ const EventDetailPage = () => {
               狀態｜場地完成：{venueCompleted ? "✅" : "❌"}，
               報名表單完成：{formCompleted ? "✅" : "❌"}
             </p>
+
+            {/* 新增的下拉選單區塊 */}
+            <div className="mt-4">
+              <select
+                value={currentVersion.type}
+                onChange={e => handleChange({ type: e.target.value })}
+                className="w-full p-2 rounded-lg bg-blue-900 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              >
+                <option value="" disabled className="text-gray-400">Event Type</option>
+                {options.type.map(opt => (
+                  <option key={opt.value} value={opt.value} className="text-black">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={currentVersion.target_audience}
+                onChange={e => handleChange({ target_audience: e.target.value })}
+                className="w-full p-2 rounded-lg bg-blue-900 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 mt-2"
+              >
+                <option value="" disabled className="text-gray-400">Audience</option>
+                {options.audience.map(opt => (
+                  <option key={opt.value} value={opt.value} className="text-black">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={currentVersion.atmosphere}
+                onChange={e => handleChange({ atmosphere: e.target.value })}
+                className="w-full p-2 rounded-lg bg-blue-900 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 mt-2"
+              >
+                <option value="" disabled className="text-gray-400">Event Atmosphere</option>
+                {options.atmosphere.map(opt => (
+                  <option key={opt.value} value={opt.value} className="text-black">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="flex gap-10 mt-6">
@@ -122,7 +184,7 @@ const EventDetailPage = () => {
               Change
             </button>
             <button
-              onClick={() => alert("Save clicked")}
+              onClick={() => handleSave(currentVersion)}
               className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
             >
               Save
@@ -133,5 +195,25 @@ const EventDetailPage = () => {
     </div>
   );
 };
+
+// Mock sidebar items
+const sidebarItems = [
+  { key: "basic", label: "基本資料" },
+  { key: "venue", label: "場地" },
+  { key: "registration", label: "報名表單" },
+  // 你可以依需求增加更多功能
+];
+
+// Mock 功能啟用判斷
+const isItemEnabled = (item) => true;
+
+// Mock 功能點擊
+const handleFunctionClick = (key) => {
+  alert(`功能 ${key} 尚未實作`);
+};
+
+// Mock 狀態
+const venueCompleted = true;
+const formCompleted = false;
 
 export default EventDetailPage;

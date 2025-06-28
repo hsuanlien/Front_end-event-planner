@@ -74,7 +74,7 @@ const Registration= () => {
         <button
           // Task 3
           //onClick={() => alert("Save clicked")}
-          onClick={() => navigate("/event/:id/:version/check-registration")}
+          onClick={() => navigate(`/event/${id}/${version}/check-registration`)}
           className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
         >
           Save

@@ -14,42 +14,17 @@ function LoginPage() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/accounts/login/", {
-        username,
-        password,
-      });
-
-    if (response.status === 200) {
-        const token = response.data.token;
-        console.log("登入成功，Token：", token);
-
-        // 儲存 token 到 localStorage
-        localStorage.setItem("token", token);
-        // console.log("登入 token：", token);
-
-        // 查詢帳號資訊
-        const profileRes = await axios.get("http://localhost:8000/accounts/", {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-
-        console.log("使用者資訊：", profileRes.data);
-
-        // 導向首頁
+      // 用 json-server 查詢 users
+      const response = await axios.get(`http://localhost:8000/users?username=${username}&password=${password}`);
+      if (response.data.length > 0) {
+        // 登入成功
+        localStorage.setItem("user", JSON.stringify(response.data[0]));
         navigate('/home');
+      } else {
+        alert("⚠️ 登入失敗：請確認帳密");
       }
     } catch (error) {
-      alert("⚠️ 登入失敗：" + 
-          (error.response?.data?.non_field_errors?.[0] ||
-          error.response?.data?.error ||
-          "請確認帳密"));
-
-      if (error.response && error.response.status === 400) {
-        alert("⚠️ 登入失敗：" + (error.response.data.non_field_errors || "請確認帳密"));
-      } else {
-        alert("⚠️ 登入過程發生錯誤");
-      }
+      alert("⚠️ 登入過程發生錯誤");
     }
   };
   

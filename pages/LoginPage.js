@@ -8,7 +8,11 @@ function LoginPage() {
 
   const handleLogin = () => {
     if (username && password) {
+      // 假裝登入成功，把 user 存到 localStorage
+      localStorage.setItem('user', JSON.stringify({ username }));
       navigate('/home');
+    } else {
+      alert('請輸入帳號和密碼');
     }
   };
 
