@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Event_Description = () => {
@@ -17,10 +17,56 @@ const Event_Description = () => {
 
   const token = localStorage.getItem("token");
 
-  const handleConfirm = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/events/${eventId}/update/`,
+  // 狀態管理
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(eventName || "");
+  const [slogan, setSlogan] = useState(selectedSlogan || "");
+  const [desc, setDesc] = useState(description || "");
+  const [attendees, setAttendees] = useState(expected_attendees || "");
+  const [time, setTime] = useState(suggested_time || "");
+  const [duration, setDuration] = useState(suggested_event_duration || "");
+
+  // const handleSave = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
+  //       {
+  //         method: "PATCH",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Token ${token}`,
+  //         },
+  //         body: JSON.stringify({
+  //           name,
+  //           slogan,
+  //           description: desc,
+  //           expected_attendees: attendees,
+  //           suggested_time: time,
+  //           suggested_event_duration: duration,
+  //         }),
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       console.log("✅ 活動更新成功：", result);
+  //       alert("Event updated successfully!");
+  //       setIsEditing(false);
+  //     } else {
+  //       const errorText = await response.text();
+  //       console.error("❌ 更新失敗：", errorText);
+  //       alert("Update failed.");
+  //     }
+  //   } catch (err) {
+  //     console.error("❌ 發送 PATCH 請求錯誤：", err);
+  //   }
+  // };
+  const handleSave = async () => {
+  console.log(" Token used for request: ", token);
+  try {
+      // 1. PATCH 更新活動資料
+      const patchResponse = await fetch(
+        `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
         {
           method: "PATCH",
           headers: {
@@ -28,69 +74,166 @@ const Event_Description = () => {
             Authorization: `Token ${token}`,
           },
           body: JSON.stringify({
-            name: eventName,
-            slogan: selectedSlogan,
-            description,
-            expected_attendees,
-            suggested_time,
-            suggested_event_duration,
+            name,
+            slogan,
+            description: desc,
+            expected_attendees: attendees,
+            suggested_time: time,
+            suggested_event_duration: duration,
           }),
         }
       );
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("✅ 活動更新成功：", result);
-        navigate("/home");
-      } else {
-        const errorText = await response.text();
+      if (!patchResponse.ok) {
+        const errorText = await patchResponse.text();
         console.error("❌ 更新失敗：", errorText);
+        alert("Update failed.");
+        return;
+      }
+
+      const updatedEvent = await patchResponse.json();
+      console.log("✅ 活動更新成功：", updatedEvent);
+
+      // 2. POST 儲存版本
+      const versionResponse = await fetch(
+        `https://genai-backend-2gji.onrender.com/api/events/${eventId}/save-version/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
+
+      if (versionResponse.status === 201) {
+        const versionData = await versionResponse.json();
+        console.log("✅ 活動版本儲存成功：", versionData);
+        alert(`Event updated and version saved! Version ID: ${versionData.version_id}`);
+        setIsEditing(false);
+      } else if (versionResponse.status === 403) {
+        const errorData = await versionResponse.json();
+        console.error("❌ 儲存版本失敗（權限）：", errorData);
+        alert("Permission denied while saving version.");
+      } else {
+        const errorText = await versionResponse.text();
+        console.error("❌ 儲存版本失敗：", errorText);
+        alert("Failed to save event version.");
       }
     } catch (err) {
-      console.error("❌ 發送 PATCH 請求錯誤：", err);
+      console.error("❌ 發送請求錯誤：", err);
+      alert("An error occurred while saving.");
     }
   };
 
+
+  const handleNext = () => {
+    navigate("/home");
+  };
+
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white overflow-hidden">
-      <main className="flex-1 flex flex-col p-8">
-        <h1 className="text-3xl font-bold mb-6 drop-shadow-md">
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
+      <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-8 border border-white/20 shadow-lg max-w-xl w-full">
+        <h1 className="text-3xl font-bold mb-6 text-center drop-shadow-md">
           📝 Event Description
         </h1>
-        <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner max-w-xl space-y-4">
+        <div className="space-y-4">
           <div>
-            <strong className="text-cyan-400">活動名稱：</strong> {eventName}
+            <strong className="text-cyan-400">Event name：</strong>
+            {isEditing ? (
+              <input
+                className="w-full mt-1 p-2 rounded bg-white/10 text-white"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            ) : (
+              name
+            )}
           </div>
           <div>
-            <strong className="text-cyan-400">標語：</strong> {selectedSlogan}
+            <strong className="text-cyan-400">Event slogan：</strong>
+            {isEditing ? (
+              <input
+                className="w-full mt-1 p-2 rounded bg-white/10 text-white"
+                value={slogan}
+                onChange={(e) => setSlogan(e.target.value)}
+              />
+            ) : (
+              slogan
+            )}
           </div>
           <div>
-            <strong className="text-cyan-400">預計人數：</strong> {expected_attendees}
+            <strong className="text-cyan-400">Expected Attendees：</strong>
+            {isEditing ? (
+              <input
+                type="number"
+                className="w-full mt-1 p-2 rounded bg-white/10 text-white"
+                value={attendees}
+                onChange={(e) => setAttendees(e.target.value)}
+              />
+            ) : (
+              attendees
+            )}
           </div>
           <div>
-            <strong className="text-cyan-400">建議時間：</strong> {suggested_time}（共 {suggested_event_duration}）
+            <strong className="text-cyan-400">Suggested time：</strong>
+            {isEditing ? (
+              <input
+                className="w-full mt-1 p-2 rounded bg-white/10 text-white"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+              />
+            ) : (
+              time
+            )}
+            <span className="text-sm text-white/80">
+              （Total: {duration}）
+            </span>
           </div>
           <div>
-            <strong className="text-cyan-400">活動描述：</strong>
-            <p className="mt-2 whitespace-pre-line">{description}</p>
+            <strong className="text-cyan-400">Description：</strong>
+            {isEditing ? (
+              <textarea
+                className="w-full mt-1 p-2 rounded bg-white/10 text-white"
+                rows={4}
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+              />
+            ) : (
+              <p className="mt-2 whitespace-pre-line">{desc}</p>
+            )}
           </div>
         </div>
-        <div className="flex justify-end pt-6">
+
+        {/* 按鈕區塊 */}
+        <div className="flex justify-end space-x-4 pt-6">
+          {isEditing ? (
+            <button
+              onClick={handleSave}
+              className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-semibold shadow"
+            >
+              Save
+            </button>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold shadow"
+            >
+              Edit
+            </button>
+          )}
           <button
-            onClick={handleConfirm}
-            className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
+            onClick={handleNext}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-2 rounded-lg font-semibold shadow"
           >
-            確認
+            Next
           </button>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
 
 export default Event_Description;
-
-
 // import React from "react";
 // import { useNavigate, useLocation } from "react-router-dom";
 
@@ -108,60 +251,64 @@ export default Event_Description;
 //     suggested_event_duration,
 //   } = location.state || {};
 
-//   const token = localStorage.getItem("token"); // ⬅️ 建議從 localStorage 取得 token
+//   const token = localStorage.getItem("token");
 
 //   const handleConfirm = async () => {
 //     try {
-//       const response = await fetch("http://127.0.0.1:8000/ai/confirm-event/", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Token ${token}`,
-//         },
-//         body: JSON.stringify({
-//           event_id: eventId,
-//           name: eventName,
-//           slogan: selectedSlogan,
-//           description,
-//           expected_attendees,
-//           suggested_time,
-//           suggested_event_duration,
-//         }),
-//       });
+//       const response = await fetch(
+//         `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
+//         {
+//           method: "PATCH",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Token ${token}`,
+//           },
+//           body: JSON.stringify({
+//             name: eventName,
+//             slogan: selectedSlogan,
+//             description,
+//             expected_attendees,
+//             suggested_time,
+//             suggested_event_duration,
+//           }),
+//         }
+//       );
 
 //       if (response.ok) {
 //         const result = await response.json();
-//         console.log("✅ 活動已確認：", result);
+//         console.log("✅ 活動更新成功：", result);
 //         navigate("/home");
 //       } else {
-//         console.error("❌ 確認失敗", await response.text());
+//         const errorText = await response.text();
+//         console.error("❌ 更新失敗：", errorText);
 //       }
 //     } catch (err) {
-//       console.error("❌ 發送請求失敗", err);
+//       console.error("❌ 發送 PATCH 請求錯誤：", err);
 //     }
 //   };
 
 //   return (
-//     <div className="min-h-screen flex bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white overflow-hidden">
-//       <main className="flex-1 flex flex-col p-8">
-//         <h1 className="text-3xl font-bold mb-6 drop-shadow-md">
+//     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
+//       <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-8 border border-white/20 shadow-lg max-w-xl w-full">
+//         <h1 className="text-3xl font-bold mb-6 text-center drop-shadow-md">
 //           📝 Event Description
 //         </h1>
-//         <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner max-w-xl space-y-4">
+//         <div className="space-y-4">
 //           <div>
-//             <strong className="text-cyan-400">活動名稱：</strong> {eventName}
+//             <strong className="text-cyan-400">Event name：</strong> {eventName}
 //           </div>
 //           <div>
-//             <strong className="text-cyan-400">標語：</strong> {selectedSlogan}
+//             <strong className="text-cyan-400">Event slogan：</strong> {selectedSlogan}
 //           </div>
 //           <div>
-//             <strong className="text-cyan-400">預計人數：</strong> {expected_attendees}
+//             <strong className="text-cyan-400">Expected Attendees：</strong> {expected_attendees}
 //           </div>
 //           <div>
-//             <strong className="text-cyan-400">建議時間：</strong> {suggested_time}（共 {suggested_event_duration}）
+//             <strong className="text-cyan-400">Suggested time：</strong> {suggested_time}
+//             <span className="text-sm text-white/80">（Total: {suggested_event_duration}）</span>
 //           </div>
 //           <div>
-//             <strong className="text-cyan-400">活動描述：</strong>
+//             <strong className="text-cyan-400">Description：</strong>
 //             <p className="mt-2 whitespace-pre-line">{description}</p>
 //           </div>
 //         </div>
@@ -170,74 +317,12 @@ export default Event_Description;
 //             onClick={handleConfirm}
 //             className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
 //           >
-//             確認
+//             Next
 //           </button>
 //         </div>
-//       </main>
+//       </div>
 //     </div>
 //   );
 // };
 
 // export default Event_Description;
-
-/*
-import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-
-const Event_Description = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { eventName, slogan } = location.state || {};
-  const [description, setDescription] = useState("");
-
-  useEffect(() => {
-    // 取得對應 event name 的 description
-    fetch("http://localhost:3001/events")
-      .then(res => res.json())
-      .then(data => {
-        const event = data[0];
-        setDescription(event?.description || "");
-      });
-  }, []);
-
-  const handleConfirm = async () => {
-    // 送出 eventName, slogan, description 到後端
-    const token = "c072fc90dc5ac75e8c500ddc1c2cdf09ef728d6b";
-    await fetch("http://localhost:3001/selected", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${token}`,
-      },
-      body: JSON.stringify({
-        name: eventName,
-        slogan,
-        description,
-      }),
-    });
-    navigate("/home");
-  };
-
-  return (
-    <div className="min-h-screen flex bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white overflow-hidden">
-      <main className="flex-1 flex flex-col p-8">
-        <h1 className="text-3xl font-bold mb-6 drop-shadow-md">
-          📝 Event Description
-        </h1>
-        <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner max-w-xl">
-          <p className="text-white text-lg whitespace-pre-line">{description}</p>
-        </div>
-        <div className="flex justify-end pt-6">
-          <button
-            onClick={handleConfirm}
-            className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
-          >
-            確認
-          </button>
-        </div>
-      </main>
-    </div>
-  );
-};
-
-export default Event_Description;  */

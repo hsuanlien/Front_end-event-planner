@@ -72,3 +72,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ### Terminal 
 cd Desktop/ai-event-planner
 json-server --watch db.json --port 3001
+### ----------------
+表單指令：
+export OAUTHLIB_INSECURE_TRANSPORT=1 //mac

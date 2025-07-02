@@ -9,26 +9,26 @@ function LoginPage() {
 
   const handleLogin = async () => {
     if (!username || !password) {
-      alert("請輸入帳號和密碼");
+      alert("Please enter your account and password");
       return;
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/accounts/login/", {
+      const response = await axios.post("https://genai-backend-2gji.onrender.com/accounts/login/", {
         username,
         password,
       });
 
     if (response.status === 200) {
         const token = response.data.token;
-        console.log("登入成功，Token：", token);
+        console.log("Login successful, Token：", token);
 
         // 儲存 token 到 localStorage
         localStorage.setItem("token", token);
         // console.log("登入 token：", token);
 
         // 查詢帳號資訊
-        const profileRes = await axios.get("http://localhost:8000/accounts/", {
+        const profileRes = await axios.get("https://genai-backend-2gji.onrender.com/accounts/", {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -40,7 +40,7 @@ function LoginPage() {
         navigate('/home');
       }
     } catch (error) {
-      alert("⚠️ 登入失敗：" + 
+      alert("⚠️ Login fail：" + 
           (error.response?.data?.non_field_errors?.[0] ||
           error.response?.data?.error ||
           "請確認帳密"));
@@ -68,7 +68,7 @@ function LoginPage() {
       {/* 登入表單卡片 */}
       <div className="backdrop-blur-md bg-white/10 p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-white/20 z-10">
         <h2 className="text-2xl font-semibold text-center text-white mb-6 tracking-wide">
-          登入帳號
+          Login
         </h2>
 
         <input
@@ -91,14 +91,14 @@ function LoginPage() {
           onClick={handleLogin}
           className="w-full bg-cyan-500 text-white py-3 rounded-lg hover:bg-cyan-600 transition font-semibold tracking-wide shadow-lg"
         >
-          登入
+          Submit
         </button>
 
         <button
           onClick={() => navigate('/register')}
           className="w-full mt-4 text-cyan-300 hover:underline text-sm text-center"
         >
-          沒有帳號？前往註冊
+           Not have an account ? Sign up
         </button>
       </div>
     </div>

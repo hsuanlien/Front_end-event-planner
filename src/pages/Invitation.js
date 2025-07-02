@@ -1,88 +1,170 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// 0618Task3
-const Invitation= () => {
-  const { id, version } = useParams();
+
+const getAuthToken = () => localStorage.getItem("token");
+
+// API functions 拉出來寫
+const saveInvitationToBackend = async (eventId, invitation) => {
+  const token = getAuthToken();
+
+  const res = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-invitation/${eventId}/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    },
+    body: JSON.stringify(invitation),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to save invitation");
+  }
+
+  return res.json(); // 會回傳 invitation_list 陣列
+};
+
+const Invitation = () => {
+  const { id, version } = useParams();// id 是 event_id
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  const [invitationData, setInvitationData] = useState({
+    receiver_name: "",
+    recipient_email: "",
+    words_limit: "150",
     tone: "",
     language: "",
-    version_count: "",
-    platform: "poster",
-    word_limit: "",
-    reward: "",
-    keywords_to_emphasize: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setInvitationData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    console.log("送出的資料:", formData);
-    
+  const handleSave = async () => {
+    const { receiver_name, recipient_email, words_limit, tone, language } =
+      invitationData;
+
+    if (!receiver_name || !recipient_email || !words_limit || !tone || !language) {
+      alert("Please fill out all fields");
+      return;
+    }
+    try {
+      // 呼叫後端 API 儲存
+      const response = await saveInvitationToBackend(id, invitationData);
+
+      // 檢查是否有 invitation
+      if (response?.invitation_list?.length > 0) {
+        // 可根據需要儲存 invitation ID / 顯示成功訊息
+        localStorage.setItem("latestInvitation", JSON.stringify(response.invitation_list[0]));
+        navigate(`/event/${id}/${version}/check-invitation`);
+      } else {
+        throw new Error("No invitation returned");
+      }
+    } catch (error) {
+      console.error("Save failed: ", error);
+      alert("Save failed. Please try again later.");
+    }
   };
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white p-8">
       <div className="max-w-3xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl">
-        {/* 0618Task3 ：event版本正確提取 */}
         <h2 className="text-3xl font-bold mb-6 text-cyan-300">
-          🎨 Event {id} - {version.toUpperCase()} Invitation Info
+          🎨 Event {id} - {version.toUpperCase()} Invitation Letter Info
         </h2>
 
-        <div className="grid grid-cols-1 gap-4">
-          {[
-            ["tone", "語氣 (如 youthful)"],
-            ["language", "語言 (如 zh_tw)"],
-            ["version_count", "版本數量"],
-            ["word_limit", "字數上限"],
-            ["reward", "獎勵說明 (如 First prize: EUR$500)"],
-            ["keywords_to_emphasize", "強調關鍵字 (以逗號分隔)"],
-          ].map(([key, label]) => (
-            <div key={key}>
-              <label className="block mb-1 text-sm text-gray-300">{label}</label>
-              <input
-                type="text"
-                name={key}
-                value={formData[key]}
-                onChange={handleChange}
-                className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-          ))}
+        {/** 表單欄位 */}
+        {[
+          {
+            label: "Please input the receiver's name:",
+            name: "receiver_name",
+            type: "text",
+            placeholder: "Receiver's name",
+          },
+          {
+            label: "Please input the receiver's email:",
+            name: "recipient_email",
+            type: "email",
+            placeholder: "Receiver's email",
+          },
+          {
+            label: "Please set the word limit of the invitation:",
+            name: "words_limit",
+            type: "number",
+            placeholder: "Words Limit",
+            step: 50,
+          },
+        ].map(({ label, name, type, placeholder, step }) => (
+          <div key={name}>
+            <label className="block mb-1 text-sm text-gray-300">{label}</label>
+            <input
+              className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              type={type}
+              name={name}
+              placeholder={placeholder}
+              step={step}
+              value={invitationData[name]}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        ))}
+
+        {/** Tone */}
+        <div>
+          <label className="block mb-1 text-sm text-gray-300">Choose the tone:</label>
+          <select
+            name="tone"
+            className="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            value={invitationData.tone}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled> Select tone </option>
+            <option value="Formal">Formal</option>
+            <option value="Semi-formal / Professional">Semi-formal / Professional</option>
+            <option value="Friendly / Warm">Friendly / Warm</option>
+            <option value="Casual / Informal">Casual / Informal</option>
+            <option value="Persuasive / Promotional">Persuasive / Promotional</option>
+          </select>
         </div>
 
+        {/** Language */}
+        <div>
+          <label className="block mb-1 text-sm text-gray-300">Choose language:</label>
+          <select
+            name="language"
+            className="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            value={invitationData.language}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled> Select language </option>
+            {[
+              "English", "German", "Traditional Chinese", "Simplified Chinese", "Spanish", "French", "Japanese", "Korean", "Russian", "Arabic", "Vietnamese", "Indonesian", "Thai", "Turkish", "Italian"
+            ].map(lang => (
+              <option key={lang} value={lang}>{lang}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-  {/* Task5:按鈕寫法 */}
-  {/* 底部按鈕區：flex 分左右 */}
-    <div className="mt-8 flex justify-between items-center">
-      {/* 左下角返回按鈕 */}
-      <button
-        onClick={() => navigate(-1)}    
-        className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
-      >
-        ← 返回
-      </button>
-
-    {/* 右下角 Add / Change / Save 按鈕 */}
-      <div className="flex gap-10">
+      {/** 底部按鈕區 */}
+      <div className="mt-8 flex justify-between items-center">
         <button
-          // 0618Task3
-          //onClick={() => alert("Save clicked")}
-          onClick={() => navigate("/event/:id/:version/check-invitation")}
+          onClick={() => navigate(-1)}
+          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
+        >
+          ← Return
+        </button>
+
+        <button
+          onClick={handleSave}
           className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
         >
           Save
         </button>
       </div>
-    </div>
-
-
-
     </div>
   );
 };

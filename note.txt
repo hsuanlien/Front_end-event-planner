@@ -68,3 +68,83 @@ const ChooseEventTime = () => {
 };
 
 export default ChooseEventTime;
+
+//-------
+
+
+現在的back在最左側，但是現在的save到了back按鈕的下方了。是不是因為上面的場地推薦，佔滿了整個畫面，請幫我修改UI讓save能夠在對的位置：
+  return (
+    <div className="min-h-screen flex bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white overflow-hidden">
+      <main className="flex-1 flex flex-col p-8">
+        <h1 className="text-3xl font-bold mb-6 drop-shadow-md">
+          🎯 Choose Venue
+        </h1>
+
+
+
+        <div className="overflow-x-auto py-2">
+          <div className="flex space-x-4 w-max">
+            {venueSuggestions.map((venue, index) => (
+              <label
+                key={index}
+                className={min-w-[280px] max-w-[300px] flex-shrink-0 p-4 rounded-lg cursor-pointer border transition shadow-md ${
+                  selectedIndex === index
+                    ? "bg-cyan-500 text-white border-cyan-400"
+                    : "bg-white text-black border-white/50 hover:bg-cyan-100"
+                }}
+              >
+                <input
+                  type="radio"
+                  name="venue"
+                  value={index}
+                  onChange={() => setSelectedIndex(index)}
+                  checked={selectedIndex === index}
+                  className="mr-2"
+                />
+                <div>
+                  <div className="font-bold text-lg">{venue.name}</div>
+                  <div className="text-sm mt-1">🏛 容納人數: {venue.capacity}</div>
+                  <div className="text-sm">🚇 交通便利性: {venue.transportation_score}</div>
+                  <div className="text-sm">🏞 戶外場地: {venue.is_outdoor ? "是" : "否"}</div>
+                  <div className="text-sm truncate">📍 地址: {venue.address || "無"}</div>
+                  {venue.map_url && (
+                    <div className="text-sm mt-1 underline text-blue-500">
+                      <a href={venue.map_url} target="_blank" rel="noopener noreferrer">
+                        📌 地圖連結
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+
+
+{/* 左右按鈕 */}
+{/* 左下角返回 */}
+        <div className="fixed bottom-6 left-6 z-50">
+          <button
+            onClick={() => navigate(/event/${id})}
+            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
+          >
+            ← Back
+          </button>
+        </div>
+        
+        <div className="fixed bottom-6 right-6 z-50">
+          {/* 右下角确认 */}
+          <button
+            onClick={handleConfirm}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
+          >
+            Save
+          </button>
+        </div>
+
+
+
+      </main>
+    </div>
+  );
+};

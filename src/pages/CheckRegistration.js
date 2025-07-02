@@ -1,419 +1,403 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 const CheckRegistration = () => {
-    const navigate = useNavigate();
-    const { id: eventId } = useParams();
+  const { id } = useParams(); // eventId
+  const token = localStorage.getItem("token");
 
-    // State for the full object fetched from json-server, including its ID and nested registration-list
-    const [registrationContainerData, setRegistrationContainerData] = useState(null);
-    // State for the actual editable form content (event_intro, form_title, form_fields from inside registration-list)
-    const [editedFormData, setEditedFormData] = useState(null);
+  const [registrationForm, setRegistrationForm] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  //const [message, setMessage] = useState({ text: "", type: "" });
+  const [message, setMessage] = useState({ content: null, type: "" });
+  const [showModal, setShowModal] = useState(false);
+  const [googleFormUrl, setGoogleFormUrl] = useState("");
 
-    const [isEditing, setIsEditing] = useState(false);
+  // Use POST to obtain the registration form data (replace the original GET)
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
 
-    // UI states
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [sending, setSending] = useState(false);
-    const [message, setMessage] = useState({ text: '', type: '' });
-    const [showModal, setShowModal] = useState(false);
-    const [googleFormUrl, setGoogleFormUrl] = useState('');
-
-    const API_BASE_URL = 'http://localhost:3001';
-
-    const showMessage = useCallback((text, type = 'success', duration = 3000) => {
-        setMessage({ text, type });
-        setTimeout(() => setMessage({ text: '', type: '' }), duration);
-    }, []);
-
-    const fetchRegistrationForm = useCallback(async () => {
-        console.log("DEBUG: Attempting to fetch registration form...");
-        setLoading(true);
-        const token = localStorage.getItem("token");
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/registrationForms`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,
-                },
-            });
-
-            if (!response.ok) {
-                const errorBody = await response.text();
-                console.error(`DEBUG: Fetch failed with status ${response.status}: ${errorBody}`);
-                throw new Error(`Server responded with status ${response.status}: ${errorBody}`);
-            }
-
-            const data = await response.json();
-            const container = data.find(item => item.id === "1"); // Assuming ID is string "1" based on latest info
-
-            if (container && container["registration-list"] && container["registration-list"].length > 0) {
-                setRegistrationContainerData(container);
-                const formContent = container["registration-list"][0];
-                setEditedFormData({ ...formContent });
-                console.log("DEBUG: Registration form fetched successfully.", container);
-            } else {
-                showMessage("Registration form with ID '1' not found or malformed. Please check db.json.", 'error');
-                console.error("DEBUG: Registration form data not found or malformed:", container);
-            }
-        } catch (error) {
-            console.error("DEBUG: Network error during fetch:", error);
-            console.trace("DEBUG: Fetch error stack trace:");
-            showMessage("Network error. Could not fetch registration form. Please ensure json-server is running and accessible.", 'error');
-        } finally {
-            setLoading(false);
-        }
-    }, [showMessage]);
-
-    useEffect(() => {
-        fetchRegistrationForm();
-    }, [fetchRegistrationForm]);
-
-    // Handle toggling edit mode OR saving changes based on current state
-    const handleChangeOrSave = async () => {
-        if (isEditing) {
-            console.log("DEBUG: Change/Save button clicked: isEditing is TRUE. Calling handleSave.");
-            await handleSave(); // Call the save function
+    fetch(`https://genai-backend-2gji.onrender.com/ai/generate-forms/${id}/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      //API does not require a body.
+    })
+      .then((res) => {
+        //console.log("Response Status:", res.status);
+        if (!res.ok) throw new Error("Failed to fetch registration form");
+        return res.json();
+      })
+      .then((data) => {
+        //return structure is { "registration-list": [...] }
+        console.log("Data:", data);
+        if (data["registration-list"] && data["registration-list"].length > 0) {
+          setRegistrationForm(data["registration-list"][0]);
+          console.log("First registration form object:", data["registration-list"][0]);
         } else {
-            console.log("DEBUG: Change/Save button clicked: isEditing is FALSE. Setting isEditing to TRUE.");
-            // When entering edit mode, ensure editedFormData is a deep copy to prevent direct modification
-            // Also, ensure form_fields is always an array
-            const currentFormData = registrationContainerData?.["registration-list"]?.[0];
-            setEditedFormData({
-                ...currentFormData,
-                form_fields: Array.isArray(currentFormData?.form_fields)
-                    ? currentFormData.form_fields.map(field => ({ ...field })) // Deep copy each field object
-                    : [] // Initialize as empty array if null/undefined
-            });
-            setIsEditing(true);
+          throw new Error("No registration form data found");
         }
-    };
+      })
+      .catch((err) => {
+        console.error("[Fetch Error]", err);
+        setMessage({ text: err.message, type: "error" });
+        setRegistrationForm(null);
+      })
+        .finally(() => {
+        setLoading(false);
+      //  console.log("Fetch End Loading false");
+      });
+    }, [id, token]);
+  
+  // clear after displaying the message
+  useEffect(() => {
+    if (message.content) {
+      const timer = setTimeout(() => setMessage({ content: null, type: "" }), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
-    // Handle input changes for editable fields (event_intro, form_title)
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditedFormData(prev => ({
-            ...prev,
-            [name]: value,
+  //Form field change handler
+  const handleFieldChange = (index, field, value) => {
+    //console.log(`Change !! : ${index}, field: ${field}, value:`, value);
+    setRegistrationForm((prev) => {
+      if (!prev) return prev;
+      const newFields = [...prev.form_fields];
+      newFields[index] = { ...newFields[index], [field]: value };
+      return { ...prev, form_fields: newFields };
+    });
+  };
+
+  // Add new fields
+  const handleAddField = () => {
+    setRegistrationForm((prev) => {
+      if (!prev) return prev;
+      const newFields = prev.form_fields ? [...prev.form_fields] : [];
+      newFields.push({ description: "", registration_name: "" });
+      console.log("New Fields After Add :", newFields);
+      return { ...prev, form_fields: newFields };
+    });
+  };
+  // Remove fields
+  const handleRemoveField = (index) => {
+    console.log(`Remove Field index: ${index}`);
+    setRegistrationForm((prev) => {
+      if (!prev) return prev;
+      const newFields = [...prev.form_fields];
+      newFields.splice(index, 1);
+      console.log("New Fields After Remove", newFields);
+      return { ...prev, form_fields: newFields };
+    });
+  };
+
+  // Text field changes (title, description)
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    console.log(`Input Change name: ${name}, value:`, value);
+    setRegistrationForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Change button: PUT updates backend data
+  const handleChangeOrSave = () => {
+    if (!isEditing) {
+      // Enter Edit Mode
+      setIsEditing(true);
+      setMessage({ text: "", type: "" });
+      return;
+    }
+
+    // PUT Update data
+    if (!registrationForm) return;
+
+    console.log("PUT Request - Updating registration form with data:", {
+      registration_url: registrationForm.registration_url || "",
+      form_title: registrationForm.form_title,
+      event_intro: registrationForm.event_intro,
+      form_fields: registrationForm.form_fields.map(({ description, registration_name }) => ({
+        description,
+        registration_name,
+      })),
+    });
+    console.log(registrationForm.id);
+    setSaving(true);
+    fetch(`https://genai-backend-2gji.onrender.com/api/registration/${registrationForm.id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({
+        registration_url: registrationForm.registration_url || "",
+        form_title: registrationForm.form_title,
+        event_intro: registrationForm.event_intro,
+        form_fields: registrationForm.form_fields.map(({ description, registration_name }) => ({
+          description,
+          registration_name,
+        })),
+      }),
+    })
+      .then((res) => {
+        console.log("PUT Response Status", res.status);
+        if (!res.ok) throw new Error("Failed to update registration form");
+        return res.json();
+      })
+      .then((data) => {
+        console.log("PUT Response Data", data);
+        setRegistrationForm(data);
+        setIsEditing(false);
+        setMessage({ text: "Successfully updated registration form!", type: "success" });
+      })
+      .catch((err) => {
+        setMessage({ text: err.message, type: "error" });
+      })
+      .finally(() => setSaving(false));
+  };
+
+
+  // Send button: Generates Google Form API and displays a popup link
+  // Send Invitation button
+  // Generates Google Form and displays Modal
+  const handleSendInvitation = () => {
+    if (!id) return setMessage({ text: "No event ID!", type: "error" });
+    
+    console.log("Sending request to generate Google Form");
+    setSending(true);
+    fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/generate-google-form/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log("Send Invitation Response Status:", res.status);
+        if (!res.ok) throw new Error("Failed to generate Google form");
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Send Invitation Data :", data);
+        const formUrl = data.registration_url;
+
+        // Use alert to display the link
+        alert(`Google Registration Form created:\n\n${formUrl}`);
+
+        // Record this URL or pass it to subsequent components
+        setGoogleFormUrl(formUrl);
+        // setShowModal(true);
+        setRegistrationForm((prev) => ({
+          ...prev,
+          registration_url: formUrl,
         }));
-    };
+        //setMessage({ text: "Successfully created Registration form!", type: "success" });
+        
+        setMessage({
+        content: (
+          <>
+            <span>Successfully created Registration form! </span>
+            <a
+              href={formUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-blue-300 hover:text-blue-500 ml-2"
+            >
+              Open Form
+            </a>
+          </>
+        ),
+        type: "success",
+      });
 
-    // Handle changes for individual form fields
-    const handleFormFieldChange = (index, fieldName, value) => {
-        setEditedFormData(prev => {
-            const newFormFields = [...(prev?.form_fields || [])]; // Create a copy of the array
-            if (newFormFields[index]) {
-                newFormFields[index] = {
-                    ...newFormFields[index],
-                    [fieldName]: value
-                };
-            }
-            return {
-                ...prev,
-                form_fields: newFormFields
-            };
-        });
-    };
+      })
+      .catch((err) => {
+        console.error("Send Invitation Error:", err);
+        setMessage({ text: err.message, type: "error" });
+      })
+      .finally(() => setSending(false));
+  };
 
-    // Handle adding a new form field
-    const handleAddField = () => {
-        setEditedFormData(prev => ({
-            ...prev,
-            form_fields: [...(prev?.form_fields || []), { registration_name: '', description: '' }] // Add new empty field
-        }));
-    };
 
-    // Handle removing a form field
-    const handleRemoveField = (indexToRemove) => {
-        setEditedFormData(prev => ({
-            ...prev,
-            form_fields: (prev?.form_fields || []).filter((_, index) => index !== indexToRemove) // Filter out the field at index
-        }));
-    };
+  // Back Button 
+  const handleGoBack = () => {
+    window.history.back();
+  };
 
-    // Handle saving modified data to json-server
-    const handleSave = async () => {
-        setSaving(true);
-        const token = localStorage.getItem("token");
+  return (
+    <div className="p-6 min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white flex items-center justify-center">
+      <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-lg max-w-3xl w-full space-y-6 border border-white/10 relative">
+        <h2 className="text-3xl font-bold mb-6 text-cyan-300 drop-shadow text-center">📝 Event Registration Form</h2>
 
-        if (!editedFormData || !registrationContainerData || !registrationContainerData.id) {
-            showMessage("No data to save or form ID is missing.", 'error');
-            setSaving(false);
-            return;
-        }
-
-        try {
-            const updatedContainer = { ...registrationContainerData };
-            // Ensure registration-list is an array and update its first element
-            updatedContainer["registration-list"] = [{ ...editedFormData }];
-
-            console.log("DEBUG: Attempting to save. Sending payload to:", `${API_BASE_URL}/registrationForms/${updatedContainer.id}`);
-            console.log("DEBUG: Payload:", JSON.stringify(updatedContainer, null, 2));
-
-            const response = await fetch(`${API_BASE_URL}/registrationForms/${updatedContainer.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,
-                },
-                body: JSON.stringify(updatedContainer),
-            });
-
-            if (!response.ok) {
-                const errorBody = await response.text();
-                console.error(`DEBUG: Save failed with status ${response.status}: ${errorBody}`);
-                throw new Error(`Server responded with status ${response.status}: ${errorBody}`);
-            }
-
-            const data = await response.json();
-            console.log("DEBUG: Save successful. Received response:", data);
-            setRegistrationContainerData(data);
-            setEditedFormData({ ...data["registration-list"][0] });
-            setIsEditing(false);
-            showMessage("Registration form saved successfully!", 'success');
-        } catch (error) {
-            console.error("DEBUG: Network error during save operation:", error);
-            console.trace("DEBUG: Save error stack trace:");
-            showMessage("Network error. Could not save registration form. Please ensure json-server is running and accessible.", 'error');
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const handleSendInvitation = async () => {
-        console.log("DEBUG: Send button clicked. isEditing:", isEditing);
-        setSending(true);
-        try {
-            if (isEditing) {
-                showMessage("Please save your changes first before sending the invitation.", 'error');
-                setSending(false);
-                return;
-            }
-
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            const mockGoogleFormUrl = `https://docs.google.com/forms/d/1aoFJBg_OwYDJuohztXgfYjfSZoYfkrq0E45-jClEXa4/viewform?event_id=${eventId || 'mock_event'}`;
-
-            setGoogleFormUrl(mockGoogleFormUrl);
-            setShowModal(true);
-            showMessage("Successfully created Registration form link!", 'success');
-
-        } catch (error) {
-            console.error("DEBUG: Error generating Google Form link:", error);
-            showMessage("Failed to generate Google Form link.", 'error');
-        } finally {
-            setSending(false);
-        }
-    };
-
-    const handleGoBack = () => {
-        navigate(-1);
-    };
-
-    return (
-        <div className="p-6 min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white flex items-center justify-center">
-            <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-lg max-w-3xl w-full space-y-6 border border-white/10 relative">
-                <h2 className="text-3xl font-bold mb-6 text-cyan-300 drop-shadow text-center">📝 Event Registration Form</h2>
-
-                {loading ? (
-                    <p className="text-center text-gray-400 text-lg py-10">
-                        Loading registration form, please wait... <span className="animate-pulse">⏳</span>
-                    </p>
-                ) : !registrationContainerData ? (
-                    <p className="text-center text-gray-400 text-lg py-10">
-                        Could not load registration form data. Please check your db.json file and json-server.
-                    </p>
-                ) : (
-                    // This div contains all the main content panels (intro, title, fields)
-                    <div className="space-y-6">
-                        {/* Event Introduction Pane */}
-                        <div className="bg-white/5 p-4 rounded-lg border border-white/10 shadow-md">
-                            <h3 className="text-lg font-semibold text-cyan-200 mb-2">Event Introduction</h3>
-                            {isEditing ? (
-                                <textarea
-                                    name="event_intro"
-                                    className="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-y min-h-[100px]"
-                                    value={editedFormData?.event_intro || ''}
-                                    onChange={handleInputChange}
-                                    disabled={saving || sending}
-                                />
-                            ) : (
-                                <p className="text-gray-200 whitespace-pre-wrap">{editedFormData?.event_intro}</p>
-                            )}
-                        </div>
-
-                        {/* Form Title Pane */}
-                        <div className="bg-white/5 p-4 rounded-lg border border-white/10 shadow-md">
-                            <h3 className="text-lg font-semibold text-cyan-200 mb-2">Form Title</h3>
-                            {isEditing ? (
-                                <input
-                                    type="text"
-                                    name="form_title"
-                                    className="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                                    value={editedFormData?.form_title || ''}
-                                    onChange={handleInputChange}
-                                    disabled={saving || sending}
-                                />
-                            ) : (
-                                <p className="text-gray-200">{editedFormData?.form_title}</p>
-                            )}
-                        </div>
-
-                        {/* Form Fields Pane (Now Editable with Placeholders) */}
-                        <div className="bg-white/5 p-4 rounded-lg border border-white/10 shadow-md">
-                            <h3 className="text-lg font-semibold text-cyan-200 mb-2">Form Fields</h3>
-                            <div className="space-y-3">
-                                {Array.isArray(editedFormData?.form_fields) && editedFormData.form_fields.length > 0 ? (
-                                    editedFormData.form_fields.map((field, index) => (
-                                        <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 p-2 bg-white/5 rounded-md border border-white/10">
-                                            {isEditing ? (
-                                                <>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Description (e.g., First Name)"
-                                                        className="w-full sm:w-1/2 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                                                        value={field.description || ''}
-                                                        onChange={(e) => handleFormFieldChange(index, 'description', e.target.value)}
-                                                        disabled={saving || sending}
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Registration Name (e.g., first_name)"
-                                                        className="w-full sm:w-1/2 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                                                        value={field.registration_name || ''}
-                                                        onChange={(e) => handleFormFieldChange(index, 'registration_name', e.target.value)}
-                                                        disabled={saving || sending}
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleRemoveField(index)}
-                                                        className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-md font-semibold text-sm transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-                                                        disabled={saving || sending}
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <div className="flex items-center space-x-2 text-gray-300 w-full">
-                                                    <span className="font-medium">{field.description}:</span>
-                                                    <span className="text-sm text-gray-400">({field.registration_name})</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p className="text-gray-400 text-sm">No form fields defined.</p>
-                                )}
-                            </div>
-                            {isEditing && (
-                                <div className="mt-4 text-center">
-                                    <button
-                                        type="button"
-                                        onClick={handleAddField}
-                                        className="bg-green-600 hover:bg-green-700 text-white py-2 px-5 rounded-lg font-semibold shadow-md transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-                                        disabled={saving || sending}
-                                    >
-                                        Add Field
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                {/* Message display area - Now positioned within the normal flow, centered above buttons */}
-                {message.text && (
-                    <div className={`mt-4 mb-4 mx-auto px-4 py-2 rounded-lg shadow-md z-10 max-w-sm text-center
-                                    ${message.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
-                        {message.text}
-                    </div>
-                )}
-
-                {/* Bottom Buttons */}
-                <div className="mt-8 flex justify-between items-center pt-4 border-t border-white/10">
-                    {/* Left: Back button */}
-                    <div className="flex">
-                        <button
-                            type="button"
-                            onClick={handleGoBack}
-                            className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-5 rounded-lg font-semibold shadow-md transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={loading || saving || sending}
-                        >
-                            Back
-                        </button>
-                    </div>
-
-                    {/* Right: Change/Save and Send buttons */}
-                    <div className="flex" style={{ gap: '1.5rem' }}>
-                        {/* Change / Save combined button */}
-                        <button
-                            type="button"
-                            onClick={handleChangeOrSave}
-                            className={`px-5 py-2 rounded-md font-semibold transition duration-200 ease-in-out
-                                ${isEditing ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-600 hover:bg-gray-700'} text-white disabled:opacity-50 disabled:cursor-not-allowed`}
-                            disabled={loading || saving || sending}
-                        >
-                            {isEditing ? (saving ? 'Saving...' : 'Save') : 'Change'}
-                        </button>
-
-                        {/* Send Invitation button */}
-                        <button
-                            type="button"
-                            onClick={handleSendInvitation}
-                            className="px-5 py-2 rounded-md font-semibold transition duration-200 ease-in-out
-                                bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={loading || saving || sending || isEditing}
-                        >
-                            {sending ? 'Sending...' : 'Send Invitation'}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Google Form Link Modal - This is designed to pop out */}
-                {showModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-                        <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full text-center space-y-4 border border-gray-600">
-                            <h3 className="text-xl font-bold text-green-400">Successfully created Registration form!</h3>
-                            <p className="text-gray-200">This is the link:</p>
-                            <a
-                                href={googleFormUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition truncate"
-                            >
-                                {googleFormUrl}
-                            </a>
-                            <button
-                                onClick={() => {
-                                    navigator.clipboard.writeText(googleFormUrl)
-                                        .then(() => {
-                                            showMessage('Link copied to clipboard!', 'success');
-                                            setShowModal(false);
-                                        })
-                                        .catch(err => {
-                                            console.error('Failed to copy text: ', err);
-                                            showMessage('Failed to copy link.', 'error');
-                                        });
-                                }}
-                                className="mt-2 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md transition"
-                            >
-                                Copy Link
-                            </button>
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="mt-4 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md transition"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                )}
+        {loading ? (
+          <p className="text-center text-gray-400 text-lg py-10">
+            Loading registration form, please wait... <span className="animate-pulse">⏳</span>
+          </p>
+        ) : !registrationForm ? (
+          <p className="text-center text-gray-400 text-lg py-10">
+            Could not load registration form data. Please check your backend and token.
+          </p>
+        ) : (
+          <div className="space-y-6">
+            {/* Event Introduction Pane */}
+            <div className="bg-white/5 p-4 rounded-lg border border-white/10 shadow-md">
+              <h3 className="text-lg font-semibold text-cyan-200 mb-2">Event Introduction</h3>
+              {isEditing ? (
+                <textarea
+                  name="event_intro"
+                  className="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 resize-y min-h-[100px]"
+                  value={registrationForm.event_intro || ""}
+                  onChange={handleInputChange}
+                  disabled={saving || sending}
+                />
+              ) : (
+                <p className="text-gray-200 whitespace-pre-wrap">{registrationForm.event_intro}</p>
+              )}
             </div>
-        </div>
-    );
+
+            {/* Form Title Pane */}
+            <div className="bg-white/5 p-4 rounded-lg border border-white/10 shadow-md">
+              <h3 className="text-lg font-semibold text-cyan-200 mb-2">Form Title</h3>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="form_title"
+                  className="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  value={registrationForm.form_title || ""}
+                  onChange={handleInputChange}
+                  disabled={saving || sending}
+                />
+              ) : (
+                <p className="text-gray-200">{registrationForm.form_title}</p>
+              )}
+            </div>
+
+            {/* Form Fields Pane */}
+            <div className="bg-white/5 p-4 rounded-lg border border-white/10 shadow-md">
+              <h3 className="text-lg font-semibold text-cyan-200 mb-2">Form Fields</h3>
+              <div className="space-y-3">
+                {Array.isArray(registrationForm.form_fields) && registrationForm.form_fields.length > 0 ? (
+                  registrationForm.form_fields.map((field, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4"
+                    >
+                      {isEditing ? (
+                        <>
+                          <input
+                            type="text"
+                            placeholder="Description"
+                            className="flex-1 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            value={field.description}
+                            onChange={(e) =>
+                              handleFieldChange(index, "description", e.target.value)
+                            }
+                            disabled={saving || sending}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Registration Name"
+                            className="flex-1 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            value={field.registration_name}
+                            onChange={(e) =>
+                              handleFieldChange(index, "registration_name", e.target.value)
+                            }
+                            disabled={saving || sending}
+                          />
+                          <button
+                            onClick={() => handleRemoveField(index)}
+                            disabled={saving || sending}
+                            className="text-red-400 hover:text-red-600 font-semibold transition"
+                            title="Remove field"
+                            type="button"
+                          >
+                            ✖
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex-1 text-gray-200">{field.description || "—"}</div>
+                          <div className="flex-1 text-gray-300">{field.registration_name || "—"}</div>
+                        </>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400 italic">No form fields available.</p>
+                )}
+
+                {/* Add new column button */}
+                {isEditing && (
+                  <button
+                    onClick={handleAddField}
+                    disabled={saving || sending}
+                    className="mt-2 px-3 py-1 bg-cyan-600 hover:bg-cyan-700 rounded-md text-white font-semibold transition w-full md:w-auto"
+                    type="button"
+                  >
+                    + Add Field
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-center gap-4 mt-6">
+              <button
+                onClick={handleChangeOrSave}
+                disabled={saving || sending || loading}
+                className="bg-cyan-600 hover:bg-cyan-700 rounded-md px-6 py-3 font-bold text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isEditing ? (saving ? "Saving..." : "Save") : "Edit"}
+              </button>
+
+              <button
+                onClick={handleSendInvitation}
+                disabled={sending || saving || loading}
+                className="bg-green-600 hover:bg-green-700 rounded-md px-6 py-3 font-bold text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {sending ? "Create..." : "Create"}
+              </button>
+
+              <button
+                onClick={handleGoBack}
+                className="bg-gray-600 hover:bg-gray-700 rounded-md px-6 py-3 font-bold text-white transition"
+              >
+                Back
+              </button>
+            </div>
+
+            {/* 訊息顯示 */}
+            {message.content && (
+              // <div
+              //   className={`mt-4 p-3 rounded-md text-center font-semibold ${
+              //     message.type === "error"
+              //       ? "bg-red-600 text-white"
+              //       : message.type === "success"
+              //       ? "bg-green-600 text-white"
+              //       : "bg-yellow-400 text-black"
+              //   }`}
+              // >
+              <div
+                          className={`mt-4 text-center font-semibold text-green-600`}
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                // 如果你想點整段開啟連結，也可以用這段
+                const url = message.url || null;
+                if (url) window.open(url, "_blank");
+              }}
+              >
+                {message.content}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default CheckRegistration;

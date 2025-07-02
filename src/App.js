@@ -30,27 +30,26 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* <Route path="/login" element={<LoginPage />} />   */}
         <Route path="/" element={<LoginPage />} />  
         <Route path="/home" element={<HomePage />} />  
-{/* <Route path="/" element={<HomePage />} />    */}
+        {/* <Route path="/" element={<HomePage />} />    */}
 
-
-         {/*-------------------------------------- */}
         <Route path="/register" element={<RegisterPage />} />
+
+  {/* --------------------------------- */}
         <Route path="/add-event" element={<AddEvent />} />
         <Route path="/upcoming-events" element={<UpcomingEvents />} />
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/history" element={<History />} />
         <Route path="/user-profile" element={<UserProfile />} />
         
-        {/* 0620 change :  <Route path="/assignment-task" element={<AssignmentTask />} />  */}
         <Route path="/choose-name" element={<ChooseName />} /> 
         <Route path="/choose-slogan" element={<ChooseSlogan />} /> 
         <Route path="/event-description" element={<Event_Description />} /> 
-        {/* assignment-task */}
 
-        <Route path="/event/:id" element={<EventDetailPage />} />  
+        <Route path="/event/:id/" element={<EventDetailPage />} />  
+         {/* ----------------- 0701 Test----------------- */}
+        {/* <Route path="/" element={<EventDetailPage />} />   */}
         
         <Route path="/event/:id/choose-event-time" element={<ChooseEventTime />} />
         {/* ----------------- */}

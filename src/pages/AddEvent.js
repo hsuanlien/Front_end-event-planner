@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/ai/generate-event/";
+const API_URL = "https://genai-backend-2gji.onrender.com/ai/generate-event/";
 
 const AddEvent = () => {
   const [goal, setGoal] = useState("");
   const [type, setType] = useState("");
   const [date, setDate] = useState("");
-  const [budget, setBudget] = useState(50); // 將 *100 再送出
+  const [budget, setBudget] = useState(50); 
   const [audience, setAudience] = useState("");
   const [atmosphere, setAtmosphere] = useState("");
 
@@ -19,7 +19,7 @@ const AddEvent = () => {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("尚未登入，請先登入！");
+      alert("Please log in");
       return;
     }
 
@@ -55,11 +55,11 @@ const AddEvent = () => {
         });
       }
     } catch (error) {
-      console.error("❌ 建立活動失敗：", error.response || error.message);
+      console.error("❌ Failed to create activity:", error.response || error.message);
       if (error.response?.status === 401) {
-        alert("驗證失敗：請重新登入");
+        alert("Verification failed: Please log in again");
       } else {
-        alert("建立活動失敗，請稍後再試");
+        alert("Failed to create event, please try again later");
       }
     }
   };
@@ -107,7 +107,7 @@ const AddEvent = () => {
 
           {/* Budget Slider 0‑100 (×100) */}
            <label>
-             預算（budget）：{budget} 元
+             Budget : {budget} dollar
             <input
               type="range"
                min={1000}
@@ -162,195 +162,3 @@ const AddEvent = () => {
 };
 
 export default AddEvent;
-
-
-// import React, { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-
-// // const API_URL = "http://localhost:8000/ai/generate-event/";
-// //const API_URL = "http://localhost:3001/events";
-
-// const API_URL = "http://localhsot:8000/ai/generate-event/"; // 替換為實際後端 API URL
-
-// const AddEvent = () => {
-  
-//   /* 表單欄位狀態管理 */
-//   const [goal, setGoal] = useState("");
-//   const [type, setType] = useState("");
-//   const [date, setDate] = useState("");
-//   const [budget, setBudget] = useState(50); // 0‑100 → 0‑10000 (×100)
-//   const [audience, setAudience] = useState("");
-//   const [atmosphere, setAtmosphere] = useState("");
-
-//   const navigate = useNavigate();
-
-//   /**
-//    * 送出表單 → 呼叫後端 API
-//    */
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     const token = localStorage.getItem("token");
-//     if (!token) {
-//       alert("尚未登入，請先登入！");
-//       return;
-//     }
-
-//     const payload = {
-//       goal: goal.trim(),
-//       type,
-//       date,
-//       budget: budget * 100,
-//       target_audience: audience,
-//       atmosphere,
-//     };
-
-//     try {
-//       // JSON Server 不需要 Token，正式後端才需要
-//       // const token = localStorage.getItem("token");
-//       const res = await fetch(API_URL, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           // Authorization: `Token ${token}`,
-//         },
-//         body: JSON.stringify(payload),
-//       });
-
-//       if (!res.ok) {
-//         const txt = await res.text();
-//         throw new Error(`HTTP ${res.status} – ${txt}`);
-//       }
-
-//       const data = await res.json();
-//       console.log("✅ 成功送出活動：", data);
-
-//       navigate("/choose-name", {
-//         state: {
-//           eventId: data.id, // JSON Server 會自動產生 id
-//           names: [], // 你可以根據需求傳遞
-//         },
-//       });
-//     } catch (err) {
-//       console.error("❌ 新增活動失敗：", err);
-//       alert("新增活動失敗，請稍後再試或檢查主控台錯誤。");
-//     }
-//   };
-
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white p-6">
-//       <div className="w-full max-w-xl bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-white/20">
-//         <h2 className="text-3xl font-bold mb-8 text-cyan-300 drop-shadow">
-//           Add New Event{" "}
-//         </h2>
-//         {/* 表單 */}{" "}
-//         <form onSubmit={handleSubmit} className="space-y-6">
-//           {" "}
-//           {/* Goal */}{" "}
-//           <input
-//             className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-//             type="text"
-//             placeholder="Event Goal"
-//             value={goal}
-//             onChange={(e) => setGoal(e.target.value)}
-//             required
-//           />
-//           {/* Date */}{" "}
-//           <input
-//             className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-//             type="date"
-//             value={date}
-//             onChange={(e) => setDate(e.target.value)}
-//             required
-//           />
-//           {/* Type */}{" "}
-//           <select
-//             className="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-//             value={type}
-//             onChange={(e) => setType(e.target.value)}
-//             required
-//           >
-//             <option value="" disabled>
-//               Event Type{" "}
-//             </option>{" "}
-//             <option value="Workshop_Training"> Workshop / Training </option>{" "}
-//             <option value="Social_Networking"> Social / Networking </option>{" "}
-//             <option value="Performance_Showcase">
-//               {" "}
-//               Performance / Showcase{" "}
-//             </option>{" "}
-//             <option value="Speech_Seminar"> Speech / Seminar </option>{" "}
-//             <option value="Recreational_Entertainment">
-//               Recreational / Entertainment{" "}
-//             </option>{" "}
-//             <option value="Market_Exhibition"> Market / Exhibition </option>{" "}
-//             <option value="Competition_Challenge">
-//               {" "}
-//               Competition / Challenge{" "}
-//             </option>{" "}
-//           </select>
-//           {/* Budget Slider 0‑100 (×100) */}
-//           <label>
-//             預算（budget）：{budget} 元
-//             <input
-//               type="range"
-//               min={1000}
-//               max={10000}
-//               step={500}
-//               value={budget}
-//               onChange={(e) => setBudget(Number(e.target.value))}
-//               style={{ width: "300px", marginLeft: "10px" }}
-//             />
-//           </label>
-//           {/* Audience */}{" "}
-//           <select
-//             className="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-//             value={audience}
-//             onChange={(e) => setAudience(e.target.value)}
-//             required
-//           >
-//             <option value="" disabled>
-//               Audience{" "}
-//             </option>{" "}
-//             <option value="Students_Young"> Students / Young Adults </option>{" "}
-//             <option value="Professionals"> Professionals </option>{" "}
-//             <option value="Families"> Families </option>{" "}
-//             <option value="Local_Community"> Local Community </option>{" "}
-//           </select>
-//           {/* Atmosphere */}{" "}
-//           <select
-//             className="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-//             value={atmosphere}
-//             onChange={(e) => setAtmosphere(e.target.value)}
-//             required
-//           >
-//             <option value="" disabled>
-//               Event atmosphere{" "}
-//             </option>{" "}
-//             <option value="Formal_Professional"> Formal / Professional </option>{" "}
-//             <option value="Casual_Friendly"> Casual / Friendly </option>{" "}
-//             <option value="Energetic_Fun"> Energetic / Fun </option>{" "}
-//             <option value="Relaxed_Calm"> Relaxed / Calm </option>{" "}
-//             <option value="Creative_Artistic"> Creative / Artistic </option>{" "}
-//             <option value="Immersive_Interactive">
-//               {" "}
-//               Immersive / Interactive{" "}
-//             </option>{" "}
-//           </select>
-//           {/* Submit */}{" "}
-//           <div className="flex justify-end pt-2">
-//             <button
-//               type="submit"
-//               className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
-//             >
-//               Submit{" "}
-//             </button>{" "}
-//           </div>{" "}
-//         </form>{" "}
-//       </div>{" "}
-//     </div>
-//   );
-// };
-
-// export default AddEvent;

@@ -48,11 +48,16 @@
       "id": "0d6f",
       "event_id": "ee2a",
       "venue_name": "Unity Fest"
+    },
+    {
+      "id": "5844",
+      "event_id": ":id",
+      "venue_name": "Harry Klein"
     }
   ],
   "events": [
     {
-      "id": 1,
+      "id": "1",
       "name": "活動1",
       "description": "說明",
       "latest_version": 2,
@@ -65,7 +70,9 @@
           "version": "v2",
           "description": "第二版"
         }
-      ]
+      ],
+      "start_time": "T13:56",
+      "end_time": "T13:58"
     }
   ],
   "events_test": [
@@ -147,13 +154,23 @@
           "name": "Synergy Social: Connect & Cultivate",
           "description": "*****-",
           "date": "2025-08-15",
-          "type": "Social_Networking",
+          "type": "Speech_Seminar",
           "budget": 5000,
-          "target_audience": "Students_Young",
-          "atmosphere": "Immersive_Interactive"
+          "target_audience": "Local_Community",
+          "atmosphere": "Relaxed_Calm"
+        },
+        {
+          "version": "v9",
+          "name": "Synergy Social: Connect & Cultivate",
+          "description": "*****-",
+          "date": "2025-08-15",
+          "type": "Speech_Seminar",
+          "budget": 5000,
+          "target_audience": "Local_Community",
+          "atmosphere": "Relaxed_Calm"
         }
       ],
-      "latest_version": 8,
+      "latest_version": 9,
       "name": "8520++++33QWEQEQQWEQE3 "
     },
     {
@@ -299,7 +316,8 @@
       "transportation_score": 5,
       "is_outdoor": false,
       "address": "Rue Harry A Earnshaw, Hospice St Nicolas, Vitré, Fougères-Vitré, Ille-et-Vilaine, Bretagne, France métropolitaine, 35500, France",
-      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1215031,-1.2264911"
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1215031,-1.2264911",
+      "id": "e39b"
     },
     {
       "name": "Bahnwärter Thiel",
@@ -307,7 +325,8 @@
       "transportation_score": 5,
       "is_outdoor": true,
       "address": "Bahnwärter Thiel, 45, Tumblingerstraße, Am Schlachthof, Ludwigsvorstadt-Isarvorstadt, München, Bayern, 80337, Deutschland",
-      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1222748,11.5548426"
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1222748,11.5548426",
+      "id": "9338"
     },
     {
       "name": "Backstage München",
@@ -315,7 +334,8 @@
       "transportation_score": 4,
       "is_outdoor": true,
       "address": "Backstage, 6, Reitknechtstraße, Siedlung Neuhausen, Neuhausen, Neuhausen-Nymphenburg, München, Bayern, 80639, Deutschland",
-      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1449557,11.5219647"
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.1449557,11.5219647",
+      "id": "fd97"
     },
     {
       "name": "Feierwerk e.V.",
@@ -323,7 +343,8 @@
       "transportation_score": 4,
       "is_outdoor": true,
       "address": "",
-      "map_url": null
+      "map_url": null,
+      "id": "40cc"
     },
     {
       "name": "Pacha Munich",
@@ -331,7 +352,13 @@
       "transportation_score": 5,
       "is_outdoor": false,
       "address": "Pacha, 5, Maximiliansplatz, Königsplatz, Maxvorstadt, München, Bayern, 80333, Deutschland",
-      "map_url": "https://www.google.com/maps/search/?api=1&query=48.142124,11.5697566"
+      "map_url": "https://www.google.com/maps/search/?api=1&query=48.142124,11.5697566",
+      "id": "0745"
+    },
+    {
+      "id": "53a3",
+      "name": "100",
+      "radius_km": 300
     }
   ],
   "venues": [
@@ -440,6 +467,99 @@
           ]
         }
       ]
+    }
+  ],
+  "event_options": {
+    "type": [
+      {
+        "value": "Workshop_Training",
+        "label": "Workshop / Training"
+      },
+      {
+        "value": "Social_Networking",
+        "label": "Social / Networking"
+      },
+      {
+        "value": "Performance_Showcase",
+        "label": "Performance / Showcase"
+      },
+      {
+        "value": "Speech_Seminar",
+        "label": "Speech / Seminar"
+      },
+      {
+        "value": "Recreational_Entertainment",
+        "label": "Recreational / Entertainment"
+      },
+      {
+        "value": "Market_Exhibition",
+        "label": "Market / Exhibition"
+      },
+      {
+        "value": "Competition_Challenge",
+        "label": "Competition / Challenge"
+      }
+    ],
+    "audience": [
+      {
+        "value": "Students_Young",
+        "label": "Students / Young Adults"
+      },
+      {
+        "value": "Professionals",
+        "label": "Professionals"
+      },
+      {
+        "value": "Families",
+        "label": "Families"
+      },
+      {
+        "value": "Local_Community",
+        "label": "Local Community"
+      }
+    ],
+    "atmosphere": [
+      {
+        "value": "Formal_Professional",
+        "label": "Formal / Professional"
+      },
+      {
+        "value": "Casual_Friendly",
+        "label": "Casual / Friendly"
+      },
+      {
+        "value": "Energetic_Fun",
+        "label": "Energetic / Fun"
+      },
+      {
+        "value": "Relaxed_Calm",
+        "label": "Relaxed / Calm"
+      },
+      {
+        "value": "Creative_Artistic",
+        "label": "Creative / Artistic"
+      },
+      {
+        "value": "Immersive_Interactive",
+        "label": "Immersive / Interactive"
+      }
+    ]
+  },
+  "invitation_list": [
+    {
+      "id": "2a71",
+      "invitation_letter_subject": " Marketplsssss",
+      "invitation_letter_body": "Dear Daniel,\ninvited to Campus Crossroads: A Student Marketplace on August 15, 2025. This event showcases student talent and entrepreneurship. Discover unique creations and support emerging talent. Join us to \"Create, Connect, and Cultivate Your Future!\" We hope to see you there.\n\nSincerely,\nThe Campus Crossroads Team"
+    }
+  ],
+  "invitation_info": [
+    {
+      "id": "4f3b",
+      "receiver_name": "aaa",
+      "recipient_email": "aaa@gmail.com",
+      "words_limit": "250",
+      "tone": "Formal",
+      "language": "English"
     }
   ]
 }

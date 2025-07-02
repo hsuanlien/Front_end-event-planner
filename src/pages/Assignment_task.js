@@ -1,256 +1,271 @@
-/*import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
-// 測試用，直接寫死 eventId 為 9
-const eventId = 9;
-
-const TaskAssignmentPage = () => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-
-  const [tasks, setTasks] = useState([]);
-  const [error, setError] = useState(null);
-  const [showModalAdd, setShowModalAdd] = useState(false);
-  const [showModalEdit, setShowModalEdit] = useState(false);
-  const [showModalDelete, setShowModalDelete] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [newTask, setNewTask] = useState({
-    role: "", description: "", count: "", start_time: "", end_time: ""
-  });
-  const [editTask, setEditTask] = useState({ ...newTask });
-
-  useEffect(() => {
-    if (!token) { navigate("/login"); return; }
-    // http://127.0.0.1:8000/ai/generate-task-assignments/
-    fetch(`http://127.0.0.1:8000/ai/generate-task-assignments/`, {
-      headers: { Authorization: `Token ${token}` }
-    })
-    // fetch(`http://127.0.0.1:8000/api/events/${eventId}/assignments/`, {
-    //   headers: { Authorization: `Token ${token}` }
-    // })
-      .then(res => res.ok ? res.json() : Promise.reject("Fetch failed"))
-      .then(setTasks)
-      .catch(err => { console.error(err); setError("無法取得任務"); });
-  }, [token]);
-
-  const toISO = dt => new Date(dt).toISOString();
-
-  const handleAddSubmit = async () => {
-    try {
-      const body = {
-        ...newTask,
-        count: Number(newTask.count),
-        start_time: toISO(newTask.start_time),
-        end_time: toISO(newTask.end_time),
-      };
-      const res = await fetch(`http://127.0.0.1:8000/api/events/${eventId}/assignments/`, {
-        method: "POST", headers: { "Content-Type": "application/json", Authorization: `Token ${token}` },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (res.ok) setTasks(prev => [...prev, data]);
-      else throw data;
-      setShowModalAdd(false);
-    } catch (err) {
-      console.error(err); alert("新增失敗");
-    }
-  };
-
-  const handleEditSubmit = async () => {
-    try {
-      const body = {
-        role: editTask.role || selectedTask.role,
-        description: editTask.description || selectedTask.description,
-        count: Number(editTask.count || selectedTask.count),
-        start_time: toISO(editTask.start_time || selectedTask.start_time),
-        end_time: toISO(editTask.end_time || selectedTask.end_time),
-      };
-      const res = await fetch(`http://127.0.0.1:8000/api/assignments/${selectedTask.id}/`, {
-        method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Token ${token}` },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (res.ok) setTasks(prev => prev.map(t => t.id === data.id ? data : t));
-      else throw data;
-      setShowModalEdit(false);
-    } catch (err) {
-      console.error(err); alert("編輯失敗");
-    }
-  };
-
-  const handleDeleteSubmit = async () => {
-    try {
-      const res = await fetch(`http://127.0.0.1:8000/api/assignments/${selectedTask.id}/`, {
-        method: "DELETE", headers: { Authorization: `Token ${token}` },
-      });
-      if (res.status === 204) setTasks(prev => prev.filter(t => t.id !== selectedTask.id));
-      else throw "";
-      setShowModalDelete(false);
-    } catch (err) {
-      console.error(err); alert("刪除失敗");
-    }
-  };
-
-  const renderTaskCard = task => (
-    <div key={task.id}
-      className="p-4 rounded-lg bg-white text-black shadow-md hover:bg-cyan-100 cursor-pointer"
-      onClick={() => { setSelectedTask(task); setEditTask({}); }}
-    >
-      <h2 className="font-semibold text-lg">{task.role}</h2>
-      <p className="text-sm">Desc: {task.description}</p>
-      <p className="text-sm">Count: {task.count}</p>
-      <p className="text-sm">From: {task.start_time}</p>
-      <p className="text-sm">To: {task.end_time}</p>
-    </div>
-  );
-
-  if (!token) return null;
-
-  return (
-    <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 text-white min-h-screen p-8">
-      <h1 className="text-3xl font-bold mb-6">📌 Task Assignment</h1>
-      <button onClick={() => navigate(-1)}
-        className="fixed bottom-4 left-4 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg">← Back</button>
-
-      <div className="flex gap-4">
-        <div className="flex-1 overflow-auto max-h-[70vh]">
-          {tasks.length ? tasks.map(renderTaskCard) : error ? <p className="text-red-400">{error}</p> : <p>Loading…</p>}
-        </div>
-
-        <div className="flex flex-col gap-4 w-1/6">
-          <button onClick={() => setShowModalAdd(true)}
-            className="bg-cyan-500 hover:bg-cyan-600 py-2 rounded-lg">Add</button>
-          <button onClick={() => {
-            if (!selectedTask) return alert("請先點選任務");
-            setShowModalEdit(true);
-          }} className="bg-cyan-500 hover:bg-cyan-600 py-2 rounded-lg">Edit</button>
-          <button onClick={() => {
-            if (!selectedTask) return alert("請先點選任務");
-            setShowModalDelete(true);
-          }} className="bg-cyan-500 hover:bg-cyan-600 py-2 rounded-lg">Delete</button>
-        </div>
-      </div>
-
-      {showModalAdd && (
-        <Modal title="新增任務" fields={newTask} setFields={setNewTask}
-          onCancel={() => setShowModalAdd(false)} onSubmit={handleAddSubmit} />
-      )}
-      {showModalEdit && selectedTask && (
-        <Modal title="編輯任務" fields={editTask} setFields={setEditTask}
-          onCancel={() => setShowModalEdit(false)} onSubmit={handleEditSubmit} />
-      )}
-      {showModalDelete && selectedTask && (
-        <ConfirmDeleteModal title="刪除任務"
-          onCancel={() => setShowModalDelete(false)} onConfirm={handleDeleteSubmit} />
-      )}
-    </div>
-  );
-};
-
-const Modal = ({ title, fields, setFields, onCancel, onSubmit }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center">
-    <div className="bg-white p-6 rounded-lg w-96 text-black">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
-      <input className="w-full mb-2 p-2 border" placeholder="Role"
-        value={fields.role} onChange={e => setFields(f => ({ ...f, role: e.target.value }))} />
-      <input className="w-full mb-2 p-2 border" placeholder="Description"
-        value={fields.description} onChange={e => setFields(f => ({ ...f, description: e.target.value }))} />
-      <input type="number" className="w-full mb-2 p-2 border" placeholder="Count"
-        value={fields.count} onChange={e => setFields(f => ({ ...f, count: e.target.value }))} />
-      <input type="datetime-local" className="w-full mb-2 p-2 border"
-        value={fields.start_time} onChange={e => setFields(f => ({ ...f, start_time: e.target.value }))} />
-      <input type="datetime-local" className="w-full mb-2 p-2 border"
-        value={fields.end_time} onChange={e => setFields(f => ({ ...f, end_time: e.target.value }))} />
-      <div className="flex justify-end gap-2 mt-4">
-        <button onClick={onCancel} className="px-4 py-2 bg-gray-300 rounded">取消</button>
-        <button onClick={onSubmit} className="px-4 py-2 bg-blue-600 text-white rounded">確定</button>
-      </div>
-    </div>
-  </div>
-);
-
-const ConfirmDeleteModal = ({ title, onCancel, onConfirm }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center">
-    <div className="bg-white p-6 rounded-lg text-black">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
-      <p className="mb-4">確定要刪除此任務嗎？</p>
-      <div className="flex justify-end gap-2">
-        <button onClick={onCancel} className="px-4 py-2 bg-gray-300 rounded">取消</button>
-        <button onClick={onConfirm} className="px-4 py-2 bg-red-600 text-white rounded">刪除</button>
-      </div>
-    </div>
-  </div>
-);
-
-export default TaskAssignmentPage;
- */
-
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 const TaskAssignmentPage = () => {
+  //const { id } = useParams();
   const navigate = useNavigate();
- 
+  
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState(null);
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showModalEdit, setShowModalEdit] = useState(false);
+  const [editRole, setEditRole] = useState("");
   const [showModalDelete, setShowModalDelete] = useState(false);
-  const [editRole, setEditRole] = useState(false);
-  const [deleteRole, setDeleteRole] = useState(false);
+  const [deleteRole, setDeleteRole] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const API_BASE = "https://genai-backend-2gji.onrender.com/api";
+
   const [newTask, setNewTask] = useState({
-    role: '',
-    description: '',
-    count: '',
-    start_time: '',
-    end_time: ''
-  });
-  const [editTask, setEdittedTask] = useState({
-    role: '',
-    description: '',
-    count: '',
-    start_time: '',
-    end_time: ''
+    role: "",
+    description: "",
+    count: "",
+    start_time: "",
+    end_time: ""
   });
 
+  const [editTask, setEdittedTask] = useState({
+    role: "",
+    description: "",
+    count: "",
+    start_time: "",
+    end_time: ""
+  });
+
+  const formatDateTimeToUTC = (localDateTime) => {
+    const date = new Date(localDateTime);
+    return date.toISOString();
+  };
+
+  const eventId = localStorage.getItem("event_id");
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("http://localhost:3001/task_summary_by_role")
-      .then(res => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch task data");
+      if (!eventId || !token) return;
+
+      const fetchGeneratedTasks = async () => {
+        try {
+          const response = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-tasks/${eventId}/`, {
+            method: "POST",
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch task data");
+          }
+
+          const data = await response.json();
+          console.log("Raw response data:", data);
+          console.log("task_summary_by_role:", data.task_summary_by_role);
+          setTasks(data.task_summary_by_role || []);
+        } catch (err) {
+          console.error("Fetch failed:", err);
+          setError("fail to fetch from server");
         }
-        return res.json();
-      })
-      .then(data => setTasks(data))
-      .catch(err => {
-        console.error(err);
-        setError("fail to fetch from server");
-      });
-  }, []);
+      };
+
+      fetchGeneratedTasks();
+    }, [eventId, token]);
+
+  // useEffect(() => {
+  // if (!eventId || !token) return;
+
+  // fetch(`https://genai-backend-2gji.onrender.com/ai/generate-task-assignments/${eventId}/`, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //      Authorization: `Token ${token}`,
+  //   },
+  //  // body: JSON.stringify({ event_id: eventId }),
+  // })
+  //   .then((res) => {
+  //     if (!res.ok) {
+  //       throw new Error("Failed to fetch task data");
+  //     }
+  //     return res.json();
+  //   })
+  //   .then((data) => {
+  //     console.log("Raw response data:", data);
+  //     console.log("task_summary_by_role:", data.task_summary_by_role);
+  //     setTasks(data.task_summary_by_role || []);
+
+  //     // setTasks(data.task_summary_by_role);  // 注意：是 data.task_summary_by_role
+  //     // console.log("Fetched generated tasks:", data.task_summary_by_role);
+  //   })
+  //   .catch((err) => {
+  //     console.error(err);
+  //     setError("fail to fetch from server");
+  //   });
+  // }, [eventId, token]);
+
+  // useEffect(() => {
+  //   fetch(`https://genai-backend-2gji.onrender.com/ai/generate-task-assignments/${id}/`, {
+  //     headers: {
+  //       Authorization: `Token ${token}`
+  //     }
+  //   })
+  //     .then(res => {
+  //       if (!res.ok) {
+  //         throw new Error("Failed to fetch task data");
+  //       }
+  //       return res.json();
+  //     })
+  //     .then(data => {
+  //      // console.log("Fetched assignments:", data);
+  //       setTasks(data);
+  //       console.log(data);
+  //     })
+  //     .catch(err => {
+  //       console.error(err);
+  //       setError("fail to fetch from server");
+  //     });
+  // }, [eventId, token]);
+
+  useEffect(() => {
+  fetch(`${API_BASE}/events/${eventId}/`, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error("Failed to fetch event");
+      }
+      return res.json();
+    })
+    .then((data) => {
+      const startDate = data.start_time?.split("T")[0];
+      setEventDate(startDate);
+    })
+    .catch((err) => {
+      console.error("Failed to fetch event:", err);
+    });
+  }, [eventId, token]);
 
   const handleAddTask = () => {
-    // 開啟彈窗，可擴充任務欄位
-    // alert("功能擴充中：新增任務");
+    setNewTask({
+      role: "",
+      description: "",
+      count: "",
+      start_time: `${eventDate}T00:00`,
+      end_time: `${eventDate}T23:59`
+    });
     setShowModalAdd(true);
     setShowModalEdit(false);
     setShowModalDelete(false);
   };
+
   const handleEditTask = () => {
+    setEdittedTask((prev) => ({
+      ...prev,
+      start_time: `${eventDate}T00:00`,
+      end_time: `${eventDate}T23:59`
+    }));
     setShowModalAdd(false);
     setShowModalEdit(true);
     setShowModalDelete(false);
   };
+
+  const toLocalDateTimeString = (isoString) => {
+    const date = new Date(isoString);
+    return date.toISOString().slice(0, 16); //  "YYYY-MM-DDTHH:mm"
+  };
+
   const handleDeleteTask = () => {
     setShowModalAdd(false);
     setShowModalEdit(false);
     setShowModalDelete(true);
   };
 
+  const handleConfirmDelete = async () => {
+    const taskToDelete = tasks.find((task) => task.role === deleteRole);
+    if (!taskToDelete) {
+      alert("Task not found");
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE}/assignments/${taskToDelete.id}/`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Token ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete task");
+      }
+      setTasks(tasks.filter(task => task.id !== taskToDelete.id));
+      setDeleteRole("");
+      setShowModalDelete(false);
+    } catch (error) {
+      console.error("Delete failed:", error);
+      alert("Delete failed. Please try again later.");
+    }
+  };
+
+  const handleConfirmAdd = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/events/${eventId}/assignments/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`
+        },
+        body: JSON.stringify({
+          ...newTask,
+          start_time: formatDateTimeToUTC(newTask.start_time),
+          end_time: formatDateTimeToUTC(newTask.end_time)
+        })
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add task");
+      }
+      const data = await response.json();
+      setTasks([...tasks, data]);
+      setNewTask({ role: "", description: "", count: "", start_time: `${eventDate}T09:00`, end_time: `${eventDate}T23:00` });
+      setShowModalAdd(false);
+    } catch (err) {
+      console.error("Add failed:", err);
+      alert("Add failed. Please try again later.");
+    }
+  };
+
+  const handleConfirmEdit = async () => {
+    const taskToEdit = tasks.find((task) => task.role === editRole);
+    if (!taskToEdit) {
+      alert("Task not found");
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE}/assignments/${taskToEdit.id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`
+        },
+        body: JSON.stringify({
+          ...editTask,
+          start_time: formatDateTimeToUTC(editTask.start_time),
+          end_time: formatDateTimeToUTC(editTask.end_time)
+        })
+      });
+      if (!response.ok) {
+        throw new Error("Failed to edit task");
+      }
+      const updatedTask = await response.json();
+      setTasks(tasks.map(task => task.id === taskToEdit.id ? updatedTask : task));
+      setEdittedTask({ role: "", description: "", count: "", start_time: "", end_time: "" });
+      setEditRole("");
+      setShowModalEdit(false);
+    } catch (err) {
+      console.error("Edit failed:", err);
+      alert("Edit failed. Please try again later.");
+    }
+  };
+
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
-      {/* Main Task Area */}
       <h1 className="text-3xl font-bold mb-6 drop-shadow-md">
         📌 Task Assignment
       </h1>
@@ -263,9 +278,7 @@ const TaskAssignmentPage = () => {
             ← Back
           </button>
         </div>
-        {/* 任務列表區塊 */}
         <div className="flex-1 flex-column max-h-screen overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4">
-          {/* 根據後端回傳資料顯示任務資訊  */}
           {tasks.length > 0 ? (
             tasks.map((task, idx) => (
               <div
@@ -294,14 +307,16 @@ const TaskAssignmentPage = () => {
           )}
         </div>
         <div className="w-1/6 flex-col gap-4 items-start max-h-screen overflow-y-hidden">
+        
           <div>
-            {/* 點此按鈕可新增任務 */}
             <button
               onClick={handleAddTask}
               className="h-20 bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
             >
               Add
             </button>
+
+
             <button
               onClick={handleEditTask}
               className="h-20 bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
@@ -315,292 +330,174 @@ const TaskAssignmentPage = () => {
               Delete
             </button>
           </div>
-          <div>
-            {
-              showModalAdd && (
-                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-                  <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
-                    <h2 className="text-xl font-bold">Add New Task</h2>
+        </div>
+      </main>
 
-                    <input
-                      type="text"
-                      placeholder="Task Role"
-                      className="w-full p-2 border rounded"
-                      value={newTask.role}
-                      onChange={(e) => setNewTask({ ...newTask, role: e.target.value })}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Task Description"
-                      className="w-full p-2 border rounded"
-                      value={newTask.description}
-                      onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                    />
-                    <input
-                      type="number"
-                      placeholder="Number of People"
-                      className="w-full p-2 border rounded"
-                      value={newTask.count}
-                      onChange={(e) => setNewTask({ ...newTask, count: parseInt(e.target.value) })}
-                    />
-                    <input
-                      type="datetime-local"
-                      placeholder="Event Start Time"
-                      className="w-full p-2 border rounded"
-                      value={newTask.start_time}
-                      onChange={(e) => setNewTask({ ...newTask, start_time: e.target.value })}
-                    />
-                    <input
-                      type="datetime-local"
-                      placeholder="Event End Time"
-                      className="w-full p-2 border rounded"
-                      value={newTask.end_time}
-                      onChange={(e) => setNewTask({ ...newTask, end_time: e.target.value })}
-                    />
-
-                    <div className="flex justify-end gap-2">
-                      <button
-                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                        onClick={() => setShowModalAdd(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-
-                        onClick={async () => {
-                          const { role, description, count, start_time, end_time } = newTask;
-
-                          if (
-                            !role.trim() ||
-                            !description.trim() ||
-                            !count ||
-                            !start_time ||
-                            !end_time
-                          ) {
-                            alert("Please fill out all fields");
-                            return;
-                          }
-
-                          try {
-                            const response = await fetch("http://localhost:3001/task_summary_by_role", {
-                              method: "POST",
-                              headers: {
-                                "Content-Type": "application/json"
-                              },
-                              body: JSON.stringify(newTask)
-                            });
-
-                            if (!response.ok) {
-                              throw new Error("Failed to add task");
-                            }
-
-                            const createdTask = await response.json();
-
-                            setTasks([...tasks, createdTask]);  // 更新畫面
-                            setNewTask({
-                              role: '',
-                              description: '',
-                              count: '',
-                              start_time: '',
-                              end_time: ''
-                            });
-                            setShowModalAdd(false);
-                          } catch (error) {
-                            console.error("Add failed: ", error);
-                            alert("Add failed. Please try again later.");
-                          }
-                        }}
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )
-            }
-            {
-              showModalEdit && (
-                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-                  <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
-                    <h2 className="text-xl font-bold">Edit Task</h2>
-                    <select
-                      className="w-full p-2 border rounded"
-                      required
-                      value={editRole}
-                      onChange={(e) => setEditRole(e.target.value)}
-                    >
-                      <option value="" disabled>Task role</option>
-                      {tasks.length > 0 ? (
-                        tasks.map((task, idx) => (
-                          <option key={idx} value={task.role}>{task.role}</option>
-                        ))
-                      ) : error ? (
-                        <p className="text-red-500">{error}</p>
-                      ) : (
-                        <p>loading...</p>
-                      )}
-                    </select>
-                    <input
-                      type="text"
-                      placeholder="Edit Task Role"
-                      className="w-full p-2 border rounded"
-                      value={editTask.role}
-                      onChange={(e) => setEdittedTask({ ...editTask, role: e.target.value })}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Edit Task Description"
-                      className="w-full p-2 border rounded"
-                      value={editTask.description}
-                      onChange={(e) => setEdittedTask({ ...editTask, description: e.target.value })}
-                    />
-                    <input
-                      type="number"
-                      placeholder="Edit Number of People"
-                      className="w-full p-2 border rounded"
-                      value={editTask.count}
-                      onChange={(e) => setEdittedTask({ ...editTask, count: e.target.value })}
-                    />
-                    <input
-                      type="datetime-local"
-                      placeholder="Edit Start Time"
-                      className="w-full p-2 border rounded"
-                      value={editTask.start_time}
-                      onChange={(e) => setEdittedTask({ ...editTask, start_time: e.target.value })}
-                    />
-                    <input
-                      type="datetime-local"
-                      placeholder="Edit End Time"
-                      className="w-full p-2 border rounded"
-                      value={editTask.end_time}
-                      onChange={(e) => setEdittedTask({ ...editTask, end_time: e.target.value })}
-                    />
-
-                    <div className="flex justify-end gap-2">
-                      <button
-                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                        onClick={() => setShowModalEdit(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                        onClick={async () => {
-                          const taskToEdit = tasks.find((task) => task.role === editRole);
-                          if (!taskToEdit) {
-                            alert("Could not find the selected task!");
-                            return;
-                          }
-
-                          const updatedTask = {
-                            ...taskToEdit,
-                            ...Object.fromEntries(Object.entries(editTask).filter(([_, v]) => v !== "" && v !== null))
-                          };
-
-                          try {
-                            const response = await fetch(`http://localhost:3001/task_summary_by_role/${taskToEdit.id}`, {
-                              method: "PUT",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(updatedTask)
-                            });
-
-                            if (!response.ok) {
-                              const errorMessage = await response.text();
-                              throw new Error("Server Error: " + errorMessage);
-                            }
-
-                            const result = await response.json();
-                            const newTasks = tasks.map((task) => (task.role === editRole ? result : task));
-                            setTasks(newTasks);
-                            setShowModalEdit(false);
-                            setEditRole('');
-                            setEdittedTask({
-                              role: '',
-                              description: '',
-                              count: '',
-                              start_time: '',
-                              end_time: ''
-                            });
-                          } catch (err) {
-                            console.error("Update failed: ", err);
-                            alert("Update failed. Please try again later.");
-                          }
-                        }}
-
-                      >
-                        Update
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )
-            }
-            {
-              showModalDelete && (
-                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-                  <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
-                    <h2 className="text-xl font-bold">Delete Task</h2>
-
-                    <select
-                      className="w-full p-2 border rounded"
-                      required
-                      value={deleteRole}
-                      onChange={(e) => setDeleteRole(e.target.value)}
-                    >
-                      <option value="" disabled>Task role</option>
-                      {tasks.length > 0 ? (
-                        tasks.map((task, idx) => (
-                          <option key={idx} value={task.role}>{task.role}</option>
-                        ))
-                      ) : error ? (
-                        <p className="text-red-500">{error}</p>
-                      ) : (
-                        <p>loading...</p>
-                      )}
-                    </select>
-                    <div className="flex justify-end gap-2">
-                      <button
-                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-
-                        onClick={async () => {
-                          const taskToDelete = tasks.find((task) => task.role === deleteRole);
-                          if (!taskToDelete) {
-                            alert("Could not find the selected task!");
-                            return;
-                          }
-
-                          try {
-                            const response = await fetch(`http://localhost:3001/task_summary_by_role/${taskToDelete.id}`, {
-                              method: "DELETE"
-                            });
-
-                            if (!response.ok) {
-                              throw new Error("Failed to delete task");
-                            }
-
-                            // Update frontend state
-                            setTasks(tasks.filter(task => task.id !== taskToDelete.id));
-                            setDeleteRole('');
-                            setShowModalDelete(false);
-                          } catch (error) {
-                            console.error("Delete failed: ", error);
-                            alert("Delete failed. Please try again later.");
-                          }
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )
-            }
+    {/* Add function */}
+    {showModalAdd && (
+      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+        <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
+          <h2 className="text-xl font-bold">新增任務</h2>
+          <input
+            type="text"
+            placeholder="角色"
+            className="w-full p-2 border rounded"
+            value={newTask.role}
+            onChange={(e) => setNewTask({ ...newTask, role: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="描述"
+            className="w-full p-2 border rounded"
+            value={newTask.description}
+            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="人數"
+            className="w-full p-2 border rounded"
+            value={newTask.count}
+            onChange={(e) => setNewTask({ ...newTask, count: e.target.value })}
+          />
+          <input
+            type="datetime-local"
+            className="w-full p-2 border rounded"
+            value={newTask.start_time}
+            onChange={(e) => setNewTask({ ...newTask, start_time: e.target.value })}
+          />
+          <input
+            type="datetime-local"
+            className="w-full p-2 border rounded"
+            value={newTask.end_time}
+            onChange={(e) => setNewTask({ ...newTask, end_time: e.target.value })}
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              onClick={() => setShowModalAdd(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
+              onClick={handleConfirmAdd}
+            >
+              確認新增
+            </button>
           </div>
         </div>
-      </main >
-    </div >
+      </div>
+    )}
+{/* Edit 功能 */}
+{showModalEdit && (
+  <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+    <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
+      <h2 className="text-xl font-bold">編輯任務</h2>
 
+      <select
+        className="w-full p-2 border rounded"
+        value={editRole}
+        onChange={(e) => {
+          const selectedRole = e.target.value;
+          setEditRole(selectedRole);
+          const selectedTask = tasks.find(t => t.role === selectedRole);
+          if (selectedTask) {
+            setEdittedTask({
+              role: selectedTask.role,
+              description: selectedTask.description,
+              count: selectedTask.count,
+              start_time: toLocalDateTimeString(selectedTask.start_time),
+              end_time: toLocalDateTimeString(selectedTask.end_time)
+            });
+          }
+        }}
+      >
+        <option value="" disabled>選擇任務角色</option>
+        {tasks.map((task, idx) => (
+          <option key={idx} value={task.role}>{task.role}</option>
+        ))}
+      </select>
+
+      <input
+        type="text"
+        placeholder="描述"
+        className="w-full p-2 border rounded"
+        value={editTask.description}
+        onChange={(e) => setEdittedTask({ ...editTask, description: e.target.value })}
+      />
+      <input
+        type="number"
+        placeholder="人數"
+        className="w-full p-2 border rounded"
+        value={editTask.count}
+        onChange={(e) => setEdittedTask({ ...editTask, count: e.target.value })}
+      />
+      <input
+        type="datetime-local"
+        className="w-full p-2 border rounded"
+        value={editTask.start_time}
+        onChange={(e) => setEdittedTask({ ...editTask, start_time: e.target.value })}
+      />
+      <input
+        type="datetime-local"
+        className="w-full p-2 border rounded"
+        value={editTask.end_time}
+        onChange={(e) => setEdittedTask({ ...editTask, end_time: e.target.value })}
+      />
+      <div className="flex justify-end gap-2">
+        <button
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          onClick={() => setShowModalEdit(false)}
+        >
+          Cancel
+        </button>
+        <button
+          className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
+          onClick={handleConfirmEdit}
+        >
+          確認編輯
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* Delete功能 */}
+      {showModalDelete && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold">Delete Task</h2>
+            <select
+              className="w-full p-2 border rounded"
+              required
+              value={deleteRole}
+              onChange={(e) => setDeleteRole(e.target.value)}
+            >
+              <option value="" disabled>Task role</option>
+              {tasks.map((task, idx) => (
+                <option key={idx} value={task.role}>{task.role}</option>
+              ))}
+            </select>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                onClick={() => setShowModalDelete(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                onClick={handleConfirmDelete}
+              >
+                Confirm Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
   );
 };
 
