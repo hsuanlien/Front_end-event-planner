@@ -16,10 +16,11 @@ const Venue = () => {
     
     if (!venueName || !radiusKm) {
       setVenueMessage("請填寫所有欄位");
-      setIsSubmitting(false); // 🔧 防止按鈕卡住
+      setIsSubmitting(false); //  防止按鈕卡住
       return;
     }
-    const token = localStorage.getItem("token"); // 假設你登入後存在這裡
+    const token = localStorage.getItem("token"); // 假設你登入後存在這裡 
+    // @@venue ID沒有get, 沒辦法更新
     try {
       const res = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-venues/${id}/`, {
         method: "POST",
@@ -49,7 +50,7 @@ const Venue = () => {
 
 
     // ✅ 帶資料跳轉
-      navigate(`/event/${id}/${version}/choose-venue`, {
+      navigate(`/event/${id}/choose-venue`, {
         state: {
           venue_suggestions: data.venue_suggestions,
           eventId: id, // 從 useParams 傳來即可
@@ -107,12 +108,12 @@ const Venue = () => {
 
         {/* 右下角 Add / Change / Save 按鈕 */}
         <div className="flex gap-10">
-          <button
+          {/* <button
             onClick={() => alert("Change clicked")}
             className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
           >
             Change
-          </button>
+          </button> */}
           
 {/* 儲存按鈕點擊後應禁用，避免多次提交 */}
          <button

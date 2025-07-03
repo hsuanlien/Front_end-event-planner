@@ -26,41 +26,6 @@ const Event_Description = () => {
   const [time, setTime] = useState(suggested_time || "");
   const [duration, setDuration] = useState(suggested_event_duration || "");
 
-  // const handleSave = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
-  //       {
-  //         method: "PATCH",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Token ${token}`,
-  //         },
-  //         body: JSON.stringify({
-  //           name,
-  //           slogan,
-  //           description: desc,
-  //           expected_attendees: attendees,
-  //           suggested_time: time,
-  //           suggested_event_duration: duration,
-  //         }),
-  //       }
-  //     );
-
-  //     if (response.ok) {
-  //       const result = await response.json();
-  //       console.log("✅ 活動更新成功：", result);
-  //       alert("Event updated successfully!");
-  //       setIsEditing(false);
-  //     } else {
-  //       const errorText = await response.text();
-  //       console.error("❌ 更新失敗：", errorText);
-  //       alert("Update failed.");
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ 發送 PATCH 請求錯誤：", err);
-  //   }
-  // };
   const handleSave = async () => {
   console.log(" Token used for request: ", token);
   try {
@@ -93,40 +58,53 @@ const Event_Description = () => {
 
       const updatedEvent = await patchResponse.json();
       console.log("✅ 活動更新成功：", updatedEvent);
-
-      // 2. POST 儲存版本
-      const versionResponse = await fetch(
-        `https://genai-backend-2gji.onrender.com/api/events/${eventId}/save-version/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        }
-      );
-
-      if (versionResponse.status === 201) {
-        const versionData = await versionResponse.json();
-        console.log("✅ 活動版本儲存成功：", versionData);
-        alert(`Event updated and version saved! Version ID: ${versionData.version_id}`);
-        setIsEditing(false);
-      } else if (versionResponse.status === 403) {
-        const errorData = await versionResponse.json();
-        console.error("❌ 儲存版本失敗（權限）：", errorData);
-        alert("Permission denied while saving version.");
-      } else {
-        const errorText = await versionResponse.text();
-        console.error("❌ 儲存版本失敗：", errorText);
-        alert("Failed to save event version.");
-      }
     } catch (err) {
       console.error("❌ 發送請求錯誤：", err);
       alert("An error occurred while saving.");
     }
   };
 
+  const handleNext = async () => {
+  console.log(" Token used for request: ", token);
+  try {
+      // 1. PATCH 更新活動資料
+      const patchResponse = await fetch(
+        `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${token}`,
+          },
+          body: JSON.stringify({
+            name,
+            slogan,
+            description: desc,
+            expected_attendees: attendees,
+            suggested_time: time,
+            suggested_event_duration: duration,
+          }),
+        }
+      );
 
-  const handleNext = () => {
+      if (!patchResponse.ok) {
+        const errorText = await patchResponse.text();
+        console.error("❌ 更新失敗：", errorText);
+        alert("Update failed.");
+        return;
+      }
+
+      const updatedEvent = await patchResponse.json();
+      console.log("✅ 活動更新成功：", updatedEvent);
+    } catch (err) {
+      console.error("❌ 發送請求錯誤：", err);
+      alert("An error occurred while saving.");
+    }
+    navigate("/home");
+  };
+
+
+  const handleNext_ = () => {
     navigate("/home");
   };
 

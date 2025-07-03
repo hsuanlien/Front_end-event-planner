@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 
 const TaskAssignmentPage = () => {
-  //const { id } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   
   const [tasks, setTasks] = useState([]);
@@ -68,60 +68,6 @@ const TaskAssignmentPage = () => {
 
       fetchGeneratedTasks();
     }, [eventId, token]);
-
-  // useEffect(() => {
-  // if (!eventId || !token) return;
-
-  // fetch(`https://genai-backend-2gji.onrender.com/ai/generate-task-assignments/${eventId}/`, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //      Authorization: `Token ${token}`,
-  //   },
-  //  // body: JSON.stringify({ event_id: eventId }),
-  // })
-  //   .then((res) => {
-  //     if (!res.ok) {
-  //       throw new Error("Failed to fetch task data");
-  //     }
-  //     return res.json();
-  //   })
-  //   .then((data) => {
-  //     console.log("Raw response data:", data);
-  //     console.log("task_summary_by_role:", data.task_summary_by_role);
-  //     setTasks(data.task_summary_by_role || []);
-
-  //     // setTasks(data.task_summary_by_role);  // 注意：是 data.task_summary_by_role
-  //     // console.log("Fetched generated tasks:", data.task_summary_by_role);
-  //   })
-  //   .catch((err) => {
-  //     console.error(err);
-  //     setError("fail to fetch from server");
-  //   });
-  // }, [eventId, token]);
-
-  // useEffect(() => {
-  //   fetch(`https://genai-backend-2gji.onrender.com/ai/generate-task-assignments/${id}/`, {
-  //     headers: {
-  //       Authorization: `Token ${token}`
-  //     }
-  //   })
-  //     .then(res => {
-  //       if (!res.ok) {
-  //         throw new Error("Failed to fetch task data");
-  //       }
-  //       return res.json();
-  //     })
-  //     .then(data => {
-  //      // console.log("Fetched assignments:", data);
-  //       setTasks(data);
-  //       console.log(data);
-  //     })
-  //     .catch(err => {
-  //       console.error(err);
-  //       setError("fail to fetch from server");
-  //     });
-  // }, [eventId, token]);
 
   useEffect(() => {
   fetch(`${API_BASE}/events/${eventId}/`, {

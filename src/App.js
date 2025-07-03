@@ -53,21 +53,30 @@ function App() {
         
         <Route path="/event/:id/choose-event-time" element={<ChooseEventTime />} />
         {/* ----------------- */}
-        <Route path="/event/:id/:version/assignment-task" element={<AssignmentTask />} /> 
+        <Route path="/event/:id/assignment-task" element={<AssignmentTask />} /> 
+        {/* <Route path="/event/:id:version/assignment-task" element={<AssignmentTask />} />  */}
         <Route path="/event/:id/:version/poster-info" element={<PosterInfo />} />
         <Route path="/event/:id/:version/poster-template" element={<PosterTemplate />} />
         {/* ----------------- */}
-        <Route path="/event/:id/:version/venue" element={<Venue />} />
-        <Route path="/event/:id/:version/choose-venue" element={<ChooseVenue />} />
+        {/* <Route path="/event/:id/:version/venue" element={<Venue />} />
+        <Route path="/event/:id/:version/choose-venue" element={<ChooseVenue />} /> */}
+        <Route path="/event/:id/venue" element={<Venue />} />
+        <Route path="/event/:id/choose-venue" element={<ChooseVenue />} />
         {/* ----------------- */}
-        <Route path="/event/:id/:version/invitation" element={<Invitation />} />
-        <Route path="/event/:id/:version/check-invitation" element={<CheckInvitation />} />
+        {/* <Route path="/event/:id/:version/invitation" element={<Invitation />} />
+        <Route path="/event/:id/:version/check-invitation" element={<CheckInvitation />} /> */}
+        <Route path="/event/:id/invitation" element={<Invitation />} />
+        <Route path="/event/:id/check-invitation" element={<CheckInvitation />} />
         {/* ----------------- */}
-        <Route path="/event/:id/:version/copywriting" element={<Copywriting />} />
-        <Route path="/event/:id/:version/check-copywriting" element={<CheckCopywriting />} />
+        {/* <Route path="/event/:id/:version/copywriting" element={<Copywriting />} />
+        <Route path="/event/:id/:version/check-copywriting" element={<CheckCopywriting />} /> */}
+         <Route path="/event/:id/copywriting" element={<Copywriting />} />
+        <Route path="/event/:id/check-copywriting" element={<CheckCopywriting />} />
         {/* ----------------- */}
-        <Route path="/event/:id/:version/registration" element={<Registration />} />
-        <Route path="/event/:id/:version/check-registration" element={<CheckRegistration />} />
+        {/* <Route path="/event/:id/:version/registration" element={<Registration />} />
+        <Route path="/event/:id/:version/check-registration" element={<CheckRegistration />} /> */}
+        <Route path="/event/:id/registration" element={<Registration />} />
+        <Route path="/event/:id/check-registration" element={<CheckRegistration />} />
 
 
       </Routes>

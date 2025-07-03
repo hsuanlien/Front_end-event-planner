@@ -2,72 +2,140 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+// 直接寫在前端的下拉選單選項
+const EVENT_TYPE_OPTIONS = [
+  { value: "Workshop_Training", label: "Workshop / Training" },
+  { value: "Social_Networking", label: "Social / Networking" },
+  { value: "Performance_Showcase", label: "Performance / Showcase" },
+  { value: "Speech_Seminar", label: "Speech / Seminar" },
+  { value: "Recreational_Entertainment", label: "Recreational / Entertainment" },
+  { value: "Market_Exhibition", label: "Market / Exhibition" },
+  { value: "Competition_Challenge", label: "Competition / Challenge" },
+];
+const AUDIENCE_OPTIONS = [
+  { value: "Students_Young", label: "Students / Young Adults" },
+  { value: "Professionals", label: "Professionals" },
+  { value: "Families", label: "Families" },
+  { value: "Local_Community", label: "Local Community" },
+];
+
+const API_BASE = "https://genai-backend-2gji.onrender.com/api";
+
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const versions = ["v1"];// 待修改
-  const [selectedVersion, setSelectedVersion] = useState("v1");
+  const token = localStorage.getItem("token");
 
   const [eventData, setEventData] = useState(null);
   const [error, setError] = useState(null);
-  
-  const token = localStorage.getItem("token");
-  // temporary storage completion status
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({});
+
   const [venueCompleted, setVenueCompleted] = useState(true);
   const [formCompleted, setFormCompleted] = useState(true);
-  const version_id =3 ;
 
-  // Function menu and dependencies
+  const [versions, setVersions] = useState([]); // 空的
+  const [selectedVersion, setSelectedVersion] = useState(""); // 初始沒有選
+
+
   const sidebarItems = [
     { label: "Task assignment", key: "Task assignment", requires: [] },
     { label: "Venue Selection", key: "場地", requires: [] },
     { label: "Registration Form", key: "報名表單", requires: [] },
     { label: "Invitation letter", key: "邀請函", requires: ["場地", "報名表單"] },
     { label: "Social media post", key: "文案", requires: ["場地", "報名表單"] },
-    // { label: "海報", key: "海報", requires: ["場地", "報名表單"] },
   ];
 
-  // Click the processing logic of the function menu
-  const handleFunctionClick = (itemKey) => {
-    if (itemKey === "場地") {
-      setVenueCompleted(true); 
-      navigate(`/event/${id}/${selectedVersion}/venue`);
-    } else if (itemKey === "報名表單") {
-      setFormCompleted(true); 
-      navigate(`/event/${id}/${selectedVersion}/check-registration`);
-    } else if (itemKey === "邀請函") {
-      navigate(`/event/${id}/${selectedVersion}/invitation`);
-    } else if (itemKey === "文案") {
-      navigate(`/event/${id}/${selectedVersion}/copywriting`);
+  useEffect(() => {
+    const fetchVersions = async () => {
+      try {
+        const response = await fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/versions/`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        if (!response.ok) throw new Error("Failed to fetch versions");
+        const data = await response.json();
+        console.log("fetched versions:", data);
+
+          // 👉 依照 version_number 升冪排序
+        const sortedData = [...data].sort((a, b) => a.version_number - b.version_number);
+
+
+        setVersions(sortedData); // 全部版本完整資料陣列 [{id: 6, ...}, ...]
+        if (sortedData.length > 0) {
+          setSelectedVersion(`v${sortedData.length}`); // 預設選擇最後一版（v1, v2, ...）
+        } else { // 最一開始進去時 不顯示版本
+          setSelectedVersion(""); // 沒有版本時清空
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchVersions();
+  }, [id, token]);
+
+  // 根據點選的 v1/v2/v3 來顯示對應版本資料
+  useEffect(() => { // 監聽 selectedVersion 變動
+    if (!selectedVersion) return;
+
+    // selectedVersion 是 v1, v2, v3，要拿出對應 index
+    const versionIndex = parseInt(selectedVersion.replace("v", ""), 10) - 1;
+
+    // 確保 index 不超出範圍
+    if (versions[versionIndex]) {
+      const selectedData = versions[versionIndex].event_snapshot;
+      setEventData(selectedData);
+      setFormData(selectedData);
     }
-    // } else if (itemKey === "海報") {
-    //   navigate(`/event/${id}/${selectedVersion}/poster-info`);
-    // } 
-    else if (itemKey === "Task assignment") {
-      navigate(`/event/${id}/${selectedVersion}/assignment-task`);
-    } else {
-      console.log(`尚未設定 ${itemKey} 的跳轉`);
+  }, [selectedVersion, versions]);
+
+
+
+  const handleFunctionClick = (itemKey) => {
+    //const pathBase = `/event/${id}/${selectedVersion}`;
+    const pathBase = `/event/${id}/`;
+    if (itemKey === "場地") {
+      setVenueCompleted(true);
+      navigate(`${pathBase}venue`);
+    } else if (itemKey === "報名表單") {
+      setFormCompleted(true);
+      navigate(`${pathBase}check-registration`);
+    } else if (itemKey === "邀請函") {
+      navigate(`${pathBase}invitation`);
+    } else if (itemKey === "文案") {
+      navigate(`${pathBase}copywriting`);
+    } else if (itemKey === "Task assignment") {
+      navigate(`${pathBase}assignment-task`);
     }
   };
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchEventVersion = async () => {
       try {
         const response = await fetch(
-          `https://genai-backend-2gji.onrender.com/api/events/${id}/versions/${version_id}/`,
+           `https://genai-backend-2gji.onrender.com/api/events/${id}/`,
           {
             headers: {
               Authorization: `Token ${token}`,
             },
           }
         );
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const data = await response.json();
-        setEventData(data.event_snapshot); // Only snapshot data
+        console.log(data);
+        
+        if (data.event_snapshot) {
+          // 未來有多版本（如 /versions/<id>/）的需求才使用 event_snapshot
+          setEventData(data.event_snapshot);
+          setFormData(data.event_snapshot);
+        } else {
+          //第一次進來 實際從 GET /api/events/<id>/ 拿到的資料
+          setEventData(data);
+          setFormData(data);
+        }
       } catch (err) {
         setError(err.message);
         console.error("Failed to fetch event version:", err);
@@ -75,121 +143,328 @@ const EventDetailPage = () => {
     };
 
     fetchEventVersion();
-  }, [id, versions]);
+  }, [id, token]);
 
-  // Check if the feature is enabled
   const isItemEnabled = (item) =>
-    item.requires.every((dep) => {
-      if (dep === "場地") return venueCompleted;
-      if (dep === "報名表單") return formCompleted;
-      return true;
-    });
+    item.requires.every((dep) =>
+      dep === "場地" ? venueCompleted : dep === "報名表單" ? formCompleted : true
+    );
+ 
+  const handleChange = (e) => { // 表單變更欄位更新
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave_Change = async () => {// 更改欄位儲存 patch
+  try {
+    const response = await fetch(
+      `https://genai-backend-2gji.onrender.com/api/events/${id}/update/`, 
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`PATCH failed: ${response.status} ${JSON.stringify(errorData)}`);
+    }
+
+    const updatedData = await response.json();
+    console.log("✅ PATCH 成功，回傳資料:", updatedData);
+
+      setEventData(updatedData);
+      //setIsEditing(false);
+      alert("Change saved successfully.");
+    } catch (error) {
+      console.error("❌ handleSave_Change 發生錯誤:", error);
+      alert("Failed to save changes.");
+    }
+  }; 
+
+  const handleSave_Version = async () => {// post 存活動版本
+    try {
+      const response = await fetch(
+        `https://genai-backend-2gji.onrender.com/api/events/${id}/save-version/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${token}`,
+          },
+          body: JSON.stringify({ event_snapshot: formData }),
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`POST failed: ${response.status} ${JSON.stringify(errorData)}`);
+      }
+
+      const data = await response.json();
+      console.log("Save data", data);
+      
+      setIsEditing(false);
+      alert("Event updated successfully.");    
+      //如果你有版本列表可選，可以更新版本
+      // if (!versions.includes(`v${data.version_id}`)) {
+      //   setVersions([...versions, `v${data.version_id}`]);
+      //   setSelectedVersion(`v${data.version_id}`);
+      // }
+      // 再次獲取版本列表
+      const res = await fetch(
+        `https://genai-backend-2gji.onrender.com/api/events/${id}/versions/`, 
+        {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch updated versions");
+      const updatedVersions = await res.json();
+      setVersions(updatedVersions);
+      setSelectedVersion(`v${updatedVersions.length}`); // 選中新版本
+
+    } catch (err) {
+      console.error("Failed to save changes:", err);
+      alert("Failed to save changes.");
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
-      {/* Version menu on the left column */}
-      <div className="w-32 p-4 border-r border-white/10 bg-white/5">
-        <h3 className="text-md font-semibold mb-4 text-cyan-300">版本</h3>
-          <ul className="space-y-2">
-            {versions.map((ver) => (
-              <li key={ver}>
-                <button
-                  className={`w-full text-left px-3 py-2 rounded-lg transition ${
-                    selectedVersion === ver
-                      ? "bg-cyan-600 text-white"
-                      : "hover:bg-white/10 text-gray-300"
-                  }`}
-                  onClick={() => setSelectedVersion(ver)}
-                >
-                  {ver.toUpperCase()}
-                </button>
+      {/* Left menu (Menu + Back) */}
+    <div className="w-64 p-6 border-r border-white/10 bg-white/5 flex flex-col justify-between">
+      <div>
+        <h3 className="text-xl font-bold mb-4">📌 Menu</h3>
+        <ul className="space-y-2">
+          {sidebarItems.map((item, index) => {
+            const enabled = isItemEnabled(item);
+            return (
+              <li
+                key={index}
+                className={`p-2 rounded-xl transition ${
+                  enabled
+                    ? "hover:bg-white/20 cursor-pointer text-white"
+                    : "text-gray-500 cursor-not-allowed"
+                }`}
+                onClick={() => {
+                  if (enabled) handleFunctionClick(item.key);
+                }}
+              >
+                {item.label}
               </li>
-            ))}
-          </ul>
+            );
+          })}
+        </ul>
       </div>
 
-      {/* Main UI */}
-      <div className="flex-1 flex">
-        {/* Meun function  on the left */}
-        <div className="w-64 p-6 border-r border-white/10 bg-white/5 flex flex-col justify-between">
-          <div>
-            <h3 className="text-xl font-bold mb-4">📌 Menu</h3>
-            <ul className="space-y-2">
-              {sidebarItems.map((item, index) => {
-                const enabled = isItemEnabled(item);
-                return (
-                  <li
-                    key={index}
-                    className={`p-2 rounded-xl transition ${
-                      enabled
-                        ? "hover:bg-white/20 cursor-pointer text-white"
-                        : "text-gray-500 cursor-not-allowed"
-                    }`}
-                    onClick={() => {
-                      if (enabled) handleFunctionClick(item.key);
-                    }}
-                  >
-                    {item.label}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+      <button
+        onClick={() => navigate("/home")}
+        className="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 text-sm rounded-lg shadow border border-gray-400"
+      >
+        ← Back
+      </button>
+    </div> 
 
-          {/* Back Button */}
-          <div className="mt-6">
+    {/* Version menu — 放到中間 */}
+    <div className="w-32 p-4 border-r border-white/10 bg-white/5">
+      <h3 className="text-md font-semibold mb-4 text-cyan-300">Version</h3>
+      
+      {/* 渲染 versions 清單時映射 UI 版本號（v1, v2, v3） */}
+      <ul className="space-y-2">
+          {versions.map((ver, index) => (
+            <li key={ver.id}>
+              <button
+                className={`w-full text-left px-3 py-2 rounded-lg transition ${
+                  selectedVersion === `v${index + 1}`
+                    ? "bg-cyan-600 text-white"
+                    : "hover:bg-white/10 text-gray-300"
+                }`}
+                onClick={() => setSelectedVersion(`v${index + 1}`)}
+              >
+                {`v${index + 1}`}
+              </button>
+            </li>
+          ))}
+        </ul>
+
+    </div>
+
+      {/* Right main content */}
+      {/* 右側內容區 */}
+      <div className="flex-1 p-6">
+        <h2 className="text-2xl font-bold mb-4">
+          🧾 Event {id} {selectedVersion ? `- ${selectedVersion.toUpperCase()}` : ""}
+        </h2>
+
+        <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl h-[400px] overflow-y-auto shadow-inner text-sm leading-relaxed space-y-2">
+        {error ? (
+          <p className="text-red-400">Fail to load：{error}</p>
+        ) : !eventData ? (
+          <p>Loading ...</p>
+        ) : isEditing ? (
+          <>
+            <label>
+              🎉 Name:
+              <input
+                className="text-black p-1 ml-2 rounded"
+                name="name"
+                value={formData.name || ""}
+                onChange={handleChange}
+              />
+            </label><br />
+
+            <label>
+              📣 Slogan:
+              <input
+                className="text-black p-1 ml-2 rounded"
+                name="slogan"
+                value={formData.slogan || ""}
+                onChange={handleChange}
+              />
+            </label><br />
+
+            <label>
+              📋 Description:<br />
+              <textarea
+                className="text-black w-full p-1 rounded"
+                name="description"
+                value={formData.description || ""}
+                onChange={handleChange}
+              />
+            </label><br />
+
+            <label>
+              📆 Start:
+              <input
+                className="text-black p-1 ml-2 rounded"
+                name="start_time"
+                value={formData.start_time || ""}
+                onChange={handleChange}
+              />
+            </label><br />
+
+            <label>
+              📆 End:
+              <input
+                className="text-black p-1 ml-2 rounded"
+                name="end_time"
+                value={formData.end_time || ""}
+                onChange={handleChange}
+              />
+            </label><br />
+
+            <label>
+              👥 Expected Attendees:
+              <input
+                className="text-black p-1 ml-2 rounded"
+                name="expected_attendees"
+                value={formData.expected_attendees || ""}
+                onChange={handleChange}
+              />
+            </label><br />
+
+            <label>
+              💰 Budget:
+              <input
+                className="text-black p-1 ml-2 rounded"
+                name="budget"
+                value={formData.budget || ""}
+                onChange={handleChange}
+              />
+            </label><br />
+            <label>
+            🎯 Audience:
+              <select
+                name="target_audience"
+                value={formData.target_audience || ""}
+                onChange={handleChange}
+                className="text-black p-1 ml-2 rounded"
+              >
+                <option value="" disabled>Select Audience</option>
+                {AUDIENCE_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </label><br />
+            
+
+            {/* 加入 EVENT_TYPE_OPTIONS 下拉選擇 */}
+            <label>
+              📂 Event Type:
+              <select
+                name="type"
+                value={formData.type || ""}
+                onChange={handleChange}
+                className="text-black p-1 ml-2 rounded"
+              >
+                <option value="" disabled>Select Type</option>
+                {EVENT_TYPE_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </label><br />
+
+    </>
+      ) : (
+        <>
+          <p><strong>🎉 Name:</strong> {eventData.name}</p>
+          <p><strong>📣 Slogan:</strong> {eventData.slogan}</p>
+          <p><strong>📋 Description:</strong> {eventData.description}</p>
+          <p><strong>📆 Date:</strong> {eventData.start_time} ~ {eventData.end_time}</p>
+          <p><strong>👥 Expected Attendees:</strong> {eventData.expected_attendees}</p>
+          <p><strong>💰 Budget:</strong> {eventData.budget}</p>
+          <p><strong>🎯 Audience:</strong> {eventData.target_audience}</p> {/* 加入 AUDIENCE_OPTIONS下拉選擇 */}
+          {/* 加入 EVENT_TYPE_OPTIONS 下拉選擇 */}
+          <p><strong>📂 Event Type:</strong> {eventData.type}</p>
+        </>
+      )}
+    </div>
+
+
+        {/* Buttons */}
+        <div className="flex gap-4 mt-6">
+          {isEditing ? (
+            <>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleSave_Change}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+              >
+                Save Change
+              </button>
+              
+              <button
+                onClick={handleSave_Version}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+              >
+                Save Version
+              </button>
+
+            </>
+          ) : (
             <button
-              onClick={() => navigate("/home")}
-              className="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 text-sm rounded-lg shadow border border-gray-400"
-            >
-              ← Back
-            </button>
-          </div>
-        </div>
-
-        {/* Right content area */}
-        <div className="flex-1 p-6">
-          <h2 className="text-2xl font-bold mb-4">
-            🧾 Event {id} - {selectedVersion.toUpperCase()}
-          </h2>
-          <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl h-[400px] overflow-y-auto shadow-inner">
-            {/* selectedVersion Event data */}
-              {error ? (
-                    <p className="text-red-400">Fail to load：{error}</p>
-                  ) : eventData ? (
-                    <div className="space-y-2 text-sm leading-relaxed">
-                      <p><strong>🎉 Event name：</strong> {eventData.name}</p>
-                      <p><strong>📣 Slogan：</strong> {eventData.slogan}</p>
-                      <p><strong>📋 Description：</strong> {eventData.description}</p>
-                      <p><strong>📆 Date：</strong> {eventData.start_time} ~ {eventData.end_time}</p>
-                      <p><strong>🎯 Target Audience：</strong> {eventData.target_audience}</p>
-                      <p><strong>👥 Expected Attendees：</strong> {eventData.expected_attendees}</p>
-                      <p><strong>💰 Budge：</strong> {eventData.budget}</p>
-                      <p><strong>🛠 State：</strong> {eventData.status}</p>
-                    </div>
-                  ) : (
-                    <p>Loading ...</p>
-                  )}
-          </div>
-
-          <div className="flex gap-10 mt-6">
-            <button
-              onClick={() => alert("Change clicked")}
-              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+              onClick={handleEdit}
+              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg"
             >
               Change
             </button>
-            <button
-              onClick={() => alert("Save clicked")}
-              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
-            >
-              Save
-            </button>
-          </div>
+          )}
         </div>
       </div>
-      
-      
     </div>
   );
 };

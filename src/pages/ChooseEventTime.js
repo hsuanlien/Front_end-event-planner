@@ -10,8 +10,7 @@ const ChooseEventTime = () => {
     startTime: "",
     endTime: "",
   });
-
-
+  
   useEffect(() => {
     const fetchEventDate = async () => {
       const token = localStorage.getItem("token");
@@ -127,12 +126,6 @@ const ChooseEventTime = () => {
         </button>
 
         <div className="flex gap-10">
-          <button
-            onClick={() => alert("Change clicked")}
-            className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
-          >
-            Change
-          </button>
           <button
             onClick={handleSubmit}
             className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"

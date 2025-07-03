@@ -56,7 +56,7 @@ const Invitation = () => {
       if (response?.invitation_list?.length > 0) {
         // 可根據需要儲存 invitation ID / 顯示成功訊息
         localStorage.setItem("latestInvitation", JSON.stringify(response.invitation_list[0]));
-        navigate(`/event/${id}/${version}/check-invitation`);
+        navigate(`/event/${id}/check-invitation`);
       } else {
         throw new Error("No invitation returned");
       }
@@ -70,7 +70,7 @@ const Invitation = () => {
     <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white p-8">
       <div className="max-w-3xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl">
         <h2 className="text-3xl font-bold mb-6 text-cyan-300">
-          🎨 Event {id} - {version.toUpperCase()} Invitation Letter Info
+          🎨 Event {id} Invitation Letter Info
         </h2>
 
         {/** 表單欄位 */}

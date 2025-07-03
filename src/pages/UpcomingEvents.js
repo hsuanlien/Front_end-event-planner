@@ -9,6 +9,7 @@ const UpcomingEvents = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  //const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -37,8 +38,36 @@ const UpcomingEvents = () => {
     fetchEvents();
   }, []);
 
-  const handleClick = (id) => {
-    navigate(`/event/${id}/choose-event-time`);
+  const handleClick = async (id) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${API_BASE}/events/${id}/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("無法載入活動詳情");
+      }
+
+      const data = await res.json();
+      const startTime = data.start_time;
+      const endTime = data.end_time;
+
+      // 如果是初始預設值，表示尚未設定時間
+      if (
+        startTime?.endsWith("00:00:00Z") &&
+        endTime?.endsWith("23:59:59Z")
+      ) {
+        navigate(`/event/${id}/choose-event-time`);
+      } else {
+        navigate(`/event/${id}`);
+      }
+    } catch (err) {
+      console.error("載入活動詳情失敗：", err);
+      alert("無法載入活動詳情，請稍後再試");
+    }
   };
 
   if (loading) return <div className="text-gray-300">載入中...</div>;

@@ -27,7 +27,7 @@ const AddEvent = () => {
       goal: goal.trim(),
       type,
       date,
-      budget: budget * 100,
+      budget: budget,
       target_audience: audience,
       atmosphere,
     };
@@ -107,12 +107,12 @@ const AddEvent = () => {
 
           {/* Budget Slider 0‑100 (×100) */}
            <label>
-             Budget : {budget} dollar
+             Budget : {budget} EUR
             <input
               type="range"
-               min={1000}
-               max={10000}
-               step={500}
+               min={50}
+               max={1000}
+               step={50}
                value={budget}
                onChange={(e) => setBudget(Number(e.target.value))}
                style={{ width: "300px", marginLeft: "10px" }}

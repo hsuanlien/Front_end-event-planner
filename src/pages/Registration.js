@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// 0618Task1 
+// 表單
 const Registration= () => {
   const { id, version } = useParams();
   const navigate = useNavigate();
@@ -22,7 +22,6 @@ const Registration= () => {
 
   const handleSubmit = () => {
     console.log("送出的資料:", formData);
-    //navigate(`/event/${id}/${version}`);
   };
 
   return (
@@ -71,7 +70,7 @@ const Registration= () => {
     {/* 右下角 Add / Change / Save 按鈕 */}
       <div className="flex gap-10">
         <button
-          onClick={() => navigate("/event/:id/:version/check-registration")}
+          onClick={() => navigate("/event/:id/check-registration")}
           className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
         >
           Save
