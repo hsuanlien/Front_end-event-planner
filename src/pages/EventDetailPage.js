@@ -31,8 +31,8 @@ const EventDetailPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
 
-  const [venueCompleted, setVenueCompleted] = useState(true);
-  const [formCompleted, setFormCompleted] = useState(true);
+  const [taskCompleted, setTaskCompleted] = useState(false); // do Task assignment
+  const [venueCompleted, setVenueCompleted] = useState(true); //  do Venue select
 
   const [versions, setVersions] = useState([]); // 空的
   const [selectedVersion, setSelectedVersion] = useState(""); // 初始沒有選
@@ -41,9 +41,9 @@ const EventDetailPage = () => {
   const sidebarItems = [
     { label: "Task assignment", key: "Task assignment", requires: [] },
     { label: "Venue Selection", key: "場地", requires: [] },
-    { label: "Registration Form", key: "報名表單", requires: [] },
-    { label: "Invitation letter", key: "邀請函", requires: ["場地", "報名表單"] },
-    { label: "Social media post", key: "文案", requires: ["場地", "報名表單"] },
+    { label: "Registration Form", key: "報名表單", requires: ["場地", "Task assignment"] },
+    { label: "Invitation letter", key: "邀請函", requires: ["場地", "Task assignment"] },
+    { label: "Social media post", key: "文案", requires: ["場地", "Task assignment"] },
   ];
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const EventDetailPage = () => {
         const data = await response.json();
         console.log("fetched versions:", data);
 
-          // 👉 依照 version_number 升冪排序
+          // 依照 version_number 升冪排序
         const sortedData = [...data].sort((a, b) => a.version_number - b.version_number);
 
 
@@ -91,6 +91,13 @@ const EventDetailPage = () => {
     }
   }, [selectedVersion, versions]);
 
+  useEffect(() => {
+    const taskStatus = localStorage.getItem(`taskCompleted_${id}`) === "true";
+    const venueStatus = localStorage.getItem(`venueCompleted_${id}`) === "true";
+    setTaskCompleted(taskStatus);
+    setVenueCompleted(venueStatus);
+  }, [id]);
+
 
 
   const handleFunctionClick = (itemKey) => {
@@ -98,15 +105,19 @@ const EventDetailPage = () => {
     const pathBase = `/event/${id}/`;
     if (itemKey === "場地") {
       setVenueCompleted(true);
+      localStorage.setItem(`venueCompleted_${id}`, "true");
+      console.log("setVenueCompleted : ", setVenueCompleted);
       navigate(`${pathBase}venue`);
     } else if (itemKey === "報名表單") {
-      setFormCompleted(true);
       navigate(`${pathBase}check-registration`);
     } else if (itemKey === "邀請函") {
       navigate(`${pathBase}invitation`);
     } else if (itemKey === "文案") {
       navigate(`${pathBase}copywriting`);
     } else if (itemKey === "Task assignment") {
+      setTaskCompleted(true);  // 模擬完成
+      localStorage.setItem(`taskCompleted_${id}`, "true");
+      console.log("taskCompleted : ", setTaskCompleted);
       navigate(`${pathBase}assignment-task`);
     }
   };
@@ -146,10 +157,12 @@ const EventDetailPage = () => {
   }, [id, token]);
 
   const isItemEnabled = (item) =>
-    item.requires.every((dep) =>
-      dep === "場地" ? venueCompleted : dep === "報名表單" ? formCompleted : true
-    );
- 
+    item.requires.every((dep) => {
+      if (dep === "場地") return venueCompleted;
+      if (dep === "Task assignment") return taskCompleted;
+      return true;
+    });
+    
   const handleChange = (e) => { // 表單變更欄位更新
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -160,34 +173,35 @@ const EventDetailPage = () => {
   };
 
   const handleSave_Change = async () => {// 更改欄位儲存 patch
-  try {
-    const response = await fetch(
-      `https://genai-backend-2gji.onrender.com/api/events/${id}/update/`, 
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
-        },
-        body: JSON.stringify(formData),
+    setIsEditing(false);
+    try {
+      const response = await fetch(
+        `https://genai-backend-2gji.onrender.com/api/events/${id}/update/`, 
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${token}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`PATCH failed: ${response.status} ${JSON.stringify(errorData)}`);
       }
-    );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`PATCH failed: ${response.status} ${JSON.stringify(errorData)}`);
-    }
+      const updatedData = await response.json();
+      console.log("PATCH 成功，回傳資料:", updatedData);
 
-    const updatedData = await response.json();
-    console.log("✅ PATCH 成功，回傳資料:", updatedData);
-
-      setEventData(updatedData);
-      //setIsEditing(false);
-      alert("Change saved successfully.");
-    } catch (error) {
-      console.error("❌ handleSave_Change 發生錯誤:", error);
-      alert("Failed to save changes.");
-    }
+        setEventData(updatedData);
+        //setIsEditing(false);
+        //alert("Change saved successfully.");
+      } catch (error) {
+        console.error("handleSave_Change error:", error);
+        //alert("Failed to save changes.");
+      }
   }; 
 
   const handleSave_Version = async () => {// post 存活動版本
@@ -442,26 +456,36 @@ const EventDetailPage = () => {
 
               <button
                 onClick={handleSave_Change}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+                className="bg-cyan-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
               >
                 Save Change
               </button>
               
-              <button
+              {/* <button
                 onClick={handleSave_Version}
                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
               >
                 Save Version
-              </button>
+              </button> */}
 
             </>
           ) : (
+             <>
             <button
               onClick={handleEdit}
               className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg"
             >
               Change
             </button>
+
+            <button
+                onClick={handleSave_Version}
+                className="bg-cyan-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+              >
+                Save Version
+              </button>
+
+            </>
           )}
         </div>
       </div>

@@ -14,6 +14,7 @@ const TaskAssignmentPage = () => {
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [deleteRole, setDeleteRole] = useState("");
   const [eventDate, setEventDate] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const API_BASE = "https://genai-backend-2gji.onrender.com/api";
 
   const [newTask, setNewTask] = useState({
@@ -63,6 +64,8 @@ const TaskAssignmentPage = () => {
         } catch (err) {
           console.error("Fetch failed:", err);
           setError("fail to fetch from server");
+        } finally {
+          setIsLoading(false); // ✅ 確保無論成功或失敗都會設為 false
         }
       };
 
@@ -224,8 +227,18 @@ const TaskAssignmentPage = () => {
             ← Back
           </button>
         </div>
+
         <div className="flex-1 flex-column max-h-screen overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4">
-          {tasks.length > 0 ? (
+          
+          {isLoading ? (
+            <div className="text-white text-xl font-semibold animate-pulse">
+              Loading...
+            </div>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : (
+          
+          // {tasks.length > 0 ? (
             tasks.map((task, idx) => (
               <div
                 key={idx}
@@ -246,10 +259,10 @@ const TaskAssignmentPage = () => {
                 </p>
               </div>
             ))
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
-          ) : (
-            <p>loading...</p>
+          // ) : error ? (
+          //   <p className="text-red-500">{error}</p>
+          // ) : (
+          //   <p>loading...</p>
           )}
         </div>
         <div className="w-1/6 flex-col gap-4 items-start max-h-screen overflow-y-hidden">

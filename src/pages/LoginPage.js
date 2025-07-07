@@ -105,43 +105,16 @@ function LoginPage() {
         >
           Not have an account ? Sign up
         </button>
-      </form>
-      {/* 登入表單卡片 */}
-      {/* <div className="backdrop-blur-md bg-white/10 p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-white/20 z-10">
-        <h2 className="text-2xl font-semibold text-center text-white mb-6 tracking-wide">
-          Login
-        </h2>
-
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-3 mb-4 bg-white/20 text-white placeholder-gray-300 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 mb-6 bg-white/20 text-white placeholder-gray-300 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
-        />
 
         <button
-          onClick={handleLogin}
-          className="w-full bg-cyan-500 text-white py-3 rounded-lg hover:bg-cyan-600 transition font-semibold tracking-wide shadow-lg"
-        >
-          Submit
-        </button>
-
-        <button
-          onClick={() => navigate('/register')}
+          type="button" // ✅ 避免這個 button 被當作 submit
+          onClick={() => navigate('/forget-passwort')}
           className="w-full mt-4 text-cyan-300 hover:underline text-sm text-center"
         >
-           Not have an account ? Sign up
+          Forget Passwort
         </button>
-      </div> */}
+      </form>
+     
     </div>
   );
 }

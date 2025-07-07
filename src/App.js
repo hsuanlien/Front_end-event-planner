@@ -25,6 +25,7 @@ import CheckCopywriting from "./pages/CheckCopywriting";
 import Registration from "./pages/Registration";
 import CheckRegistration from "./pages/CheckRegistration";
 import ChooseEventTime from "./pages/ChooseEventTime";
+import Forget_Passwort from "./pages/ForgetPasswort";
 
 function App() {
   return (
@@ -77,7 +78,8 @@ function App() {
         <Route path="/event/:id/:version/check-registration" element={<CheckRegistration />} /> */}
         <Route path="/event/:id/registration" element={<Registration />} />
         <Route path="/event/:id/check-registration" element={<CheckRegistration />} />
-
+        
+        <Route path="/forget-passwort" element={<Forget_Passwort />} />
 
       </Routes>
     </Router>

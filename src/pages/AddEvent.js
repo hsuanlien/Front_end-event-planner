@@ -41,7 +41,7 @@ const AddEvent = () => {
       });
 
       if (response.status === 201) {
-        console.log("✅ 活動建立成功：", response.data);
+        console.log("Event created successfully：", response.data);
         navigate("/choose-name", {
           state: {
             eventId: response.data.event_id,
