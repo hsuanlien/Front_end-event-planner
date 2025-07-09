@@ -35,6 +35,7 @@ const HomePage = () => {
         alert("登出時發生錯誤");
       }
     };
+
     return (
     <div className="min-h-screen flex bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white overflow-hidden">
       {/* Sidebar 側邊欄 */}
@@ -50,6 +51,7 @@ const HomePage = () => {
             >
               ➕ Add Event
             </button>
+
             <button
               onClick={() => navigate("/upcoming-events")}
               className="hover:text-cyan-400 transition text-left"
@@ -69,6 +71,7 @@ const HomePage = () => {
         <button
           onClick={handleLogout}
           className="text-red-400 hover:text-red-300 text-left"
+    
         >
           🚪 Log out
         </button>

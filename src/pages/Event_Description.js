@@ -100,12 +100,12 @@ const Event_Description = () => {
       console.error("❌ 發送請求錯誤：", err);
       alert("An error occurred while saving.");
     }
-    navigate("/home");
+    navigate("/upcoming-events");
   };
 
 
   const handleNext_ = () => {
-    navigate("/home");
+    navigate("/upcoming-events");
   };
 
   return (
@@ -212,95 +212,3 @@ const Event_Description = () => {
 };
 
 export default Event_Description;
-// import React from "react";
-// import { useNavigate, useLocation } from "react-router-dom";
-
-// const Event_Description = () => {
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   const {
-//     eventId,
-//     eventName,
-//     selectedSlogan,
-//     description,
-//     expected_attendees,
-//     suggested_time,
-//     suggested_event_duration,
-//   } = location.state || {};
-
-//   const token = localStorage.getItem("token");
-
-//   const handleConfirm = async () => {
-//     try {
-//       const response = await fetch(
-//         `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
-//         {
-//           method: "PATCH",
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Token ${token}`,
-//           },
-//           body: JSON.stringify({
-//             name: eventName,
-//             slogan: selectedSlogan,
-//             description,
-//             expected_attendees,
-//             suggested_time,
-//             suggested_event_duration,
-//           }),
-//         }
-//       );
-
-//       if (response.ok) {
-//         const result = await response.json();
-//         console.log("✅ 活動更新成功：", result);
-//         navigate("/home");
-//       } else {
-//         const errorText = await response.text();
-//         console.error("❌ 更新失敗：", errorText);
-//       }
-//     } catch (err) {
-//       console.error("❌ 發送 PATCH 請求錯誤：", err);
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
-//       <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-8 border border-white/20 shadow-lg max-w-xl w-full">
-//         <h1 className="text-3xl font-bold mb-6 text-center drop-shadow-md">
-//           📝 Event Description
-//         </h1>
-//         <div className="space-y-4">
-//           <div>
-//             <strong className="text-cyan-400">Event name：</strong> {eventName}
-//           </div>
-//           <div>
-//             <strong className="text-cyan-400">Event slogan：</strong> {selectedSlogan}
-//           </div>
-//           <div>
-//             <strong className="text-cyan-400">Expected Attendees：</strong> {expected_attendees}
-//           </div>
-//           <div>
-//             <strong className="text-cyan-400">Suggested time：</strong> {suggested_time}
-//             <span className="text-sm text-white/80">（Total: {suggested_event_duration}）</span>
-//           </div>
-//           <div>
-//             <strong className="text-cyan-400">Description：</strong>
-//             <p className="mt-2 whitespace-pre-line">{description}</p>
-//           </div>
-//         </div>
-//         <div className="flex justify-end pt-6">
-//           <button
-//             onClick={handleConfirm}
-//             className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
-//           >
-//             Next
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Event_Description;

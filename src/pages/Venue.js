@@ -20,6 +20,7 @@ const Venue = () => {
       return;
     }
     const token = localStorage.getItem("token"); // 假設你登入後存在這裡 
+    //console.log("venue", token);
     // @@venue ID沒有get, 沒辦法更新
     try {
       const res = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-venues/${id}/`, {

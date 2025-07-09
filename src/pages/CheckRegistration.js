@@ -289,7 +289,7 @@ const CheckRegistration = () => {
                     >
                       {isEditing ? (
                         <>
-                          <input
+                          {/* <input
                             type="text"
                             placeholder="Description"
                             className="flex-1 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -298,7 +298,7 @@ const CheckRegistration = () => {
                               handleFieldChange(index, "description", e.target.value)
                             }
                             disabled={saving || sending}
-                          />
+                          /> */}
                           <input
                             type="text"
                             placeholder="Registration Name"
@@ -306,6 +306,16 @@ const CheckRegistration = () => {
                             value={field.registration_name}
                             onChange={(e) =>
                               handleFieldChange(index, "registration_name", e.target.value)
+                            }
+                            disabled={saving || sending}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Description"
+                            className="flex-1 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                            value={field.description}
+                            onChange={(e) =>
+                              handleFieldChange(index, "description", e.target.value)
                             }
                             disabled={saving || sending}
                           />

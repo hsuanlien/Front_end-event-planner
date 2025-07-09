@@ -8,7 +8,7 @@ function LoginPage() {
 
   const handleLogin = () => {
     if (username && password) {
-      navigate('/home');
+      navigate('/upcoming-events');
     }
   };
 

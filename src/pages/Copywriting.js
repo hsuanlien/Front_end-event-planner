@@ -73,6 +73,16 @@ const Copywriting = () => {
         setCurrentHashtagInput(e.target.value);
     };
 
+    const handleIncludeEmojiChange = (value) => { // The value of emojiLevel is automatically updated according to includeEmoji
+        setIncludeEmoji(value);
+        if (value === 'false') {
+            setEmojiLevel('None');
+        } else {
+            setEmojiLevel(''); // Reset to blank so user selects manually
+        }
+    };
+
+
     const handleHashtagInputKeyDown = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault(); // Prevent default behavior
@@ -110,10 +120,10 @@ const Copywriting = () => {
         return `${content.trim()}\n\n${formattedTags}`;
     };
 
-    const handleSubmit = async (e) => {// 送出 post
+    const handleSubmit = async (e) => {// post
         e.preventDefault();
 
-        if (!platform || !tone || !hookType || !emojiLevel || !language) {
+        if (!platform || !tone || !hookType || (includeEmoji === 'true' && !emojiLevel)  || !language) {
             alert("Please fill out all required fields (Platform, Tone, Hook Type, Emoji Level, Language).");
             return;
         }
@@ -127,7 +137,8 @@ const Copywriting = () => {
             tone,
             hook_type: hookType,
             include_emoji: includeEmoji === 'true',
-            emoji_level: emojiLevel,
+            //emoji_level: emojiLevel,
+            emoji_level: includeEmoji === 'true' ? emojiLevel : "None",
             power_words: powerWords.split(',').map(w => w.trim()).filter(Boolean),
             hashtag_seeds: hashtagSeeds,
             language
@@ -160,7 +171,7 @@ const Copywriting = () => {
                         }
                     } else {
                         const errorData = await response.json();
-                        alert(`❌ Copy generation failed：${errorData.detail || errorData.message || "server error"}`);
+                        alert(`Copy generation failed：${errorData.detail || errorData.message || "server error"}`);
                         console.error("Copywriting generation error:", errorData);
                     }
                 } catch (error) {
@@ -260,7 +271,8 @@ const Copywriting = () => {
                         <select
                             className="w-full p-3 rounded-lg bg-gray-100 text-gray-900 text-gray-900 border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 appearance-none"
                             value={includeEmoji}
-                            onChange={(e) => setIncludeEmoji(e.target.value)}
+                            //onChange={(e) => setIncludeEmoji(e.target.value)}
+                            onChange={(e) => handleIncludeEmojiChange(e.target.value)}
                             required
                         >
                             <option value="true" className="text-gray-900 bg-white" style={{color: 'rgb(17 24 39)', backgroundColor: 'white'}}>True</option>
@@ -275,13 +287,22 @@ const Copywriting = () => {
                             className="w-full p-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 appearance-none"
                             value={emojiLevel}
                             onChange={(e) => setEmojiLevel(e.target.value)}
-                            required
+                            //if choose no includeEmoji -> can not choose level
+                            disabled={includeEmoji === 'false'}
+                            required={includeEmoji === 'true'}
                         >
-                            <option value="" disabled className="text-gray-500 bg-white">Choose Level</option>
-                            {emojiLevelOptions.map(opt => (
-                                <option key={opt} value={opt} className="text-gray-900 bg-white" style={{color: 'rgb(17 24 39)', backgroundColor: 'white'}}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
-                            ))}
+                        {includeEmoji === 'true' ? (
+                            <>
+                                <option value="" disabled className="text-gray-500 bg-white">Choose Emoji Level</option>
+                                {emojiLevelOptions.map(opt => (
+                                    <option key={opt} value={opt} className="text-gray-900 bg-white">{opt}</option>
+                                ))}
+                            </>
+                        ) : (
+                            <option value="None" className="text-gray-900 bg-white">None</option>
+                        )}
                         </select>
+
                     </div>
 
                     {/* Power Words Section */}

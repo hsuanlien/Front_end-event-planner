@@ -226,12 +226,7 @@ const EventDetailPage = () => {
       console.log("Save data", data);
       
       setIsEditing(false);
-      alert("Event updated successfully.");    
-      //如果你有版本列表可選，可以更新版本
-      // if (!versions.includes(`v${data.version_id}`)) {
-      //   setVersions([...versions, `v${data.version_id}`]);
-      //   setSelectedVersion(`v${data.version_id}`);
-      // }
+      alert("Successfully save event version.");    
       // 再次獲取版本列表
       const res = await fetch(
         `https://genai-backend-2gji.onrender.com/api/events/${id}/versions/`, 
@@ -242,8 +237,15 @@ const EventDetailPage = () => {
       });
       if (!res.ok) throw new Error("Failed to fetch updated versions");
       const updatedVersions = await res.json();
-      setVersions(updatedVersions);
-      setSelectedVersion(`v${updatedVersions.length}`); // 選中新版本
+      // ✅ 加排序
+        const sortedUpdatedVersions = [...updatedVersions].sort(
+          (a, b) => a.version_number - b.version_number
+        );
+      // setVersions(updatedVersions);
+      // setSelectedVersion(`v${updatedVersions.length}`); // 選中新版本
+
+      setVersions(sortedUpdatedVersions);
+      setSelectedVersion(`v${sortedUpdatedVersions.length}`);
 
     } catch (err) {
       console.error("Failed to save changes:", err);
@@ -280,7 +282,7 @@ const EventDetailPage = () => {
       </div>
 
       <button
-        onClick={() => navigate("/home")}
+        onClick={() => navigate("/upcoming-events")}
         className="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 text-sm rounded-lg shadow border border-gray-400"
       >
         ← Back
@@ -315,7 +317,7 @@ const EventDetailPage = () => {
       {/* 右側內容區 */}
       <div className="flex-1 p-6">
         <h2 className="text-2xl font-bold mb-4">
-          🧾 Event {id} {selectedVersion ? `- ${selectedVersion.toUpperCase()}` : ""}
+          🧾 Event {selectedVersion ? `- ${selectedVersion.toUpperCase()}` : ""}
         </h2>
 
         <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl h-[400px] overflow-y-auto shadow-inner text-sm leading-relaxed space-y-2">

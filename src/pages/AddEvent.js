@@ -105,7 +105,7 @@ const AddEvent = () => {
             <option value="Competition_Challenge">Competition / Challenge</option>
           </select>
 
-          {/* Budget Slider 0‑100 (×100) */}
+          {/* Budget Slider 0‑100 (×100) 滑桿會右移 */}
            <label>
              Budget : {budget} EUR
             <input

@@ -76,14 +76,6 @@ function ForgetPassword() {
         {message && (
           <p className="mt-4 text-green-300 text-center text-sm">{message}</p>
         )}
-
-        {/* <button
-          type="button"
-          onClick={() => navigate('/')}
-          className="w-full mt-4 text-cyan-300 hover:underline text-sm text-center"
-        >
-          Back to Login
-        </button> */}
       </form>
     </div>
   );

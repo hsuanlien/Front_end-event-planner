@@ -33,51 +33,44 @@ const TaskAssignmentPage = () => {
     end_time: ""
   });
 
-  const formatDateTimeToUTC = (localDateTime) => {
-    const date = new Date(localDateTime);
-    return date.toISOString();
-  };
 
   const eventId = localStorage.getItem("event_id");
   const token = localStorage.getItem("token");
+ // console.log("task", token);
 
   useEffect(() => {
       if (!eventId || !token) return;
-
-      const fetchGeneratedTasks = async () => {
+      
+      const fetchTasks = async () => {
         try {
-          const response = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-tasks/${eventId}/`, {
-            method: "POST",
+          const res = await fetch(`${API_BASE}/events/${eventId}/assignments/`, {
             headers: {
               Authorization: `Token ${token}`,
             },
           });
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch task data");
-          }
-
-          const data = await response.json();
-          console.log("Raw response data:", data);
-          console.log("task_summary_by_role:", data.task_summary_by_role);
-          setTasks(data.task_summary_by_role || []);
+          if (!res.ok) throw new Error("Failed to fetch tasks");
+          const data = await res.json();
+          // data 排序
+          const sortedTasks = data.sort((a, b) => a.id - b.id);
+          console.log("Fetched tasks:", data);
+          setTasks(sortedTasks);  // 顯示所有已經儲存的任務
         } catch (err) {
-          console.error("Fetch failed:", err);
-          setError("fail to fetch from server");
+          console.error("Fetching tasks failed:", err);
+          setError("Failed to fetch tasks from server");
         } finally {
-          setIsLoading(false); // ✅ 確保無論成功或失敗都會設為 false
+          setIsLoading(false);
         }
       };
 
-      fetchGeneratedTasks();
+      fetchTasks();
     }, [eventId, token]);
 
   useEffect(() => {
-  fetch(`${API_BASE}/events/${eventId}/`, {
-    headers: {
-      Authorization: `Token ${token}`,
-    },
-  })
+    fetch(`${API_BASE}/events/${eventId}/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    })
     .then((res) => {
       if (!res.ok) {
         throw new Error("Failed to fetch event");
@@ -85,8 +78,9 @@ const TaskAssignmentPage = () => {
       return res.json();
     })
     .then((data) => {
-      const startDate = data.start_time?.split("T")[0];
-      setEventDate(startDate);
+      setEventDate(data.start_time);
+      // const startDate = data.start_time?.split("T")[0];
+      // setEventDate(startDate);
     })
     .catch((err) => {
       console.error("Failed to fetch event:", err);
@@ -94,12 +88,18 @@ const TaskAssignmentPage = () => {
   }, [eventId, token]);
 
   const handleAddTask = () => {
+    console.log(tasks[0].start_time);
+    // console.log("event date:",eventDate);
+    let defaultStart = toLocalDateTimeString(eventDate); 
+    let defaultEnd = toLocalDateTimeString(tasks[0].end_time); 
+    console.log("event date:",eventDate);
+
     setNewTask({
       role: "",
       description: "",
       count: "",
-      start_time: `${eventDate}T00:00`,
-      end_time: `${eventDate}T23:59`
+      start_time: defaultStart,
+      end_time: defaultEnd,
     });
     setShowModalAdd(true);
     setShowModalEdit(false);
@@ -107,19 +107,24 @@ const TaskAssignmentPage = () => {
   };
 
   const handleEditTask = () => {
+    let defaultStart = toLocalDateTimeString(eventDate); 
+    let defaultEnd = toLocalDateTimeString(tasks[0].end_time); 
     setEdittedTask((prev) => ({
       ...prev,
-      start_time: `${eventDate}T00:00`,
-      end_time: `${eventDate}T23:59`
+      start_time: defaultStart,
+      end_time: defaultEnd
     }));
     setShowModalAdd(false);
     setShowModalEdit(true);
     setShowModalDelete(false);
   };
 
-  const toLocalDateTimeString = (isoString) => {
-    const date = new Date(isoString);
-    return date.toISOString().slice(0, 16); //  "YYYY-MM-DDTHH:mm"
+  const toLocalDateTimeString = (raw) => {
+    return raw.slice(0, 16);
+  };
+
+  const toIsoString = (str) => {
+    return str ? `${str}:00Z` : "";
   };
 
   const handleDeleteTask = () => {
@@ -162,23 +167,45 @@ const TaskAssignmentPage = () => {
           Authorization: `Token ${token}`
         },
         body: JSON.stringify({
-          ...newTask,
-          start_time: formatDateTimeToUTC(newTask.start_time),
-          end_time: formatDateTimeToUTC(newTask.end_time)
+          ...newTask, 
+          start_time: toIsoString(newTask.start_time),
+          end_time: toIsoString(newTask.end_time)
+          // start_time: newTask.start_time, // 直接送原本字串
+          // end_time: newTask.end_time
         })
       });
+      console.log("to Iso String:", toIsoString(newTask.end_time));
+      
       if (!response.ok) {
         throw new Error("Failed to add task");
       }
+
       const data = await response.json();
       setTasks([...tasks, data]);
-      setNewTask({ role: "", description: "", count: "", start_time: `${eventDate}T09:00`, end_time: `${eventDate}T23:00` });
+      setNewTask({ role: "", description: "", count: "", start_time: "", end_time:"" });
       setShowModalAdd(false);
     } catch (err) {
       console.error("Add failed:", err);
       alert("Add failed. Please try again later.");
     }
+    await fetchTasks();  // 重新抓資料
   };
+  
+  const fetchTasks = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/events/${eventId}/assignments/`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch tasks");
+        const data = await res.json();
+        setTasks(data);  // 這是正確的來源
+      } catch (err) {
+        console.error("Fetching tasks failed:", err);
+      }
+    };
+
 
   const handleConfirmEdit = async () => {
     const taskToEdit = tasks.find((task) => task.role === editRole);
@@ -195,8 +222,8 @@ const TaskAssignmentPage = () => {
         },
         body: JSON.stringify({
           ...editTask,
-          start_time: formatDateTimeToUTC(editTask.start_time),
-          end_time: formatDateTimeToUTC(editTask.end_time)
+          start_time: editTask.start_time,
+          end_time: editTask.end_time
         })
       });
       if (!response.ok) {
@@ -228,10 +255,12 @@ const TaskAssignmentPage = () => {
           </button>
         </div>
 
-        <div className="flex-1 flex-column max-h-screen overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4">
-          
+       {/* <div className="flex-1 flex-column max-h-screen overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4"> */}
+        <div className="flex-1 flex flex-col min-h-[85vh] overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4">
+
           {isLoading ? (
             <div className="text-white text-xl font-semibold animate-pulse">
+          {/*   <div className="flex justify-center items-center h-full text-white text-xl font-semibold animate-pulse" */}
               Loading...
             </div>
           ) : error ? (
@@ -252,9 +281,13 @@ const TaskAssignmentPage = () => {
                   People needed: {task.count}
                 </p>
                 <p className="text-sm text-gray-700">
+                  {/* Start at: {tasks[0].start_time.replace('T', ' ').replace('Z', '')} */}
+                  {/* Start at: {new Date(task.start_time).toLocaleString()} */}
                   Start at: {task.start_time}
                 </p>
                 <p className="text-sm text-gray-700">
+                  {/* <p>End: {tasks[0].end_time.replace('T', ' ').replace('Z', '')}</p> */}
+                    {/* End at: {new Date(task.end_time).toLocaleString()} */}
                   End at: {task.end_time}
                 </p>
               </div>
@@ -296,24 +329,24 @@ const TaskAssignmentPage = () => {
     {showModalAdd && (
       <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
         <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
-          <h2 className="text-xl font-bold">新增任務</h2>
+          <h2 className="text-xl font-bold">Add task</h2>
           <input
             type="text"
-            placeholder="角色"
+            placeholder="Character"
             className="w-full p-2 border rounded"
             value={newTask.role}
             onChange={(e) => setNewTask({ ...newTask, role: e.target.value })}
           />
           <input
             type="text"
-            placeholder="描述"
+            placeholder="Work description"
             className="w-full p-2 border rounded"
             value={newTask.description}
             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
           />
           <input
             type="number"
-            placeholder="人數"
+            placeholder="People needed"
             className="w-full p-2 border rounded"
             value={newTask.count}
             onChange={(e) => setNewTask({ ...newTask, count: e.target.value })}
@@ -341,7 +374,7 @@ const TaskAssignmentPage = () => {
               className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
               onClick={handleConfirmAdd}
             >
-              確認新增
+              Save
             </button>
           </div>
         </div>
@@ -351,7 +384,7 @@ const TaskAssignmentPage = () => {
 {showModalEdit && (
   <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
     <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
-      <h2 className="text-xl font-bold">編輯任務</h2>
+      <h2 className="text-xl font-bold">Edit task</h2>
 
       <select
         className="w-full p-2 border rounded"
@@ -371,7 +404,7 @@ const TaskAssignmentPage = () => {
           }
         }}
       >
-        <option value="" disabled>選擇任務角色</option>
+        <option value="" disabled>Choose character</option>
         {tasks.map((task, idx) => (
           <option key={idx} value={task.role}>{task.role}</option>
         ))}
@@ -379,14 +412,14 @@ const TaskAssignmentPage = () => {
 
       <input
         type="text"
-        placeholder="描述"
+        placeholder="Work description"
         className="w-full p-2 border rounded"
         value={editTask.description}
         onChange={(e) => setEdittedTask({ ...editTask, description: e.target.value })}
       />
       <input
         type="number"
-        placeholder="人數"
+        placeholder="People needed"
         className="w-full p-2 border rounded"
         value={editTask.count}
         onChange={(e) => setEdittedTask({ ...editTask, count: e.target.value })}
@@ -414,7 +447,7 @@ const TaskAssignmentPage = () => {
           className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
           onClick={handleConfirmEdit}
         >
-          確認編輯
+          Save
         </button>
       </div>
     </div>
@@ -446,7 +479,7 @@ const TaskAssignmentPage = () => {
               </button>
 
               <button
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
                 onClick={handleConfirmDelete}
               >
                 Confirm Delete

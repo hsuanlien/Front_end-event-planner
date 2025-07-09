@@ -46,33 +46,36 @@ const UserProfile = () => {
 
   const handleSave = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+  if (!token) return;
 
+  // 準備 payload，只在密碼有輸入時才加入 password 欄位
+    const payload = {
+      username,
+      email,
+      first_name: firstName,
+      last_name: lastName,
+      address,
+    };
+
+    if (password.trim() !== "") {
+      payload.password = password;
+    }
     try {
-      const response = await fetch("https://genai-backend-2gji.onrender.com/accounts/account-update/", {
-        method: "PUT",
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password: password || originalPassword,
-          email,
-          first_name: firstName,
-          last_name: lastName,
-          address,
-        }),
-      });
-
-      const result = await response.json();
+    const response = await fetch("https://genai-backend-2gji.onrender.com/accounts/account-update/", {
+      method: "PUT",
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
 
       if (response.ok) {
         alert("Data updated successfully");
-        setPassword("");
+        setPassword(""); // 清除密碼欄位
         localStorage.setItem("currentUser", JSON.stringify(result.user));
-        setOriginalPassword(result.user.password);
-        setIsEditable(false); // Lock the slot after successful saving
+        setIsEditable(false); // 鎖定欄位
       } else {
         alert("Update failed, please check your information or log in again");
         console.error("Update failed:", result);
@@ -81,6 +84,43 @@ const UserProfile = () => {
       console.error("Save error:", err);
       alert("Fail");
     }
+
+    // const token = localStorage.getItem("token");
+    // if (!token) return;
+
+    // try {
+    //   const response = await fetch("https://genai-backend-2gji.onrender.com/accounts/account-update/", {
+    //     method: "PUT",
+    //     headers: {
+    //       Authorization: `Token ${token}`,
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       username,
+    //       password: password || originalPassword,
+    //       email,
+    //       first_name: firstName,
+    //       last_name: lastName,
+    //       address,
+    //     }),
+    //   });
+
+    //   const result = await response.json();
+
+    //   if (response.ok) {
+    //     alert("Data updated successfully");
+    //     setPassword("");
+    //     localStorage.setItem("currentUser", JSON.stringify(result.user));
+    //     setOriginalPassword(result.user.password);
+    //     setIsEditable(false); // Lock the slot after successful saving
+    //   } else {
+    //     alert("Update failed, please check your information or log in again");
+    //     console.error("Update failed:", result);
+    //   }
+    // } catch (err) {
+    //   console.error("Save error:", err);
+    //   alert("Fail");
+    // }
   };
 
   return (
@@ -136,10 +176,10 @@ const UserProfile = () => {
         />
 
         {/* Edit and save buttons side by side */}
-        <div className="flex justify-end space-x-4 pt-2">
+        <div className="flex flex-row justify-end space-x-4 pt-2">
           <button
             onClick={() => setIsEditable(true)}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg font-semibold"
+            className="bg-cyan-500 hover:bg-cyan-600 text-white py-2 px-4 rounded-lg font-semibold"
             disabled={isEditable} // Avoid repeated clicks
           >
             Edit

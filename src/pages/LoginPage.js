@@ -39,7 +39,7 @@ function LoginPage() {
         console.log("使用者資訊：", profileRes.data);
 
         // 導向首頁
-        navigate('/home');
+        navigate('/upcoming-events');
       }
     } catch (error) {
       alert("⚠️ Login fail：" + 
