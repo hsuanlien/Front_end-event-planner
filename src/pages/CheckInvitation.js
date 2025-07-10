@@ -148,12 +148,19 @@ const CheckInvitation = () => {
           <div>
             <h2 className="text-2xl font-bold text-cyan-300 mb-2">Body</h2>
             {editMode ? (
+              // <textarea
+              //   // className="w-full min-h-[300px] p-3 text-black rounded-lg shadow bg-white resize-none"
+              //   className="w-full h-[300px] p-3 text-black rounded-lg shadow bg-white resize-none"
+              //   value={draft.body}
+              //   onChange={(e) => setDraft(prev => ({ ...prev, body: e.target.value }))}
+              // />
               <textarea
-                // className="w-full min-h-[300px] p-3 text-black rounded-lg shadow bg-white resize-none"
-                className="w-full h-[300px] p-3 text-black rounded-lg shadow bg-white resize-none"
-                value={draft.body}
-                onChange={(e) => setDraft(prev => ({ ...prev, body: e.target.value }))}
-              />
+                  className="w-full min-h-[300px] p-3 text-black rounded-lg shadow bg-white resize-y"
+                  style={{ height: "300px" }}
+                  value={draft.body}
+                  onChange={(e) => setDraft(prev => ({ ...prev, body: e.target.value }))}
+                />
+
             ) : (
               // <div className="w-full min-h-[50px] p-3 text-black rounded-lg shadow bg-white">
               <div className="w-full h-[300px] p-3 text-black rounded-lg shadow bg-white whitespace-pre-wrap">
@@ -167,7 +174,6 @@ const CheckInvitation = () => {
         <div className="mt-8 flex justify-between items-center">
         {/* <div className="fixed bottom-8 right-8 flex gap-4 z-50"> */}
           <button
-            // onClick={() => navigate(`/event/${id}`)}
             onClick={() => {
               if (hasSent) {
                 navigate(`/event/${id}`);
@@ -175,7 +181,6 @@ const CheckInvitation = () => {
                 alert("Please send the invitation before going back.");
               }
             }}
-            //className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow"
              className={`px-4 py-2 rounded-lg shadow ${
                   showSendModal
                     ? "bg-gray-600 hover:bg-gray-700 text-white cursor-pointer"

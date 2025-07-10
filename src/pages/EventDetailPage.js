@@ -56,7 +56,7 @@ const EventDetailPage = () => {
         });
         if (!response.ok) throw new Error("Failed to fetch versions");
         const data = await response.json();
-        console.log("fetched versions:", data);
+        //console.log("fetched versions:", data);
 
           // 依照 version_number 升冪排序
         const sortedData = [...data].sort((a, b) => a.version_number - b.version_number);

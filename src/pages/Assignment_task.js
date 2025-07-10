@@ -32,27 +32,68 @@ const TaskAssignmentPage = () => {
     start_time: "",
     end_time: ""
   });
-
-
-  const eventId = localStorage.getItem("event_id");
   const token = localStorage.getItem("token");
- // console.log("task", token);
+  const eventId = id;
+
 
   useEffect(() => {
+    if (!id || !token) return;
+    const fetchGeneratedTasks = async () => {
+      try {
+        const res = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-tasks/${eventId}/`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`Fetch failed: ${res.status} ${errText}`);
+        }
+
+        const data = await res.json();
+        console.log("Generated tasks:", data);
+
+        if (data.task_summary_by_role) {
+          setTasks(data.task_summary_by_role|| []);
+        } else {
+          setError("No task_summary_by_role found in response.");
+        }
+      } catch (err) {
+        console.error("Error fetching generated tasks:", err);
+        setError("Failed to fetch generated tasks.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchGeneratedTasks();
+  }, [id, token]);
+
+/*
+  useEffect(() => {
       if (!eventId || !token) return;
-      
+      //console.log("eventId", eventId);
       const fetchTasks = async () => {
         try {
-          const res = await fetch(`${API_BASE}/events/${eventId}/assignments/`, {
+          const res = await fetch(`${API_BASE}/events/${id}/assignments/`, {
             headers: {
               Authorization: `Token ${token}`,
             },
           });
-          if (!res.ok) throw new Error("Failed to fetch tasks");
+          if (!res.ok) {
+              const errorText = await res.text();
+              throw new Error(`Error ${res.status}: ${errorText}`);
+            }
+
           const data = await res.json();
+          console.log("data", data);
           // data 排序
           const sortedTasks = data.sort((a, b) => a.id - b.id);
-          console.log("Fetched tasks:", data);
+          //console.log("Fetched tasks:", data);
           setTasks(sortedTasks);  // 顯示所有已經儲存的任務
         } catch (err) {
           console.error("Fetching tasks failed:", err);
@@ -63,10 +104,10 @@ const TaskAssignmentPage = () => {
       };
 
       fetchTasks();
-    }, [eventId, token]);
+    }, [eventId, token]);*/
 
   useEffect(() => {
-    fetch(`${API_BASE}/events/${eventId}/`, {
+    fetch(`${API_BASE}/events/${id}/`, {
       headers: {
         Authorization: `Token ${token}`,
       },
@@ -84,11 +125,12 @@ const TaskAssignmentPage = () => {
     })
     .catch((err) => {
       console.error("Failed to fetch event:", err);
+      setError("Network error or API unavailable.");
     });
-  }, [eventId, token]);
+  }, [id, token]);
 
   const handleAddTask = () => {
-    console.log(tasks[0].start_time);
+   // console.log(tasks[0].start_time);
     // console.log("event date:",eventDate);
     let defaultStart = toLocalDateTimeString(eventDate); 
     let defaultEnd = toLocalDateTimeString(tasks[0].end_time); 
@@ -192,6 +234,7 @@ const TaskAssignmentPage = () => {
   };
   
   const fetchTasks = async () => {
+    console.log("fetchTasks");
       try {
         const res = await fetch(`${API_BASE}/events/${eventId}/assignments/`, {
           headers: {
@@ -240,6 +283,19 @@ const TaskAssignmentPage = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white flex items-center justify-center p-6">
+        <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-lg max-w-xl w-full text-center border border-white/10">
+          <h2 className="text-2xl font-bold text-cyan-300 mb-4">📌 Loading Task Assignments</h2>
+          <p className="text-lg text-gray-300 animate-pulse">
+            Please wait while we generate your task list ⏳
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
       <h1 className="text-3xl font-bold mb-6 drop-shadow-md">
@@ -258,16 +314,16 @@ const TaskAssignmentPage = () => {
        {/* <div className="flex-1 flex-column max-h-screen overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4"> */}
         <div className="flex-1 flex flex-col min-h-[85vh] overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4">
 
-          {isLoading ? (
+          {/* {isLoading ? (
             <div className="text-white text-xl font-semibold animate-pulse">
-          {/*   <div className="flex justify-center items-center h-full text-white text-xl font-semibold animate-pulse" */}
               Loading...
             </div>
           ) : error ? (
             <p className="text-red-500">{error}</p>
+          ) : ( */}
+          {error ? (
+            <p className="text-red-500">{error}</p>
           ) : (
-          
-          // {tasks.length > 0 ? (
             tasks.map((task, idx) => (
               <div
                 key={idx}
@@ -292,10 +348,6 @@ const TaskAssignmentPage = () => {
                 </p>
               </div>
             ))
-          // ) : error ? (
-          //   <p className="text-red-500">{error}</p>
-          // ) : (
-          //   <p>loading...</p>
           )}
         </div>
         <div className="w-1/6 flex-col gap-4 items-start max-h-screen overflow-y-hidden">
@@ -325,169 +377,169 @@ const TaskAssignmentPage = () => {
         </div>
       </main>
 
-    {/* Add function */}
-    {showModalAdd && (
-      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-        <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
-          <h2 className="text-xl font-bold">Add task</h2>
-          <input
-            type="text"
-            placeholder="Character"
-            className="w-full p-2 border rounded"
-            value={newTask.role}
-            onChange={(e) => setNewTask({ ...newTask, role: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Work description"
-            className="w-full p-2 border rounded"
-            value={newTask.description}
-            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-          />
-          <input
-            type="number"
-            placeholder="People needed"
-            className="w-full p-2 border rounded"
-            value={newTask.count}
-            onChange={(e) => setNewTask({ ...newTask, count: e.target.value })}
-          />
-          <input
-            type="datetime-local"
-            className="w-full p-2 border rounded"
-            value={newTask.start_time}
-            onChange={(e) => setNewTask({ ...newTask, start_time: e.target.value })}
-          />
-          <input
-            type="datetime-local"
-            className="w-full p-2 border rounded"
-            value={newTask.end_time}
-            onChange={(e) => setNewTask({ ...newTask, end_time: e.target.value })}
-          />
-          <div className="flex justify-end gap-2">
-            <button
-              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              onClick={() => setShowModalAdd(false)}
-            >
-              Cancel
-            </button>
-            <button
-              className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
-              onClick={handleConfirmAdd}
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-{/* Edit 功能 */}
-{showModalEdit && (
-  <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-    <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
-      <h2 className="text-xl font-bold">Edit task</h2>
-
-      <select
-        className="w-full p-2 border rounded"
-        value={editRole}
-        onChange={(e) => {
-          const selectedRole = e.target.value;
-          setEditRole(selectedRole);
-          const selectedTask = tasks.find(t => t.role === selectedRole);
-          if (selectedTask) {
-            setEdittedTask({
-              role: selectedTask.role,
-              description: selectedTask.description,
-              count: selectedTask.count,
-              start_time: toLocalDateTimeString(selectedTask.start_time),
-              end_time: toLocalDateTimeString(selectedTask.end_time)
-            });
-          }
-        }}
-      >
-        <option value="" disabled>Choose character</option>
-        {tasks.map((task, idx) => (
-          <option key={idx} value={task.role}>{task.role}</option>
-        ))}
-      </select>
-
-      <input
-        type="text"
-        placeholder="Work description"
-        className="w-full p-2 border rounded"
-        value={editTask.description}
-        onChange={(e) => setEdittedTask({ ...editTask, description: e.target.value })}
-      />
-      <input
-        type="number"
-        placeholder="People needed"
-        className="w-full p-2 border rounded"
-        value={editTask.count}
-        onChange={(e) => setEdittedTask({ ...editTask, count: e.target.value })}
-      />
-      <input
-        type="datetime-local"
-        className="w-full p-2 border rounded"
-        value={editTask.start_time}
-        onChange={(e) => setEdittedTask({ ...editTask, start_time: e.target.value })}
-      />
-      <input
-        type="datetime-local"
-        className="w-full p-2 border rounded"
-        value={editTask.end_time}
-        onChange={(e) => setEdittedTask({ ...editTask, end_time: e.target.value })}
-      />
-      <div className="flex justify-end gap-2">
-        <button
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-          onClick={() => setShowModalEdit(false)}
-        >
-          Cancel
-        </button>
-        <button
-          className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
-          onClick={handleConfirmEdit}
-        >
-          Save
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-{/* Delete功能 */}
-      {showModalDelete && (
+      {/* Add function */}
+      {showModalAdd && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold">Delete Task</h2>
-            <select
+            <h2 className="text-xl font-bold">Add task</h2>
+            <input
+              type="text"
+              placeholder="Character"
               className="w-full p-2 border rounded"
-              required
-              value={deleteRole}
-              onChange={(e) => setDeleteRole(e.target.value)}
-            >
-              <option value="" disabled>Task role</option>
-              {tasks.map((task, idx) => (
-                <option key={idx} value={task.role}>{task.role}</option>
-              ))}
-            </select>
+              value={newTask.role}
+              onChange={(e) => setNewTask({ ...newTask, role: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Work description"
+              className="w-full p-2 border rounded"
+              value={newTask.description}
+              onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="People needed"
+              className="w-full p-2 border rounded"
+              value={newTask.count}
+              onChange={(e) => setNewTask({ ...newTask, count: e.target.value })}
+            />
+            <input
+              type="datetime-local"
+              className="w-full p-2 border rounded"
+              value={newTask.start_time}
+              onChange={(e) => setNewTask({ ...newTask, start_time: e.target.value })}
+            />
+            <input
+              type="datetime-local"
+              className="w-full p-2 border rounded"
+              value={newTask.end_time}
+              onChange={(e) => setNewTask({ ...newTask, end_time: e.target.value })}
+            />
             <div className="flex justify-end gap-2">
               <button
                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                onClick={() => setShowModalDelete(false)}
+                onClick={() => setShowModalAdd(false)}
               >
                 Cancel
               </button>
-
               <button
                 className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
-                onClick={handleConfirmDelete}
+                onClick={handleConfirmAdd}
               >
-                Confirm Delete
+                Save
               </button>
             </div>
           </div>
         </div>
       )}
+      {/* Edit 功能 */}
+      {showModalEdit && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold">Edit task</h2>
+
+            <select
+              className="w-full p-2 border rounded"
+              value={editRole}
+              onChange={(e) => {
+                const selectedRole = e.target.value;
+                setEditRole(selectedRole);
+                const selectedTask = tasks.find(t => t.role === selectedRole);
+                if (selectedTask) {
+                  setEdittedTask({
+                    role: selectedTask.role,
+                    description: selectedTask.description,
+                    count: selectedTask.count,
+                    start_time: toLocalDateTimeString(selectedTask.start_time),
+                    end_time: toLocalDateTimeString(selectedTask.end_time)
+                  });
+                }
+              }}
+            >
+              <option value="" disabled>Choose character</option>
+              {tasks.map((task, idx) => (
+                <option key={idx} value={task.role}>{task.role}</option>
+              ))}
+            </select>
+
+            <input
+              type="text"
+              placeholder="Work description"
+              className="w-full p-2 border rounded"
+              value={editTask.description}
+              onChange={(e) => setEdittedTask({ ...editTask, description: e.target.value })}
+            />
+            <input
+              type="number"
+              placeholder="People needed"
+              className="w-full p-2 border rounded"
+              value={editTask.count}
+              onChange={(e) => setEdittedTask({ ...editTask, count: e.target.value })}
+            />
+            <input
+              type="datetime-local"
+              className="w-full p-2 border rounded"
+              value={editTask.start_time}
+              onChange={(e) => setEdittedTask({ ...editTask, start_time: e.target.value })}
+            />
+            <input
+              type="datetime-local"
+              className="w-full p-2 border rounded"
+              value={editTask.end_time}
+              onChange={(e) => setEdittedTask({ ...editTask, end_time: e.target.value })}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                onClick={() => setShowModalEdit(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
+                onClick={handleConfirmEdit}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete功能 */}
+            {showModalDelete && (
+              <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
+                  <h2 className="text-xl font-bold">Delete Task</h2>
+                  <select
+                    className="w-full p-2 border rounded"
+                    required
+                    value={deleteRole}
+                    onChange={(e) => setDeleteRole(e.target.value)}
+                  >
+                    <option value="" disabled>Task role</option>
+                    {tasks.map((task, idx) => (
+                      <option key={idx} value={task.role}>{task.role}</option>
+                    ))}
+                  </select>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                      onClick={() => setShowModalDelete(false)}
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
+                      onClick={handleConfirmDelete}
+                    >
+                      Confirm Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
     </div>
   );
