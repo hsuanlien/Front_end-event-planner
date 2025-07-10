@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -19,15 +20,15 @@ const Venue = () => {
       setIsSubmitting(false); //  防止按鈕卡住
       return;
     }
-    const token = localStorage.getItem("access_token"); // 假設你登入後存在這裡 
+    // const token = localStorage.getItem("access_token"); // 假設你登入後存在這裡 
     //console.log("venue", token);
     // @@venue ID沒有get, 沒辦法更新
     try {
-      const res = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-venues/${id}/`, {
+      const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/ai/generate-venues/${id}/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          //Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: venueName,

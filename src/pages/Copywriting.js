@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -144,11 +145,11 @@ const Copywriting = () => {
             language
         };
             
-            const response = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-social-post/${id}/`, {
+            const response = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/ai/generate-social-post/${id}/`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
+                            // 'Authorization': `Bearer ${token}`
                         },
                         body: JSON.stringify(postData)
                     });

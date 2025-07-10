@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { fetchWithAuth } from "../utils/auth";
 
 const API_BASE_URL = 'https://genai-backend-2gji.onrender.com';
 
@@ -48,11 +49,11 @@ const CheckCopywriting = () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/events/${id}/social-posts/`, {
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/events/${id}/social-posts/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+                    // 'Authorization': `Bearer ${token}`,
                 },
             });
             if (response.ok) {
@@ -137,11 +138,11 @@ const CheckCopywriting = () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/social-posts/${postId}/`, {
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/social-posts/${postId}/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+                    // 'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     platform: postToSave.platform,
@@ -231,7 +232,7 @@ const CheckCopywriting = () => {
                                             type="button"
                                             onClick={() => handleSave(post.id)}
                                             className="px-4 py-2 rounded-md font-semibold transition duration-200 ease-in-out
-                                                bg-blue-600 hover:bg-blue-700 text-white"
+                                                bg-gray-500 hover:bg-blue-700 text-white"
                                         >
                                             Save
                                         </button>

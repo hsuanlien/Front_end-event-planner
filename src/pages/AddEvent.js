@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -17,11 +18,11 @@ const AddEvent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      alert("Please log in");
-      return;
-    }
+    // const token = localStorage.getItem("access_token");
+    // if (!token) {
+    //   alert("Please log in");
+    //   return;
+    // }
 
     const payload = {
       goal: goal.trim(),
@@ -36,7 +37,7 @@ const AddEvent = () => {
       const response = await axios.post(API_URL, payload, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          //Authorization: `Bearer ${token}`,
         },
       });
 
@@ -105,19 +106,6 @@ const AddEvent = () => {
             <option value="Competition_Challenge">Competition / Challenge</option>
           </select>
 
-          {/* Budget Slider 0‑100 (×100) 滑桿會右移 */}
-           {/* <label>
-             Budget : {budget} EUR
-            <input
-              type="range"
-               min={50}
-               max={1000}
-               step={50}
-               value={budget}
-               onChange={(e) => setBudget(Number(e.target.value))}
-               style={{ width: "300px", marginLeft: "10px" }}
-             />
-          </label> */}
           <label className="block text-white">
               <span className="inline-flex items-center gap-2 mb-2">
                 Budget:

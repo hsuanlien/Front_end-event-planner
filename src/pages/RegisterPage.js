@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -46,7 +47,7 @@ const RegisterPage = () => {
       });
 
       if (res.status === 201) {
-        alert("✅ Registration successful! Please check your email to activate your account.");
+        alert("Registration successful! Please check your email to activate your account.");
         navigate("/");
       } else {
         // 取得後端錯誤訊息

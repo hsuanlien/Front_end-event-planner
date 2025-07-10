@@ -1,17 +1,17 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 const getAuthToken = () => localStorage.getItem("access_token");
 
 // API functions 拉出來寫
 const saveInvitationToBackend = async (eventId, invitation) => {
-  const token = getAuthToken();
+ // const token = getAuthToken();
 
-  const res = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-invitation/${eventId}/`, {
+  const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/ai/generate-invitation/${eventId}/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+     // Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(invitation),
   });

@@ -1,3 +1,5 @@
+
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
@@ -20,10 +22,10 @@ const CheckRegistration = () => {
     if (!id) return;
     setLoading(true);
 
-    fetch(`https://genai-backend-2gji.onrender.com/ai/generate-forms/${id}/`, {
+    fetchWithAuth(`https://genai-backend-2gji.onrender.com/ai/generate-forms/${id}/`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+       // Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       //API does not require a body.
@@ -67,9 +69,9 @@ const CheckRegistration = () => {
     //console.log(`Change !! : ${index}, field: ${field}, value:`, value);
     setRegistrationForm((prev) => {
       if (!prev) return prev;
-      const newFields = [...prev.form_fields];
-      newFields[index] = { ...newFields[index], [field]: value };
-      return { ...prev, form_fields: newFields };
+        const newFields = [...prev.form_fields];
+        newFields[index] = { ...newFields[index], [field]: value };
+        return { ...prev, form_fields: newFields };
     });
   };
 

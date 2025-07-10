@@ -1,4 +1,5 @@
 // src/pages/EventDetailPage.js 
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -49,10 +50,10 @@ const EventDetailPage = () => {
   useEffect(() => {
     const fetchVersions = async () => {
       try {
-        const response = await fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/versions/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/api/events/${id}/versions/`, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
         });
         if (!response.ok) throw new Error("Failed to fetch versions");
         const data = await response.json();
@@ -125,12 +126,12 @@ const EventDetailPage = () => {
   useEffect(() => {
     const fetchEventVersion = async () => {
       try {
-        const response = await fetch(
+        const response = await fetchWithAuth(
            `https://genai-backend-2gji.onrender.com/api/events/${id}/`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            // headers: {
+            //   Authorization: `Bearer ${token}`,
+            // },
           }
         );
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -175,13 +176,13 @@ const EventDetailPage = () => {
   const handleSave_Change = async () => {// 更改欄位儲存 patch
     setIsEditing(false);
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `https://genai-backend-2gji.onrender.com/api/events/${id}/update/`, 
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            // Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(formData),
         }
@@ -206,13 +207,13 @@ const EventDetailPage = () => {
 
   const handleSave_Version = async () => {// post 存活動版本
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `https://genai-backend-2gji.onrender.com/api/events/${id}/save-version/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            // Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ event_snapshot: formData }),
         }
@@ -228,12 +229,12 @@ const EventDetailPage = () => {
       setIsEditing(false);
       alert("Successfully save event version.");    
       // 再次獲取版本列表
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `https://genai-backend-2gji.onrender.com/api/events/${id}/versions/`, 
         {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
       if (!res.ok) throw new Error("Failed to fetch updated versions");
       const updatedVersions = await res.json();

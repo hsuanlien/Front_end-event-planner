@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -15,9 +16,9 @@ const ChooseEventTime = () => {
     const fetchEventDate = async () => {
       const token = localStorage.getItem("access_token");
       try {
-        const res = await fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/`, { 
+        const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/api/events/${id}/`, { 
           // GET request to obtain detailed information about the event
-          headers: { Authorization: `Bearer ${token}` },
+          // headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
           const data = await res.json();
@@ -57,11 +58,11 @@ const ChooseEventTime = () => {
     }
 
     try {
-      const res = await fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/update/`, {
+      const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/api/events/${id}/update/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           start_time: `${eventDate}T${startTime}`,

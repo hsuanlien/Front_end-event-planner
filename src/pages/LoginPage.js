@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -46,15 +47,14 @@ function LoginPage() {
         navigate('/upcoming-events');
       }
     } catch (error) {
-      alert("⚠️ Login fail：" + 
+      alert("Login fail：" + 
           (error.response?.data?.non_field_errors?.[0] ||
-          error.response?.data?.error ||
-          "請確認帳密"));
+          error.response?.data?.error));
 
       if (error.response && error.response.status === 400) {
-        alert("⚠️ 登入失敗：" + (error.response.data.non_field_errors || "請確認帳密"));
+        alert("⚠️ Login fail：" + (error.response.data.non_field_errors || "Please confirm your account and password"));
       } else {
-        alert("⚠️ 登入過程發生錯誤");
+        alert("⚠️ An error occurred during the login process");
       }
     }
   };
@@ -70,7 +70,7 @@ function LoginPage() {
       <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-10 tracking-wide drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)]">
       Event <span className="text-cyan-400">Planner</span>
       </h1>
-{/* ✅ 表單加上 onSubmit */}
+      {/* 表單加上 onSubmit */}
       <form
         onSubmit={handleLogin}
         className="backdrop-blur-md bg-white/10 p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-white/20 z-10"
@@ -96,14 +96,14 @@ function LoginPage() {
         />
 
         <button
-          type="submit" // ✅ 表單送出按鈕
+          type="submit" //  表單送出按鈕
           className="w-full bg-cyan-500 text-white py-3 rounded-lg hover:bg-cyan-600 transition font-semibold tracking-wide shadow-lg"
         >
           Submit
         </button>
 
         <button
-          type="button" // ✅ 避免這個 button 被當作 submit
+          type="button" 
           onClick={() => navigate('/register')}
           className="w-full mt-4 text-cyan-300 hover:underline text-sm text-center"
         >
@@ -111,7 +111,7 @@ function LoginPage() {
         </button>
 
         <button
-          type="button" // ✅ 避免這個 button 被當作 submit
+          type="button"
           onClick={() => navigate('/forget-passwort')}
           className="w-full mt-4 text-cyan-300 hover:underline text-sm text-center"
         >

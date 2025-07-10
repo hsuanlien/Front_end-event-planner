@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -14,15 +15,14 @@ const UserProfile = () => {
   const [isEditable, setIsEditable] = useState(false); // Control whether it can be edited
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    fetch("https://genai-backend-2gji.onrender.com/accounts/", {
+    // const token = localStorage.getItem("access_token");
+    // if (!token) {
+    //   navigate("/login");
+    //   return;
+    // }
+    fetchWithAuth("https://genai-backend-2gji.onrender.com/accounts/", {
       headers: {
-        Authorization: `Bearer ${token}`,
+       // Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     })
@@ -45,8 +45,8 @@ const UserProfile = () => {
   }, [navigate]);
 
   const handleSave = async () => {
-    const token = localStorage.getItem("access_token");
-  if (!token) return;
+    // const token = localStorage.getItem("access_token");
+    // if (!token) return;
 
   // 準備 payload，只在密碼有輸入時才加入 password 欄位
     const payload = {
@@ -61,10 +61,10 @@ const UserProfile = () => {
       payload.password = password;
     }
     try {
-    const response = await fetch("https://genai-backend-2gji.onrender.com/accounts/account-update/", {
+    const response = await fetchWithAuth("https://genai-backend-2gji.onrender.com/accounts/account-update/", {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${token}`,
+       // Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),

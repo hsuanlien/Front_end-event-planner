@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -38,7 +39,7 @@ const CheckInvitation = () => {
           localStorage.setItem("latestInvitation", JSON.stringify(latest));
         }
       })
-      .catch(err => alert("無法取得邀請函: " + err.message));
+      .catch(err => alert("Unable to get invitation:: " + err.message));
   }, [id, token]);
 
   //  Important: Return loading status early here to avoid errors
@@ -65,11 +66,11 @@ const CheckInvitation = () => {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`https://genai-backend-2gji.onrender.com/api/invitation/${currentInvitation.id}/`, {
+      const response = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/api/invitation/${currentInvitation.id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           ...draft,
@@ -97,11 +98,11 @@ const CheckInvitation = () => {
 
   const handleSend = async () => {
     try {
-      const res = await fetch(`https://genai-backend-2gji.onrender.com/api/email/${id}/`, {
+      const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/api/email/${id}/`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
 
       if (!res.ok) throw new Error(await res.text());

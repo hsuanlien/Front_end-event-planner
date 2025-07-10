@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -38,11 +39,11 @@ const ChooseVenue = () => {
   console.log("Sending PUT to ID:", selectedVenueId);
   //const selectedVenue = venueSuggestions.find(v => v.id === selectedVenueId);
   try {
-      const res = await fetch(`https://genai-backend-2gji.onrender.com/api/venue-suggestions/${selectedVenueId}/`, {
+      const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/api/venue-suggestions/${selectedVenueId}/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization:`Bearer ${token}`
+        // Authorization:`Bearer ${token}`
       },
       body: JSON.stringify({
         name: selectedVenue.name,

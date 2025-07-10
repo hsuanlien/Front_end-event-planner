@@ -1,4 +1,5 @@
 // src/pages/UpcomingEvents.js
+import { fetchWithAuth } from "../utils/auth";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -10,16 +11,16 @@ const UpcomingEvents = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [deleteMode, setDeleteMode] = useState(false);
-  const token = localStorage.getItem("access_token");
+  // const token = localStorage.getItem("access_token");
 
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_BASE}/events/`, {
-          headers: {
-            Authorization:`Bearer ${token}`,
-          },
+        const res = await fetchWithAuth(`${API_BASE}/events/`, {
+          // headers: {
+          //   Authorization:`Bearer ${token}`,
+          // },
         });
 
         if (!res.ok) {
@@ -45,10 +46,10 @@ const UpcomingEvents = () => {
       return;
     }
     try {
-      const res = await fetch(`${API_BASE}/events/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const res = await fetchWithAuth(`${API_BASE}/events/${id}/`, {
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
 
       if (!res.ok) {
@@ -76,7 +77,7 @@ const UpcomingEvents = () => {
   const handleLogout = async () => {
     const refresh = localStorage.getItem("refresh_token");
 
-    await fetch("https://genai-backend-2gji.onrender.com/accounts/logout/", {
+    await fetchWithAuth("https://genai-backend-2gji.onrender.com/accounts/logout/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh }),
@@ -121,11 +122,11 @@ const UpcomingEvents = () => {
     const confirm = window.confirm("Are you sure you want to delete this event?");
     if (!confirm) return;
     try {
-      const res = await fetch(`${API_BASE}/events/${id}/delete/`, {
+      const res = await fetchWithAuth(`${API_BASE}/events/${id}/delete/`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
 
       if (res.status === 204) {

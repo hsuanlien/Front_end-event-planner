@@ -1,6 +1,6 @@
+import { fetchWithAuth } from "../utils/auth";
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
 const Event_Description = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,13 +30,13 @@ const Event_Description = () => {
   console.log(" Token used for request: ", token);
   try {
       // 1. PATCH 更新活動資料
-      const patchResponse = await fetch(
+      const patchResponse = await fetchWithAuth(
         `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            // Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             name,
@@ -68,13 +68,13 @@ const Event_Description = () => {
   console.log(" Token used for request: ", token);
   try {
       // 1. PATCH 更新活動資料
-      const patchResponse = await fetch(
+      const patchResponse = await fetchWithAuth(
         `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            // Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             name,
