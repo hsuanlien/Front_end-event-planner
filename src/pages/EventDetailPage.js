@@ -155,7 +155,7 @@ const EventDetailPage = () => {
     };
 
     fetchEventVersion();
-  }, [id, token]);
+  }, [id]);
 
   const isItemEnabled = (item) =>
     item.requires.every((dep) => {

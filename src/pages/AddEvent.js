@@ -2,6 +2,12 @@ import { fetchWithAuth } from "../utils/auth";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+// import DatePicker, { registerLocale } from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
+// import enUS from "date-fns/locale/en-US";
+
+// registerLocale("en", enUS);
+
 
 const API_URL = "https://genai-backend-2gji.onrender.com/ai/generate-event/";
 
@@ -18,11 +24,11 @@ const AddEvent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // const token = localStorage.getItem("access_token");
-    // if (!token) {
-    //   alert("Please log in");
-    //   return;
-    // }
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      alert("Please log in");
+      return;
+    }
 
     const payload = {
       goal: goal.trim(),
@@ -37,7 +43,7 @@ const AddEvent = () => {
       const response = await axios.post(API_URL, payload, {
         headers: {
           "Content-Type": "application/json",
-          //Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

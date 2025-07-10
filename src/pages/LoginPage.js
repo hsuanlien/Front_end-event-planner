@@ -51,11 +51,11 @@ function LoginPage() {
           (error.response?.data?.non_field_errors?.[0] ||
           error.response?.data?.error));
 
-      if (error.response && error.response.status === 400) {
-        alert("⚠️ Login fail：" + (error.response.data.non_field_errors || "Please confirm your account and password"));
-      } else {
-        alert("⚠️ An error occurred during the login process");
-      }
+      // if (error.response && error.response.status === 400) {
+      //   alert("⚠️ Login fail：" + (error.response.data.non_field_errors || "Please confirm your account and password"));
+      // } else {
+      //   alert("⚠️ An error occurred during the login process");
+      // }
     }
   };
   
