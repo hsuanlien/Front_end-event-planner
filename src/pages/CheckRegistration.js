@@ -53,14 +53,14 @@ const CheckRegistration = () => {
       //  console.log("Fetch End Loading false");
       });
     }, [id, token]);
-  
-  // clear after displaying the message
+
   useEffect(() => {
-    if (message.content) {
+    if (message.content && message.type === "error") {
       const timer = setTimeout(() => setMessage({ content: null, type: "" }), 4000);
       return () => clearTimeout(timer);
     }
   }, [message]);
+
 
   //Form field change handler
   const handleFieldChange = (index, field, value) => {
@@ -78,7 +78,7 @@ const CheckRegistration = () => {
     setRegistrationForm((prev) => {
       if (!prev) return prev;
       const newFields = prev.form_fields ? [...prev.form_fields] : [];
-      newFields.push({ description: "", registration_name: "" });
+      newFields.push({ description: "" , registration_name: ""});
       console.log("New Fields After Add :", newFields);
       return { ...prev, form_fields: newFields };
     });
@@ -121,9 +121,8 @@ const CheckRegistration = () => {
       registration_url: registrationForm.registration_url || "",
       form_title: registrationForm.form_title,
       event_intro: registrationForm.event_intro,
-      form_fields: registrationForm.form_fields.map(({ description, registration_name }) => ({
-        description,
-        registration_name,
+      form_fields: registrationForm.form_fields.map(({  description, registration_name }) => ({
+        description, registration_name, 
       })),
     });
     console.log(registrationForm.id);
@@ -138,7 +137,7 @@ const CheckRegistration = () => {
         registration_url: registrationForm.registration_url || "",
         form_title: registrationForm.form_title,
         event_intro: registrationForm.event_intro,
-        form_fields: registrationForm.form_fields.map(({ description, registration_name }) => ({
+        form_fields: registrationForm.form_fields.map(({description, registration_name}) => ({
           description,
           registration_name,
         })),
@@ -208,7 +207,7 @@ const CheckRegistration = () => {
               rel="noopener noreferrer"
               className="underline text-blue-300 hover:text-blue-500 ml-2"
             >
-              Open Form
+              {formUrl}
             </a>
           </>
         ),
@@ -289,7 +288,7 @@ const CheckRegistration = () => {
                     >
                       {isEditing ? (
                         <>
-                          {/* <input
+                          <input
                             type="text"
                             placeholder="Description"
                             className="flex-1 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -298,7 +297,7 @@ const CheckRegistration = () => {
                               handleFieldChange(index, "description", e.target.value)
                             }
                             disabled={saving || sending}
-                          /> */}
+                          />
                           <input
                             type="text"
                             placeholder="Registration Name"
@@ -309,7 +308,7 @@ const CheckRegistration = () => {
                             }
                             disabled={saving || sending}
                           />
-                          <input
+                          {/* <input
                             type="text"
                             placeholder="Description"
                             className="flex-1 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -318,7 +317,7 @@ const CheckRegistration = () => {
                               handleFieldChange(index, "description", e.target.value)
                             }
                             disabled={saving || sending}
-                          />
+                          /> */}
                           <button
                             onClick={() => handleRemoveField(index)}
                             disabled={saving || sending}
@@ -391,17 +390,26 @@ const CheckRegistration = () => {
               //       : "bg-yellow-400 text-black"
               //   }`}
               // >
-              <div
-                          className={`mt-4 text-center font-semibold text-green-600`}
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                // 如果你想點整段開啟連結，也可以用這段
-                const url = message.url || null;
-                if (url) window.open(url, "_blank");
-              }}
-              >
-                {message.content}
-              </div>
+              <div className={`p-4 rounded-md ${message.type === "error" ? "bg-red-500" : "bg-green-600"} text-white flex justify-between items-center`}>
+                  <div>{message.content}</div>
+                  <button
+                    onClick={() => setMessage({ content: null, type: "" })}
+                    className="ml-4 px-2 py-1 bg-white/20 hover:bg-white/30 rounded"
+                  >
+                    ✕
+                  </button>
+                </div>
+              // <div
+              //             className={`mt-4 text-center font-semibold text-green-600`}
+              // style={{ cursor: 'pointer' }}
+              // onClick={() => {
+              //   // 如果你想點整段開啟連結，也可以用這段
+              //   const url = message.url || null;
+              //   if (url) window.open(url, "_blank");
+              // }}
+              // >
+              //   {message.content}
+              // </div>
             )}
           </div>
         )}

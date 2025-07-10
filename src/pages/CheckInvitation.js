@@ -13,6 +13,7 @@ const CheckInvitation = () => {
   const [currentInvitation, setCurrentInvitation] = useState(null);
   const [draft, setDraft] = useState({ subject: "", body: "", recipient_email: "", recipient_name: "" });
   const [showSendModal, setShowSendModal] = useState(false);
+  const [hasSent, setHasSent] = useState(false);
 
   useEffect(() => {
     fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/invitation/`, {
@@ -107,6 +108,7 @@ const CheckInvitation = () => {
 
       const data = await res.json();
       setShowSendModal(true);
+      setHasSent(true);
       
     } catch (err) {
       console.error(err);
@@ -120,19 +122,23 @@ const CheckInvitation = () => {
 
         {/* <div className="min-w-[700px] mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl space-y-6"> */}
         <div className="w-full max-w-3xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl space-y-6">
-
+{/* <div className="w-full max-w-3xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl space-y-6 min-h-[500px]">
+ */}
           {/* Subject */}
           <div>
             <h2 className="text-2xl font-bold text-cyan-300 mb-2">Subject</h2>
             {editMode ? (
               <input
                 type="text"
-                className="w-full min-h-[50px] p-3 text-black rounded-lg shadow bg-white"
+                //className="w-full min-h-[50px] p-3 text-black rounded-lg shadow bg-white"
+                className="w-full h-[60px] p-3 text-black rounded-lg shadow bg-white"
                 value={draft.subject}
                 onChange={(e) => setDraft(prev => ({ ...prev, subject: e.target.value }))}
               />
             ) : (
-              <div className="w-full min-h-[50px] p-3 bg-white text-black rounded-lg shadow">
+              // <div className="w-full min-h-[50px] p-3 bg-white text-black rounded-lg shadow">
+              <div className="w-full h-[60px] p-3 text-black rounded-lg shadow bg-white"> 
+
                 {currentInvitation.subject}
               </div>
             )}
@@ -143,12 +149,14 @@ const CheckInvitation = () => {
             <h2 className="text-2xl font-bold text-cyan-300 mb-2">Body</h2>
             {editMode ? (
               <textarea
-                className="w-full min-h-[300px] p-3 text-black rounded-lg shadow bg-white resize-none"
+                // className="w-full min-h-[300px] p-3 text-black rounded-lg shadow bg-white resize-none"
+                className="w-full h-[300px] p-3 text-black rounded-lg shadow bg-white resize-none"
                 value={draft.body}
                 onChange={(e) => setDraft(prev => ({ ...prev, body: e.target.value }))}
               />
             ) : (
-              <div className="w-full min-h-[300px] p-3 bg-white text-black rounded-lg shadow whitespace-pre-wrap">
+              // <div className="w-full min-h-[50px] p-3 text-black rounded-lg shadow bg-white">
+              <div className="w-full h-[300px] p-3 text-black rounded-lg shadow bg-white whitespace-pre-wrap">
                 {currentInvitation.body}
               </div>
             )}
@@ -157,14 +165,27 @@ const CheckInvitation = () => {
 
         {/* Footer Buttons */}
         <div className="mt-8 flex justify-between items-center">
+        {/* <div className="fixed bottom-8 right-8 flex gap-4 z-50"> */}
           <button
-            onClick={() => navigate(`/event/${id}`)}
-            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow"
+            // onClick={() => navigate(`/event/${id}`)}
+            onClick={() => {
+              if (hasSent) {
+                navigate(`/event/${id}`);
+              } else {
+                alert("Please send the invitation before going back.");
+              }
+            }}
+            //className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow"
+             className={`px-4 py-2 rounded-lg shadow ${
+                  showSendModal
+                    ? "bg-gray-600 hover:bg-gray-700 text-white cursor-pointer"
+                    : "bg-gray-500 text-gray-300 cursor-not-allowed"
+                }`}
           >
-            ← Return
+            ← Back to event
           </button>
-
-          <div className="flex gap-4">
+          <div className="fixed bottom-8 right-8 flex gap-4 z-50">
+          {/* <div className="flex gap-4"> */}
             {editMode ? (
               <>
                 <button
@@ -175,7 +196,7 @@ const CheckInvitation = () => {
                 </button>
                 <button
                   onClick={handleSave}
-                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow"
+                  className="bg-cyan-500  hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow"
                 >
                   Save
                 </button>

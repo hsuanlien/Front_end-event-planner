@@ -64,7 +64,7 @@ const Registration= () => {
         onClick={() => navigate(-1)}    
         className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
       >
-        ← 返回
+        ← Back
       </button>
 
     {/* 右下角 Add / Change / Save 按鈕 */}

@@ -106,7 +106,7 @@ const AddEvent = () => {
           </select>
 
           {/* Budget Slider 0‑100 (×100) 滑桿會右移 */}
-           <label>
+           {/* <label>
              Budget : {budget} EUR
             <input
               type="range"
@@ -117,7 +117,28 @@ const AddEvent = () => {
                onChange={(e) => setBudget(Number(e.target.value))}
                style={{ width: "300px", marginLeft: "10px" }}
              />
-          </label>
+          </label> */}
+          <label className="block text-white">
+              <span className="inline-flex items-center gap-2 mb-2">
+                Budget:
+                <span
+                  className="inline-block text-white font-mono text-lg"
+                  style={{ minWidth: "60px", textAlign: "right" }}  // ← 固定寬度
+                >
+                  {budget} EUR
+                </span>
+              </span>
+              <input
+                type="range"
+                min={50}
+                max={1000}
+                step={50}
+                value={budget}
+                onChange={(e) => setBudget(Number(e.target.value))}
+                className="w-full"
+              />
+            </label>
+
 
           <select
             className="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30"

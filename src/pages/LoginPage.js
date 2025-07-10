@@ -111,7 +111,7 @@ function LoginPage() {
           onClick={() => navigate('/forget-passwort')}
           className="w-full mt-4 text-cyan-300 hover:underline text-sm text-center"
         >
-          Forget Passwort
+          Forget Password
         </button>
       </form>
      
