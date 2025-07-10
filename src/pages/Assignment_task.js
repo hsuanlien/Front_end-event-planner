@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
+import { fetchWithAuth } from "../utils/auth"; 
 
 const TaskAssignmentPage = () => {
   const { id } = useParams();
@@ -32,20 +32,20 @@ const TaskAssignmentPage = () => {
     start_time: "",
     end_time: ""
   });
-  const token = localStorage.getItem("token");
+ // const token = localStorage.getItem("access_token");
   const eventId = id;
 
 
   useEffect(() => {
-    if (!id || !token) return;
+    //if (!id || !token) return;
     const fetchGeneratedTasks = async () => {
       try {
-        const res = await fetch(`https://genai-backend-2gji.onrender.com/ai/generate-tasks/${eventId}/`,
+        const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/ai/generate-tasks/${eventId}/`,
           {
             method: "POST",
-            headers: {
-              Authorization: `Token ${token}`,
-            },
+            // headers: {
+            //   Authorization: `Bearer ${token}`,
+            // },
           }
         );
 
@@ -71,46 +71,13 @@ const TaskAssignmentPage = () => {
     };
 
     fetchGeneratedTasks();
-  }, [id, token]);
-
-/*
-  useEffect(() => {
-      if (!eventId || !token) return;
-      //console.log("eventId", eventId);
-      const fetchTasks = async () => {
-        try {
-          const res = await fetch(`${API_BASE}/events/${id}/assignments/`, {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          });
-          if (!res.ok) {
-              const errorText = await res.text();
-              throw new Error(`Error ${res.status}: ${errorText}`);
-            }
-
-          const data = await res.json();
-          console.log("data", data);
-          // data 排序
-          const sortedTasks = data.sort((a, b) => a.id - b.id);
-          //console.log("Fetched tasks:", data);
-          setTasks(sortedTasks);  // 顯示所有已經儲存的任務
-        } catch (err) {
-          console.error("Fetching tasks failed:", err);
-          setError("Failed to fetch tasks from server");
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      fetchTasks();
-    }, [eventId, token]);*/
+  }, [id]);
 
   useEffect(() => {
-    fetch(`${API_BASE}/events/${id}/`, {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
+    fetchWithAuth(`${API_BASE}/events/${id}/`, {
+      // headers: {
+      //   Authorization: `Bearer ${token}`,
+      // },
     })
     .then((res) => {
       if (!res.ok) {
@@ -127,7 +94,7 @@ const TaskAssignmentPage = () => {
       console.error("Failed to fetch event:", err);
       setError("Network error or API unavailable.");
     });
-  }, [id, token]);
+  }, [id]);
 
   const handleAddTask = () => {
    // console.log(tasks[0].start_time);
@@ -182,11 +149,11 @@ const TaskAssignmentPage = () => {
       return;
     }
     try {
-      const response = await fetch(`${API_BASE}/assignments/${taskToDelete.id}/`, {
+      const response = await fetchWithAuth(`${API_BASE}/assignments/${taskToDelete.id}/`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Token ${token}`
-        }
+        // headers: {
+        //   Authorization: `Bearer ${token}`
+        // }
       });
       if (!response.ok) {
         throw new Error("Failed to delete task");
@@ -202,11 +169,11 @@ const TaskAssignmentPage = () => {
 
   const handleConfirmAdd = async () => {
     try {
-      const response = await fetch(`${API_BASE}/events/${eventId}/assignments/`, {
+      const response = await fetchWithAuth(`${API_BASE}/events/${eventId}/assignments/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${token}`
+          //Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
           ...newTask, 
@@ -236,10 +203,10 @@ const TaskAssignmentPage = () => {
   const fetchTasks = async () => {
     console.log("fetchTasks");
       try {
-        const res = await fetch(`${API_BASE}/events/${eventId}/assignments/`, {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
+        const res = await fetchWithAuth(`${API_BASE}/events/${eventId}/assignments/`, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
         });
         if (!res.ok) throw new Error("Failed to fetch tasks");
         const data = await res.json();
@@ -257,11 +224,11 @@ const TaskAssignmentPage = () => {
       return;
     }
     try {
-      const response = await fetch(`${API_BASE}/assignments/${taskToEdit.id}/`, {
+      const response = await fetchWithAuth(`${API_BASE}/assignments/${taskToEdit.id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${token}`
+          //Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
           ...editTask,
@@ -312,7 +279,8 @@ const TaskAssignmentPage = () => {
         </div>
 
        {/* <div className="flex-1 flex-column max-h-screen overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4"> */}
-        <div className="flex-1 flex flex-col min-h-[85vh] overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4">
+        {/* <div className="flex-1 flex flex-col min-h-[85vh] overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4"> */}
+        <div className="flex-1 flex flex-col overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4 min-h-screen">
 
           {/* {isLoading ? (
             <div className="text-white text-xl font-semibold animate-pulse">

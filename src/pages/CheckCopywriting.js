@@ -41,7 +41,7 @@ const CheckCopywriting = () => {
 
     const fetchPosts = useCallback(async () => {
         
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("access_token");
         if (!id) {
             alert("The event ID is missing and the document cannot be obtained.");
             return;
@@ -52,7 +52,7 @@ const CheckCopywriting = () => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,
+                    'Authorization': `Bearer ${token}`,
                 },
             });
             if (response.ok) {
@@ -110,7 +110,7 @@ const CheckCopywriting = () => {
         const postToSave = posts.find(post => post.id === postId);
         if (!postToSave) return;
 
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("access_token");
 
         // handle the separation of content and hashtag
         let contentToSave = postToSave.editedContent.trim();
@@ -141,7 +141,7 @@ const CheckCopywriting = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     platform: postToSave.platform,
@@ -253,7 +253,7 @@ const CheckCopywriting = () => {
                     <button
                         type="button"
                         onClick={handleGoToEventPage}
-                        className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-semibold shadow-md transition duration-200 ease-in-out"
+                        className="bg-cyan-500 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-semibold shadow-md transition duration-200 ease-in-out"
                     >
                         Back to Event
                     </button>

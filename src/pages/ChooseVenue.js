@@ -5,7 +5,7 @@ const ChooseVenue = () => {
   const { id } = useParams();
   const { state } = useLocation(); // Receive data from the previous page
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
 
   const [venueSuggestions, setVenueSuggestions] = useState([]);
   const [selectedVenueId, setSelectedVenueId] = useState(null);
@@ -42,7 +42,7 @@ const ChooseVenue = () => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Token ${token}`
+        Authorization:`Bearer ${token}`
       },
       body: JSON.stringify({
         name: selectedVenue.name,

@@ -19,7 +19,7 @@ const Venue = () => {
       setIsSubmitting(false); //  防止按鈕卡住
       return;
     }
-    const token = localStorage.getItem("token"); // 假設你登入後存在這裡 
+    const token = localStorage.getItem("access_token"); // 假設你登入後存在這裡 
     //console.log("venue", token);
     // @@venue ID沒有get, 沒辦法更新
     try {
@@ -27,7 +27,7 @@ const Venue = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: venueName,

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-const getAuthToken = () => localStorage.getItem("token");
+const getAuthToken = () => localStorage.getItem("access_token");
 
 // API functions 拉出來寫
 const saveInvitationToBackend = async (eventId, invitation) => {
@@ -11,7 +11,7 @@ const saveInvitationToBackend = async (eventId, invitation) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(invitation),
   });

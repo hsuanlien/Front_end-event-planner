@@ -14,7 +14,7 @@ const UserProfile = () => {
   const [isEditable, setIsEditable] = useState(false); // Control whether it can be edited
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     if (!token) {
       navigate("/login");
       return;
@@ -22,7 +22,7 @@ const UserProfile = () => {
 
     fetch("https://genai-backend-2gji.onrender.com/accounts/", {
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     })
@@ -45,7 +45,7 @@ const UserProfile = () => {
   }, [navigate]);
 
   const handleSave = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
   if (!token) return;
 
   // 準備 payload，只在密碼有輸入時才加入 password 欄位
@@ -64,7 +64,7 @@ const UserProfile = () => {
     const response = await fetch("https://genai-backend-2gji.onrender.com/accounts/account-update/", {
       method: "PUT",
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
@@ -85,42 +85,6 @@ const UserProfile = () => {
       alert("Fail");
     }
 
-    // const token = localStorage.getItem("token");
-    // if (!token) return;
-
-    // try {
-    //   const response = await fetch("https://genai-backend-2gji.onrender.com/accounts/account-update/", {
-    //     method: "PUT",
-    //     headers: {
-    //       Authorization: `Token ${token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       username,
-    //       password: password || originalPassword,
-    //       email,
-    //       first_name: firstName,
-    //       last_name: lastName,
-    //       address,
-    //     }),
-    //   });
-
-    //   const result = await response.json();
-
-    //   if (response.ok) {
-    //     alert("Data updated successfully");
-    //     setPassword("");
-    //     localStorage.setItem("currentUser", JSON.stringify(result.user));
-    //     setOriginalPassword(result.user.password);
-    //     setIsEditable(false); // Lock the slot after successful saving
-    //   } else {
-    //     alert("Update failed, please check your information or log in again");
-    //     console.error("Update failed:", result);
-    //   }
-    // } catch (err) {
-    //   console.error("Save error:", err);
-    //   alert("Fail");
-    // }
   };
 
   return (

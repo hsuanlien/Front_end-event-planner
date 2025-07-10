@@ -24,7 +24,7 @@ const API_BASE = "https://genai-backend-2gji.onrender.com/api";
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
 
   const [eventData, setEventData] = useState(null);
   const [error, setError] = useState(null);
@@ -51,7 +51,7 @@ const EventDetailPage = () => {
       try {
         const response = await fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/versions/`, {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         if (!response.ok) throw new Error("Failed to fetch versions");
@@ -129,7 +129,7 @@ const EventDetailPage = () => {
            `https://genai-backend-2gji.onrender.com/api/events/${id}/`,
           {
             headers: {
-              Authorization: `Token ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -181,7 +181,7 @@ const EventDetailPage = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(formData),
         }
@@ -212,7 +212,7 @@ const EventDetailPage = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ event_snapshot: formData }),
         }
@@ -232,7 +232,7 @@ const EventDetailPage = () => {
         `https://genai-backend-2gji.onrender.com/api/events/${id}/versions/`, 
         {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       if (!res.ok) throw new Error("Failed to fetch updated versions");

@@ -22,17 +22,21 @@ function LoginPage() {
       });
 
     if (response.status === 200) {
-        const token = response.data.token;
-        console.log("Login successful, Token：", token);
+      const { access, refresh } = response.data;
+      localStorage.setItem("access_token", access);
+      localStorage.setItem("refresh_token", refresh);
+        // const token = response.data.token;
+        // console.log("Login successful, Token：", token);
 
         // 儲存 token 到 localStorage
-        localStorage.setItem("token", token);
-        // console.log("登入 token：", token);
-
+       // localStorage.setItem("token", token);
+      // console.log("登入 token：", token);
+      // Optional: 設定預設 headers
+    //axios.defaults.headers.common["Authorization"] = `Bearer ${access}`;
         // 查詢帳號資訊
         const profileRes = await axios.get("https://genai-backend-2gji.onrender.com/accounts/", {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${access}`,
           },
         });
 

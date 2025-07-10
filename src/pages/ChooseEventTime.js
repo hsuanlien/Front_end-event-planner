@@ -13,11 +13,11 @@ const ChooseEventTime = () => {
   
   useEffect(() => {
     const fetchEventDate = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
       try {
         const res = await fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/`, { 
           // GET request to obtain detailed information about the event
-          headers: { Authorization: `Token ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
           const data = await res.json();
@@ -43,7 +43,7 @@ const ChooseEventTime = () => {
   };
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     const { startTime, endTime } = formData;
 
     if (!startTime || !endTime) {
@@ -61,7 +61,7 @@ const ChooseEventTime = () => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           start_time: `${eventDate}T${startTime}`,

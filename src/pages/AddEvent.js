@@ -17,7 +17,7 @@ const AddEvent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     if (!token) {
       alert("Please log in");
       return;
@@ -36,7 +36,7 @@ const AddEvent = () => {
       const response = await axios.post(API_URL, payload, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

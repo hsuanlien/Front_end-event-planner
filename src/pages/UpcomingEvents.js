@@ -1,7 +1,7 @@
 // src/pages/UpcomingEvents.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 const API_BASE = "https://genai-backend-2gji.onrender.com/api"; // Django API base
 
 const UpcomingEvents = () => {
@@ -10,16 +10,15 @@ const UpcomingEvents = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [deleteMode, setDeleteMode] = useState(false);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
 
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
-      //const token = localStorage.getItem("token");
       try {
         const res = await fetch(`${API_BASE}/events/`, {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization:`Bearer ${token}`,
           },
         });
 
@@ -45,12 +44,10 @@ const UpcomingEvents = () => {
       handleDelete(id);
       return;
     }
-
-   // const token = localStorage.getItem("token");
     try {
       const res = await fetch(`${API_BASE}/events/${id}/`, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -76,45 +73,58 @@ const UpcomingEvents = () => {
       // alert("error");
     }
   };
-
   const handleLogout = async () => {
-  try {
-    const response = await fetch("https://genai-backend-2gji.onrender.com/accounts/logout/", {
+    const refresh = localStorage.getItem("refresh_token");
+
+    await fetch("https://genai-backend-2gji.onrender.com/accounts/logout/", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${token}`,
-      },
-      //body: JSON.stringify({
-        // 這裡 username/password 其實後端不應該再需要，如果後端真的要求，你就必須把它從 localStorage 或 context 傳進來
-        // username:  // 根據你實際使用者
-        // password: 
-      //}),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh }),
     });
 
-    if (response.ok) {
-      alert("Successfully log out！");
-      localStorage.removeItem("token");
-      navigate("/");
-    } else {
-      const data = await response.json();
-      alert(`Logout fail：${data.detail || "請重新登入"}`);
-    }
-      } catch (error) {
-        console.error("登出錯誤:", error);
-        //alert("登出時發生錯誤");
-      }
-    };
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    axios.defaults.headers.common["Authorization"] = "";
+    navigate("/");
+  };
+  // const handleLogout = async () => {
+  //   const refresh = localStorage.getItem("refresh_token");
+  // //try {
+  //   const response = await fetch("https://genai-backend-2gji.onrender.com/accounts/logout/", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Token ${token}`,
+  //     },
+  //     //body: JSON.stringify({
+  //       // 這裡 username/password 其實後端不應該再需要，如果後端真的要求，你就必須把它從 localStorage 或 context 傳進來
+  //       // username:  // 根據你實際使用者
+  //       // password: 
+  //     //}),
+  //   });
+
+  //   if (response.ok) {
+  //     alert("Successfully log out！");
+  //     localStorage.removeItem("token");
+  //     navigate("/");
+  //   } else {
+  //     const data = await response.json();
+  //     alert(`Logout fail：${data.detail || "請重新登入"}`);
+  //   }
+  //     } catch (error) {
+  //       console.error("登出錯誤:", error);
+  //       //alert("登出時發生錯誤");
+  //     }
+  //   };
 
   const handleDelete = async (id) => {
     const confirm = window.confirm("Are you sure you want to delete this event?");
     if (!confirm) return;
-   // const token = localStorage.getItem("token");
     try {
       const res = await fetch(`${API_BASE}/events/${id}/delete/`, {
         method: "DELETE",
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

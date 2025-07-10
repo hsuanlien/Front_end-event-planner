@@ -128,7 +128,7 @@ const Copywriting = () => {
             return;
         }
 
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("access_token");
 
         try {
             const postData = {
@@ -148,7 +148,7 @@ const Copywriting = () => {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Token ${token}`
+                            'Authorization': `Bearer ${token}`
                         },
                         body: JSON.stringify(postData)
                     });

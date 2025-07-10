@@ -5,7 +5,7 @@ const HomePage = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const navigate = useNavigate(); // 加入這行
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
 
   const handleLogout = async () => {
   try {
@@ -13,7 +13,7 @@ const HomePage = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         // 這裡 username/password 其實後端不應該再需要，如果後端真的要求，你就必須把它從 localStorage 或 context 傳進來

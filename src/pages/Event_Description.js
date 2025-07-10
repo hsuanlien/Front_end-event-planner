@@ -15,7 +15,7 @@ const Event_Description = () => {
     suggested_event_duration,
   } = location.state || {};
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
 
   // 狀態管理
   const [isEditing, setIsEditing] = useState(false);
@@ -36,7 +36,7 @@ const Event_Description = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             name,
@@ -74,7 +74,7 @@ const Event_Description = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             name,

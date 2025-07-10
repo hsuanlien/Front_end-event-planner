@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const CheckInvitation = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Get the id and version from the URL
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
 
   const [recipientEmail, setRecipientEmail] = useState("");
   const [invitations, setInvitations] = useState([]);
@@ -18,7 +18,7 @@ const CheckInvitation = () => {
   useEffect(() => {
     fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/invitation/`, {
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then(res => {
@@ -69,7 +69,7 @@ const CheckInvitation = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           ...draft,
@@ -100,7 +100,7 @@ const CheckInvitation = () => {
       const res = await fetch(`https://genai-backend-2gji.onrender.com/api/email/${id}/`, {
         method: "POST",
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -183,7 +183,7 @@ const CheckInvitation = () => {
             }}
              className={`px-4 py-2 rounded-lg shadow ${
                   showSendModal
-                    ? "bg-gray-600 hover:bg-gray-700 text-white cursor-pointer"
+                    ? "bg-cyan-500 hover:bg-gray-700 text-white cursor-pointer"
                     : "bg-gray-500 text-gray-300 cursor-not-allowed"
                 }`}
           >

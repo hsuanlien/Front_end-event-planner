@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 const CheckRegistration = () => {
   const { id } = useParams(); // eventId
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
 
   const [registrationForm, setRegistrationForm] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ const CheckRegistration = () => {
     fetch(`https://genai-backend-2gji.onrender.com/ai/generate-forms/${id}/`, {
       method: "POST",
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       //API does not require a body.
@@ -131,7 +131,7 @@ const CheckRegistration = () => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         registration_url: registrationForm.registration_url || "",
@@ -172,7 +172,7 @@ const CheckRegistration = () => {
     fetch(`https://genai-backend-2gji.onrender.com/api/events/${id}/generate-google-form/`, {
       method: "POST",
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     })
