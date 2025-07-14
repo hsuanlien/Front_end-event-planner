@@ -3,10 +3,8 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 const getAuthToken = () => localStorage.getItem("access_token");
 
-// API functions 拉出來寫
 const saveInvitationToBackend = async (eventId, invitation) => {
  // const token = getAuthToken();
-
   const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/ai/generate-invitation/${eventId}/`, {
     method: "POST",
     headers: {
@@ -19,8 +17,7 @@ const saveInvitationToBackend = async (eventId, invitation) => {
   if (!res.ok) {
     throw new Error("Failed to save invitation");
   }
-
-  return res.json(); // 會回傳 invitation_list 陣列
+  return res.json(); // return invitation_list array
 };
 
 const Invitation = () => {
@@ -49,12 +46,12 @@ const Invitation = () => {
       return;
     }
     try {
-      // 呼叫後端 API 儲存
+      // Call backend API to store
       const response = await saveInvitationToBackend(id, invitationData);
 
-      // 檢查是否有 invitation
+      // Check if you have an invitation
       if (response?.invitation_list?.length > 0) {
-        // 可根據需要儲存 invitation ID / 顯示成功訊息
+        // Save invitation ID as needed / display success message
         localStorage.setItem("latestInvitation", JSON.stringify(response.invitation_list[0]));
         navigate(`/event/${id}/check-invitation`);
       } else {
@@ -73,7 +70,7 @@ const Invitation = () => {
           🎨 Event {id} Invitation Letter Info
         </h2>
 
-        {/** 表單欄位 */}
+        {/* Form Fields */}
         {[
           {
             label: "Please input the receiver's name:",
@@ -149,7 +146,7 @@ const Invitation = () => {
         </div>
       </div>
 
-      {/** 底部按鈕區 */}
+      {/** button */}
       <div className="mt-8 flex justify-between items-center">
         <button
           onClick={() => navigate(-1)}

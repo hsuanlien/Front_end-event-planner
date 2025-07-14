@@ -12,7 +12,6 @@ const CheckRegistration = () => {
   const [saving, setSaving] = useState(false);
   const [sending, setSending] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  //const [message, setMessage] = useState({ text: "", type: "" });
   const [message, setMessage] = useState({ content: null, type: "" });
   const [showModal, setShowModal] = useState(false);
   const [googleFormUrl, setGoogleFormUrl] = useState("");
@@ -52,7 +51,6 @@ const CheckRegistration = () => {
       })
         .finally(() => {
         setLoading(false);
-      //  console.log("Fetch End Loading false");
       });
     }, [id, token]);
 
@@ -66,7 +64,6 @@ const CheckRegistration = () => {
 
   //Form field change handler
   const handleFieldChange = (index, field, value) => {
-    //console.log(`Change !! : ${index}, field: ${field}, value:`, value);
     setRegistrationForm((prev) => {
       if (!prev) return prev;
         const newFields = [...prev.form_fields];
@@ -196,9 +193,7 @@ const CheckRegistration = () => {
         setRegistrationForm((prev) => ({
           ...prev,
           registration_url: formUrl,
-        }));
-        //setMessage({ text: "Successfully created Registration form!", type: "success" });
-        
+        }));        
         setMessage({
         content: (
           <>
@@ -310,16 +305,6 @@ const CheckRegistration = () => {
                             }
                             disabled={saving || sending}
                           />
-                          {/* <input
-                            type="text"
-                            placeholder="Description"
-                            className="flex-1 p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                            value={field.description}
-                            onChange={(e) =>
-                              handleFieldChange(index, "description", e.target.value)
-                            }
-                            disabled={saving || sending}
-                          /> */}
                           <button
                             onClick={() => handleRemoveField(index)}
                             disabled={saving || sending}
@@ -381,17 +366,8 @@ const CheckRegistration = () => {
               </button>
             </div>
 
-            {/* 訊息顯示 */}
+            {/* Message display */}
             {message.content && (
-              // <div
-              //   className={`mt-4 p-3 rounded-md text-center font-semibold ${
-              //     message.type === "error"
-              //       ? "bg-red-600 text-white"
-              //       : message.type === "success"
-              //       ? "bg-green-600 text-white"
-              //       : "bg-yellow-400 text-black"
-              //   }`}
-              // >
               <div className={`p-4 rounded-md ${message.type === "error" ? "bg-red-500" : "bg-green-600"} text-white flex justify-between items-center`}>
                   <div>{message.content}</div>
                   <button
@@ -401,17 +377,6 @@ const CheckRegistration = () => {
                     ✕
                   </button>
                 </div>
-              // <div
-              //             className={`mt-4 text-center font-semibold text-green-600`}
-              // style={{ cursor: 'pointer' }}
-              // onClick={() => {
-              //   // 如果你想點整段開啟連結，也可以用這段
-              //   const url = message.url || null;
-              //   if (url) window.open(url, "_blank");
-              // }}
-              // >
-              //   {message.content}
-              // </div>
             )}
           </div>
         )}

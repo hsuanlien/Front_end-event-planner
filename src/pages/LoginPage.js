@@ -9,7 +9,7 @@ function LoginPage() {
   const [password, setPassword] = useState('');
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // ✅ 阻止預設提交行為 (包含 Enter 與滑鼠)
+    e.preventDefault(); //Prevent default submit behavior (including Enter and mouse)
 
     if (!username || !password) {
       alert("Please enter your account and password");
@@ -26,51 +26,37 @@ function LoginPage() {
       const { access, refresh } = response.data;
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
-        // const token = response.data.token;
-        // console.log("Login successful, Token：", token);
-
-        // 儲存 token 到 localStorage
-       // localStorage.setItem("token", token);
-      // console.log("登入 token：", token);
-      // Optional: 設定預設 headers
-    //axios.defaults.headers.common["Authorization"] = `Bearer ${access}`;
-        // 查詢帳號資訊
+      // const token = response.data.token;
+      // console.log("Login successful, Token：", token);
+      //axios.defaults.headers.common["Authorization"] = `Bearer ${access}`;
+        //Query account information
         const profileRes = await axios.get("https://genai-backend-2gji.onrender.com/accounts/", {
           headers: {
             Authorization: `Bearer ${access}`,
           },
         });
-
         console.log("使用者資訊：", profileRes.data);
-
-        // 導向首頁
         navigate('/upcoming-events');
       }
     } catch (error) {
       alert("Login fail：" + 
           (error.response?.data?.non_field_errors?.[0] ||
           error.response?.data?.error));
-
-      // if (error.response && error.response.status === 400) {
-      //   alert("⚠️ Login fail：" + (error.response.data.non_field_errors || "Please confirm your account and password"));
-      // } else {
-      //   alert("⚠️ An error occurred during the login process");
-      // }
     }
   };
   
- // UI介面設計 
+ // UI
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 relative overflow-hidden">
-      {/* 背景光暈效果 */}
+      {/* background */}
       <div className="absolute w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse top-10 left-10"></div>
       <div className="absolute w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse bottom-10 right-10"></div>
 
-      {/* 標誌/標題 */}
+      {/* Name */}
       <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-10 tracking-wide drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)]">
       Event <span className="text-cyan-400">Planner</span>
       </h1>
-      {/* 表單加上 onSubmit */}
+      {/* Form onSubmit */}
       <form
         onSubmit={handleLogin}
         className="backdrop-blur-md bg-white/10 p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-white/20 z-10"
@@ -96,7 +82,7 @@ function LoginPage() {
         />
 
         <button
-          type="submit" //  表單送出按鈕
+          type="submit" //  Submit form button
           className="w-full bg-cyan-500 text-white py-3 rounded-lg hover:bg-cyan-600 transition font-semibold tracking-wide shadow-lg"
         >
           Submit

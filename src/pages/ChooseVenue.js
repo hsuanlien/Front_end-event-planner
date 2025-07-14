@@ -102,7 +102,6 @@ const ChooseVenue = () => {
                 <div className="font-bold text-lg">{venue.name}</div>
                 <div className="text-sm">🏛 Capacity: {venue.capacity}</div>
                 <div className="text-sm">🚇 Transportation score: {venue.transportation_score}</div>
-                {/* <div className="text-sm"> Is outdoor: {venue.is_outdoor ? "是" : "否"}</div> */}
                 <div className="text-sm">🏞 Type: {venue.is_outdoor ? "outdoor" : "indoor"}</div>
                 <div className="text-sm truncate">📍 Address: {venue.address || "無"}</div>
                 {venue.map_url && (
@@ -136,9 +135,6 @@ const ChooseVenue = () => {
             Save
           </button>
         </div>
-
-
-
       </main>
     </div>
   );

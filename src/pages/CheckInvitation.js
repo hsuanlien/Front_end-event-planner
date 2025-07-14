@@ -33,7 +33,7 @@ const CheckInvitation = () => {
           const latest = data[data.length - 1];
           // setCurrentInvitation(data[0]);
           // setRecipientEmail(data[0].recipient_email);
-          // localStorage.setItem("latestInvitation", JSON.stringify(data[0])); // ← 這裡新增
+          // localStorage.setItem("latestInvitation", JSON.stringify(data[0]));
           setCurrentInvitation(latest);
           setRecipientEmail(latest.recipient_email);
           localStorage.setItem("latestInvitation", JSON.stringify(latest));
@@ -121,23 +121,18 @@ const CheckInvitation = () => {
       <main className="flex-1 flex flex-col p-8">
         <h1 className="text-3xl font-bold mb-6 drop-shadow-md">🎯 Check Invitation Letter</h1>
 
-        {/* <div className="min-w-[700px] mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl space-y-6"> */}
         <div className="w-full max-w-3xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl space-y-6">
-{/* <div className="w-full max-w-3xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl space-y-6 min-h-[500px]">
- */}
           {/* Subject */}
           <div>
             <h2 className="text-2xl font-bold text-cyan-300 mb-2">Subject</h2>
             {editMode ? (
               <input
                 type="text"
-                //className="w-full min-h-[50px] p-3 text-black rounded-lg shadow bg-white"
                 className="w-full h-[60px] p-3 text-black rounded-lg shadow bg-white"
                 value={draft.subject}
                 onChange={(e) => setDraft(prev => ({ ...prev, subject: e.target.value }))}
               />
             ) : (
-              // <div className="w-full min-h-[50px] p-3 bg-white text-black rounded-lg shadow">
               <div className="w-full h-[60px] p-3 text-black rounded-lg shadow bg-white"> 
 
                 {currentInvitation.subject}
@@ -149,12 +144,6 @@ const CheckInvitation = () => {
           <div>
             <h2 className="text-2xl font-bold text-cyan-300 mb-2">Body</h2>
             {editMode ? (
-              // <textarea
-              //   // className="w-full min-h-[300px] p-3 text-black rounded-lg shadow bg-white resize-none"
-              //   className="w-full h-[300px] p-3 text-black rounded-lg shadow bg-white resize-none"
-              //   value={draft.body}
-              //   onChange={(e) => setDraft(prev => ({ ...prev, body: e.target.value }))}
-              // />
               <textarea
                   className="w-full min-h-[300px] p-3 text-black rounded-lg shadow bg-white resize-y"
                   style={{ height: "300px" }}
@@ -163,7 +152,6 @@ const CheckInvitation = () => {
                 />
 
             ) : (
-              // <div className="w-full min-h-[50px] p-3 text-black rounded-lg shadow bg-white">
               <div className="w-full h-[300px] p-3 text-black rounded-lg shadow bg-white whitespace-pre-wrap">
                 {currentInvitation.body}
               </div>
@@ -173,7 +161,6 @@ const CheckInvitation = () => {
 
         {/* Footer Buttons */}
         <div className="mt-8 flex justify-between items-center">
-        {/* <div className="fixed bottom-8 right-8 flex gap-4 z-50"> */}
           <button
             onClick={() => {
               if (hasSent) {

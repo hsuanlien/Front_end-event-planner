@@ -165,7 +165,7 @@ const CheckCopywriting = () => {
                             originalContent: postToSave.editedContent.trim(),
                             editedContent: postToSave.editedContent.trim(),
                             isEditing: false,
-                            ...updated // 更新其它後端可能改動的欄位
+                            ...updated // Update other fields that may be modified by the backend
                         }
                     : post
                 ));

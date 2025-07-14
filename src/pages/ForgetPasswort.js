@@ -24,7 +24,7 @@ function ForgetPassword() {
 
       if (response.status) {
         alert("📩 Please check your email to reset your password.");
-        navigate("/"); // 導回登入頁面
+        navigate("/");
     }
   }catch (error) {
       console.error("Reset failed:", error);
@@ -34,11 +34,10 @@ function ForgetPassword() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 relative overflow-hidden">
-      {/* 背景光暈效果 */}
       <div className="absolute w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse top-10 left-10"></div>
       <div className="absolute w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse bottom-10 right-10"></div>
 
-      {/* 標題 */}
+      {/* Head */}
       <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-10 tracking-wide drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)]">
         Event <span className="text-cyan-400">Planner</span>
       </h1>

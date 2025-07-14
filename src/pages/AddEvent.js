@@ -2,13 +2,6 @@ import { fetchWithAuth } from "../utils/auth";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-// import DatePicker, { registerLocale } from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
-// import enUS from "date-fns/locale/en-US";
-
-// registerLocale("en", enUS);
-
-
 const API_URL = "https://genai-backend-2gji.onrender.com/ai/generate-event/";
 
 const AddEvent = () => {
@@ -117,7 +110,7 @@ const AddEvent = () => {
                 Budget:
                 <span
                   className="inline-block text-white font-mono text-lg"
-                  style={{ minWidth: "60px", textAlign: "right" }}  // ← 固定寬度
+                  style={{ minWidth: "60px", textAlign: "right" }}  
                 >
                   {budget} EUR
                 </span>

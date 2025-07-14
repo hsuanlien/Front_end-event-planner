@@ -3,7 +3,7 @@ import { fetchWithAuth } from "../utils/auth";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-// 直接寫在前端的下拉選單選項
+// Drop-down menu options written directly on the front end
 const EVENT_TYPE_OPTIONS = [
   { value: "Workshop_Training", label: "Workshop / Training" },
   { value: "Social_Networking", label: "Social / Networking" },
@@ -35,8 +35,8 @@ const EventDetailPage = () => {
   const [taskCompleted, setTaskCompleted] = useState(false); // do Task assignment
   const [venueCompleted, setVenueCompleted] = useState(true); //  do Venue select
 
-  const [versions, setVersions] = useState([]); // 空的
-  const [selectedVersion, setSelectedVersion] = useState(""); // 初始沒有選
+  const [versions, setVersions] = useState([]); 
+  const [selectedVersion, setSelectedVersion] = useState(""); 
 
 
   const sidebarItems = [
@@ -59,15 +59,15 @@ const EventDetailPage = () => {
         const data = await response.json();
         //console.log("fetched versions:", data);
 
-          // 依照 version_number 升冪排序
+        //Sort by version_number in ascending order
         const sortedData = [...data].sort((a, b) => a.version_number - b.version_number);
 
 
-        setVersions(sortedData); // 全部版本完整資料陣列 [{id: 6, ...}, ...]
+        setVersions(sortedData); // All versions complete data array [{id: 6, ...}, ...]
         if (sortedData.length > 0) {
-          setSelectedVersion(`v${sortedData.length}`); // 預設選擇最後一版（v1, v2, ...）
-        } else { // 最一開始進去時 不顯示版本
-          setSelectedVersion(""); // 沒有版本時清空
+          setSelectedVersion(`v${sortedData.length}`); // Select the last version by default（v1, v2, ...）
+        } else { // The version is not displayed when you first enter
+          setSelectedVersion(""); // Clear if no version
         }
       } catch (err) {
         console.error(err);
@@ -77,14 +77,14 @@ const EventDetailPage = () => {
     fetchVersions();
   }, [id, token]);
 
-  // 根據點選的 v1/v2/v3 來顯示對應版本資料
-  useEffect(() => { // 監聽 selectedVersion 變動
+  // Display the corresponding version data according to the selected v1/v2/v3
+  useEffect(() => { // Listen for selectedVersion changes
     if (!selectedVersion) return;
 
-    // selectedVersion 是 v1, v2, v3，要拿出對應 index
+    // selectedVersion is v1, v2, v3, you need to get the corresponding index
     const versionIndex = parseInt(selectedVersion.replace("v", ""), 10) - 1;
 
-    // 確保 index 不超出範圍
+    //Make sure index is within range
     if (versions[versionIndex]) {
       const selectedData = versions[versionIndex].event_snapshot;
       setEventData(selectedData);
@@ -102,10 +102,9 @@ const EventDetailPage = () => {
 
 
   const handleFunctionClick = (itemKey) => {
-    //const pathBase = `/event/${id}/${selectedVersion}`;
     const pathBase = `/event/${id}/`;
     if (itemKey === "場地") {
-      setVenueCompleted(true);
+      setVenueCompleted(true);// Simulation completed
       localStorage.setItem(`venueCompleted_${id}`, "true");
       console.log("setVenueCompleted : ", setVenueCompleted);
       navigate(`${pathBase}venue`);
@@ -116,7 +115,7 @@ const EventDetailPage = () => {
     } else if (itemKey === "文案") {
       navigate(`${pathBase}copywriting`);
     } else if (itemKey === "Task assignment") {
-      setTaskCompleted(true);  // 模擬完成
+      setTaskCompleted(true);  // Simulation completed
       localStorage.setItem(`taskCompleted_${id}`, "true");
       console.log("taskCompleted : ", setTaskCompleted);
       navigate(`${pathBase}assignment-task`);
@@ -140,11 +139,11 @@ const EventDetailPage = () => {
         console.log(data);
         
         if (data.event_snapshot) {
-          // 未來有多版本（如 /versions/<id>/）的需求才使用 event_snapshot
+          //In the future, event_snapshot will be used when there are multiple versions (such as /versions/<id>/)
           setEventData(data.event_snapshot);
           setFormData(data.event_snapshot);
         } else {
-          //第一次進來 實際從 GET /api/events/<id>/ 拿到的資料
+          //The first time you come in, you actually get the data from GET /api/events/<id>/
           setEventData(data);
           setFormData(data);
         }
@@ -164,7 +163,7 @@ const EventDetailPage = () => {
       return true;
     });
     
-  const handleChange = (e) => { // 表單變更欄位更新
+  const handleChange = (e) => { // Form change field update
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -173,7 +172,7 @@ const EventDetailPage = () => {
     setIsEditing(true);
   };
 
-  const handleSave_Change = async () => {// 更改欄位儲存 patch
+  const handleSave_Change = async () => {// Change fields to save patch
     setIsEditing(false);
     try {
       const response = await fetchWithAuth(
@@ -197,15 +196,13 @@ const EventDetailPage = () => {
       console.log("PATCH 成功，回傳資料:", updatedData);
 
         setEventData(updatedData);
-        //setIsEditing(false);
-        //alert("Change saved successfully.");
       } catch (error) {
         console.error("handleSave_Change error:", error);
         //alert("Failed to save changes.");
       }
   }; 
 
-  const handleSave_Version = async () => {// post 存活動版本
+  const handleSave_Version = async () => {// post save version
     try {
       const response = await fetchWithAuth(
         `https://genai-backend-2gji.onrender.com/api/events/${id}/save-version/`,
@@ -228,7 +225,7 @@ const EventDetailPage = () => {
       
       setIsEditing(false);
       alert("Successfully save event version.");    
-      // 再次獲取版本列表
+      // Get the version list again
       const res = await fetchWithAuth(
         `https://genai-backend-2gji.onrender.com/api/events/${id}/versions/`, 
         {
@@ -238,12 +235,10 @@ const EventDetailPage = () => {
       });
       if (!res.ok) throw new Error("Failed to fetch updated versions");
       const updatedVersions = await res.json();
-      // ✅ 加排序
+      // Add sort
         const sortedUpdatedVersions = [...updatedVersions].sort(
           (a, b) => a.version_number - b.version_number
         );
-      // setVersions(updatedVersions);
-      // setSelectedVersion(`v${updatedVersions.length}`); // 選中新版本
 
       setVersions(sortedUpdatedVersions);
       setSelectedVersion(`v${sortedUpdatedVersions.length}`);
@@ -290,11 +285,11 @@ const EventDetailPage = () => {
       </button>
     </div> 
 
-    {/* Version menu — 放到中間 */}
+    {/* Version menu */}
     <div className="w-32 p-4 border-r border-white/10 bg-white/5">
       <h3 className="text-md font-semibold mb-4 text-cyan-300">Version</h3>
       
-      {/* 渲染 versions 清單時映射 UI 版本號（v1, v2, v3） */}
+      {/* Map UI version numbers (v1, v2, v3) when rendering versions list */}
       <ul className="space-y-2">
           {versions.map((ver, index) => (
             <li key={ver.id}>
@@ -315,7 +310,6 @@ const EventDetailPage = () => {
     </div>
 
       {/* Right main content */}
-      {/* 右側內容區 */}
       <div className="flex-1 p-6">
         <h2 className="text-2xl font-bold mb-4">
           🧾 Event {selectedVersion ? `- ${selectedVersion.toUpperCase()}` : ""}
@@ -413,7 +407,7 @@ const EventDetailPage = () => {
             </label><br />
             
 
-            {/* 加入 EVENT_TYPE_OPTIONS 下拉選擇 */}
+            {/* Add EVENT_TYPE_OPTIONS drop-down selection */}
             <label>
               📂 Event Type:
               <select
@@ -438,8 +432,7 @@ const EventDetailPage = () => {
           <p><strong>📆 Date:</strong> {eventData.start_time} ~ {eventData.end_time}</p>
           <p><strong>👥 Expected Attendees:</strong> {eventData.expected_attendees}</p>
           <p><strong>💰 Budget:</strong> {eventData.budget}</p>
-          <p><strong>🎯 Audience:</strong> {eventData.target_audience}</p> {/* 加入 AUDIENCE_OPTIONS下拉選擇 */}
-          {/* 加入 EVENT_TYPE_OPTIONS 下拉選擇 */}
+          <p><strong>🎯 Audience:</strong> {eventData.target_audience}</p> 
           <p><strong>📂 Event Type:</strong> {eventData.type}</p>
         </>
       )}
@@ -463,14 +456,6 @@ const EventDetailPage = () => {
               >
                 Save Change
               </button>
-              
-              {/* <button
-                onClick={handleSave_Version}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
-              >
-                Save Version
-              </button> */}
-
             </>
           ) : (
              <>

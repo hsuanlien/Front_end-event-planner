@@ -97,8 +97,6 @@ const TaskAssignmentPage = () => {
   }, [id]);
 
   const handleAddTask = () => {
-   // console.log(tasks[0].start_time);
-    // console.log("event date:",eventDate);
     let defaultStart = toLocalDateTimeString(eventDate); 
     let defaultEnd = toLocalDateTimeString(tasks[0].end_time); 
     console.log("event date:",eventDate);
@@ -179,8 +177,6 @@ const TaskAssignmentPage = () => {
           ...newTask, 
           start_time: toIsoString(newTask.start_time),
           end_time: toIsoString(newTask.end_time)
-          // start_time: newTask.start_time, // 直接送原本字串
-          // end_time: newTask.end_time
         })
       });
       console.log("to Iso String:", toIsoString(newTask.end_time));
@@ -197,7 +193,7 @@ const TaskAssignmentPage = () => {
       console.error("Add failed:", err);
       alert("Add failed. Please try again later.");
     }
-    await fetchTasks();  // 重新抓資料
+    await fetchTasks(); // Re-capture data
   };
   
   const fetchTasks = async () => {
@@ -210,7 +206,7 @@ const TaskAssignmentPage = () => {
         });
         if (!res.ok) throw new Error("Failed to fetch tasks");
         const data = await res.json();
-        setTasks(data);  // 這是正確的來源
+        setTasks(data);  
       } catch (err) {
         console.error("Fetching tasks failed:", err);
       }
@@ -278,17 +274,7 @@ const TaskAssignmentPage = () => {
           </button>
         </div>
 
-       {/* <div className="flex-1 flex-column max-h-screen overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4"> */}
-        {/* <div className="flex-1 flex flex-col min-h-[85vh] overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4"> */}
         <div className="flex-1 flex flex-col overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4 min-h-screen">
-
-          {/* {isLoading ? (
-            <div className="text-white text-xl font-semibold animate-pulse">
-              Loading...
-            </div>
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
-          ) : ( */}
           {error ? (
             <p className="text-red-500">{error}</p>
           ) : (
@@ -305,13 +291,9 @@ const TaskAssignmentPage = () => {
                   People needed: {task.count}
                 </p>
                 <p className="text-sm text-gray-700">
-                  {/* Start at: {tasks[0].start_time.replace('T', ' ').replace('Z', '')} */}
-                  {/* Start at: {new Date(task.start_time).toLocaleString()} */}
                   Start at: {task.start_time}
                 </p>
                 <p className="text-sm text-gray-700">
-                  {/* <p>End: {tasks[0].end_time.replace('T', ' ').replace('Z', '')}</p> */}
-                    {/* End at: {new Date(task.end_time).toLocaleString()} */}
                   End at: {task.end_time}
                 </p>
               </div>
@@ -400,7 +382,7 @@ const TaskAssignmentPage = () => {
           </div>
         </div>
       )}
-      {/* Edit 功能 */}
+      {/* Edit */}
       {showModalEdit && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">
@@ -474,7 +456,7 @@ const TaskAssignmentPage = () => {
         </div>
       )}
 
-      {/* Delete功能 */}
+      {/* Delete */}
             {showModalDelete && (
               <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
                 <div className="bg-white text-black p-6 rounded-xl w-96 shadow-lg space-y-4 max-h-[90vh] overflow-y-auto">

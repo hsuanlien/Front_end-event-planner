@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// 表單
+
 const Registration= () => {
   const { id, version } = useParams();
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const Registration= () => {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white p-8">
       <div className="max-w-3xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl">
-        {/* Task ：event版本正確提取 */}
+        {/* Version correctly extracted */}
         <h2 className="text-3xl font-bold mb-6 text-cyan-300">
           🎨 Event {id} - {version.toUpperCase()} Registration Info
         </h2>
@@ -55,11 +55,9 @@ const Registration= () => {
         </div>
 
       </div>
-
-  {/* Task5:按鈕寫法 */}
-  {/* 底部按鈕區：flex 分左右 */}
+    {/* flex */}
     <div className="mt-8 flex justify-between items-center">
-      {/* 左下角返回按鈕 */}
+      {/* back button */}
       <button
         onClick={() => navigate(-1)}    
         className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
@@ -67,7 +65,7 @@ const Registration= () => {
         ← Back
       </button>
 
-    {/* 右下角 Add / Change / Save 按鈕 */}
+    {/* Add / Change / Save */}
       <div className="flex gap-10">
         <button
           onClick={() => navigate("/event/:id/check-registration")}
@@ -77,9 +75,6 @@ const Registration= () => {
         </button>
       </div>
     </div>
-
-
-
     </div>
   );
 };

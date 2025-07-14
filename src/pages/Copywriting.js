@@ -272,7 +272,6 @@ const Copywriting = () => {
                         <select
                             className="w-full p-3 rounded-lg bg-gray-100 text-gray-900 text-gray-900 border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 appearance-none"
                             value={includeEmoji}
-                            //onChange={(e) => setIncludeEmoji(e.target.value)}
                             onChange={(e) => handleIncludeEmojiChange(e.target.value)}
                             required
                         >
@@ -349,7 +348,7 @@ const Copywriting = () => {
                     </div>
 
 
-                    {/* Hashtag Seeds - 自定义实现 */}
+                    {/* Hashtag Seeds */}
                     <div>
                         <label className="block text-white text-sm font-bold mb-2">Hashtag Seeds :</label>
                         <div className="flex flex-wrap gap-2 mb-2 p-2 rounded-lg bg-white/10 border border-white/30 min-h-[40px] items-center">

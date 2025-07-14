@@ -16,8 +16,6 @@ const Event_Description = () => {
   } = location.state || {};
 
   const token = localStorage.getItem("access_token");
-
-  // 狀態管理
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(eventName || "");
   const [slogan, setSlogan] = useState(selectedSlogan || "");
@@ -29,7 +27,7 @@ const Event_Description = () => {
   const handleSave = async () => {
   console.log(" Token used for request: ", token);
   try {
-      // 1. PATCH 更新活動資料
+      // 1. PATCH Update activity data
       const patchResponse = await fetchWithAuth(
         `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
         {
@@ -67,7 +65,7 @@ const Event_Description = () => {
   const handleNext = async () => {
   console.log(" Token used for request: ", token);
   try {
-      // 1. PATCH 更新活動資料
+      // PATCH Update activity data
       const patchResponse = await fetchWithAuth(
         `https://genai-backend-2gji.onrender.com/api/events/${eventId}/update/`,
         {

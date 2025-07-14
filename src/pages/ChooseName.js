@@ -15,7 +15,7 @@ const ChooseName = () => {
   }, [names]);
 
   const handleConfirm = () => {
-    // Continue to the next page with the selected event name and other event information
+    // Continue to next page with the selected event name and other event information
     navigate("/choose-slogan", {
       state: {
         eventId,

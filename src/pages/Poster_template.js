@@ -11,9 +11,6 @@ const PosterTemplate = () => {
         <h2 className="text-3xl font-bold text-cyan-300 mb-6">
           🧾 Poster Template for Event {id} - {version.toUpperCase()}
         </h2>
-        <p className="text-gray-200">
-          這裡會顯示根據使用者輸入所生成的海報內容（或其他元件）
-        </p>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const ChooseEventTime = () => {
       const token = localStorage.getItem("access_token");
       try {
         const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/api/events/${id}/`, { 
-          // GET request to obtain detailed information about the event
+          // GET request to obtain detailed information 
           // headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {

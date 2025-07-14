@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const HomePage = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const navigate = useNavigate(); // 加入這行
+  const navigate = useNavigate(); 
   //const token = localStorage.getItem("access_token");
 
   const handleLogout = async () => {
@@ -37,7 +37,7 @@ const HomePage = () => {
 
     return (
     <div className="min-h-screen flex bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white overflow-hidden">
-      {/* Sidebar 側邊欄 */}
+      {/* Sidebar */}
       <aside className="w-64 bg-white/10 backdrop-blur-md border-r border-white/20 p-6 flex flex-col justify-between shadow-lg z-10">
         <div>
           <h2 className="text-2xl font-bold mb-6 tracking-wide drop-shadow-md text-left">
@@ -66,7 +66,7 @@ const HomePage = () => {
           </nav>
         </div>
 
-        {/* Log out 按鈕固定在左下 */}
+        {/* Log out button */}
         <button
           onClick={handleLogout}
           className="text-red-400 hover:text-red-300 text-left"

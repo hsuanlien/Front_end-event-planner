@@ -16,10 +16,6 @@ const UserProfile = () => {
 
   useEffect(() => {
     // const token = localStorage.getItem("access_token");
-    // if (!token) {
-    //   navigate("/login");
-    //   return;
-    // }
     fetchWithAuth("https://genai-backend-2gji.onrender.com/accounts/", {
       headers: {
        // Authorization: `Bearer ${token}`,
@@ -45,10 +41,9 @@ const UserProfile = () => {
   }, [navigate]);
 
   const handleSave = async () => {
-    // const token = localStorage.getItem("access_token");
-    // if (!token) return;
+  // const token = localStorage.getItem("access_token");
 
-  // 準備 payload，只在密碼有輸入時才加入 password 欄位
+  // Prepare the payload, add the password field only if a password is entered
     const payload = {
       username,
       email,
@@ -73,9 +68,9 @@ const UserProfile = () => {
 
       if (response.ok) {
         alert("Data updated successfully");
-        setPassword(""); // 清除密碼欄位
+        setPassword(""); 
         localStorage.setItem("currentUser", JSON.stringify(result.user));
-        setIsEditable(false); // 鎖定欄位
+        setIsEditable(false); 
       } else {
         alert("Update failed, please check your information or log in again");
         console.error("Update failed:", result);

@@ -5,7 +5,6 @@ import { useNavigate, useParams } from "react-router-dom";
 const Venue = () => {
   const { id, version } = useParams();
   const navigate = useNavigate();
-  //  新增：場地資料欄位
   const [venueName, setVenueName] = useState("");
   const [radiusKm, setRadiusKm] = useState("");
   const [venueMessage, setVenueMessage] = useState("");
@@ -17,12 +16,9 @@ const Venue = () => {
     
     if (!venueName || !radiusKm) {
       setVenueMessage("請填寫所有欄位");
-      setIsSubmitting(false); //  防止按鈕卡住
+      setIsSubmitting(false); //  Prevent button sticking
       return;
     }
-    // const token = localStorage.getItem("access_token"); // 假設你登入後存在這裡 
-    //console.log("venue", token);
-    // @@venue ID沒有get, 沒辦法更新
     try {
       const res = await fetchWithAuth(`https://genai-backend-2gji.onrender.com/ai/generate-venues/${id}/`, {
         method: "POST",
@@ -47,15 +43,13 @@ const Venue = () => {
     if (!data.venue_suggestions || !Array.isArray(data.venue_suggestions)) {
       throw new Error("後端資料格式錯誤");
     }
-    // ✅ 先顯示成功訊息
+    //Show success message first
     setVenueMessage("✅ Submission successful!");
-
-
-    // ✅ 帶資料跳轉
+    // Jump with data
       navigate(`/event/${id}/choose-venue`, {
         state: {
           venue_suggestions: data.venue_suggestions,
-          eventId: id, // 從 useParams 傳來即可
+          eventId: id, // Passed from useParams
         },
       });
     } catch (err) {
@@ -63,14 +57,14 @@ const Venue = () => {
       setVenueMessage("❌ Submission failed, please check the server.");
     }
 
-    setIsSubmitting(false); // 在 finally 或每個路徑最後都呼叫
+    setIsSubmitting(false); //Call finally or at the end of each path
 };
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white p-8">
   
 
-      {/* ✅ 新增場地輸入區塊 */}
+      {/* Added venue input area */}
       <div className="max-w-3xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl mt-10">
         <h3 className="text-2xl font-bold mb-4 text-yellow-300">🏗️ Create Venue</h3>
 
@@ -96,11 +90,9 @@ const Venue = () => {
           <p className="text-center text-yellow-300 mt-4">{venueMessage}</p>
         )}
       </div>
-
-      {/* Task:按鈕寫法 */}
-      {/* 底部按鈕區：flex 分左右 */}
+      {/*flex */}
       <div className="mt-8 flex justify-between items-center">
-        {/* 左下角返回按鈕 */}
+        {/* back button */}
         <button
           onClick={() => navigate(-1)}
           className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
@@ -108,16 +100,9 @@ const Venue = () => {
           ← Back
         </button>
 
-        {/* 右下角 Add / Change / Save 按鈕 */}
+        {/* Add / Change / Save */}
         <div className="flex gap-10">
-          {/* <button
-            onClick={() => alert("Change clicked")}
-            className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
-          >
-            Change
-          </button> */}
-          
-{/* 儲存按鈕點擊後應禁用，避免多次提交 */}
+        {/* The save button should be disabled after clicking to avoid multiple submissions */}
          <button
             onClick={handleVenueSave}
             disabled={isSubmitting}
