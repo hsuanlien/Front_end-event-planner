@@ -16,11 +16,13 @@ This frontend connects to a Django backend with JWT authentication.
 Our project is deployed and accessible at [https://front-end-event-planner.vercel.app]. Feel free to explore and try it out!
 
 ### Project Structure Highlights
+``` 
 src/
 ├── pages/      # All major pages (AddEvent, EventDetailPage, TaskAssignment, etc.)
 ├── utils/      # Authentication utilities (e.g., fetchWithAuth with auto refresh)
 ├── App.js      # Main routing setup
-
+``` 
+    
 ### Authentication Notes
 We use JWT (JSON Web Token):
 1.Login returns access and refresh tokens.
