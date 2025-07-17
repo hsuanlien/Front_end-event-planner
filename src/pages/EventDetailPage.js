@@ -31,6 +31,15 @@ const EventDetailPage = () => {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  
+  // Control body scroll when nav is open
+  useEffect(() => {
+    document.body.style.overflow = isNavOpen ? 'hidden' : 'unset';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isNavOpen]);
 
   const [taskCompleted, setTaskCompleted] = useState(false); // do Task assignment
   const [venueCompleted, setVenueCompleted] = useState(true); //  do Venue select
@@ -248,6 +257,15 @@ const EventDetailPage = () => {
       alert("Failed to save changes.");
     }
   };
+
+  // Prevent body scroll when nav is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isMobileMenuOpen]);
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
