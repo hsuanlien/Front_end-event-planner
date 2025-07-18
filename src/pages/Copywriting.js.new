@@ -336,13 +336,50 @@ const Copywriting = () => {
                                     onMouseEnter={() => setActiveCategory(index)}
                                     onFocus={() => setActiveCategory(index)}
                                 >
-                                    <h4 className="text-white text-sm font-semibold mb-2 mt-3">
-                                        {categoryData.category}:
+                                    <h4 className="text-white text-sm font-semibold mb-2 mt-3 flex justify-between items-center">
+                                        <span>{categoryData.category}:</span>
+                                        <span className="text-xs text-cyan-400">Scroll or use arrow buttons</span>
                                     </h4>
                                     <div className="relative">
+                                        {/* Left Scroll Button */}
+                                        <button 
+                                            aria-label="Scroll left"
+                                            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gray-800/80 hover:bg-gray-700 text-white p-2 rounded-full shadow-lg focus:ring-2 focus:ring-cyan-500"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                if (powerWordsContainers.current[index]) {
+                                                    powerWordsContainers.current[index].scrollBy({ left: -200, behavior: 'smooth' });
+                                                }
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    if (powerWordsContainers.current[index]) {
+                                                        powerWordsContainers.current[index].scrollBy({ left: -200, behavior: 'smooth' });
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            ◀
+                                        </button>
+                                        
                                         <div 
-                                            className="power-words-container"
+                                            className="power-words-container flex flex-nowrap gap-3 pb-4 pt-2 px-12 w-full overflow-x-auto overflow-y-hidden custom-scrollbar scroll-snap-x"
                                             ref={el => powerWordsContainers.current[index] = el}
+                                            tabIndex="0"
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'ArrowRight') {
+                                                    e.preventDefault();
+                                                    if (powerWordsContainers.current[index]) {
+                                                        powerWordsContainers.current[index].scrollBy({ left: 200, behavior: 'smooth' });
+                                                    }
+                                                } else if (e.key === 'ArrowLeft') {
+                                                    e.preventDefault();
+                                                    if (powerWordsContainers.current[index]) {
+                                                        powerWordsContainers.current[index].scrollBy({ left: -200, behavior: 'smooth' });
+                                                    }
+                                                }
+                                            }}
                                         >
                                             {categoryData.words.map(word => (
                                                 <div 
@@ -352,15 +389,22 @@ const Copywriting = () => {
                                                     <div
                                                         className={`
                                                             inline-flex justify-center items-center
-                                                            px-4 py-3 rounded-lg text-sm cursor-pointer transition-all duration-200 whitespace-nowrap
-                                                            min-w-[140px] h-[54px]
+                                                            px-4 py-3 rounded-lg text-sm cursor-pointer transition whitespace-nowrap
+                                                            min-w-[130px] h-[50px]
                                                             ${powerWords.split(',').map(s => s.trim()).filter(Boolean).includes(word)
                                                                 ? 'bg-cyan-600 text-white shadow-lg transform scale-105'
-                                                                : 'bg-white/20 hover:bg-cyan-600/80 hover:text-white text-gray-200 border border-white/20 hover:shadow-md'
+                                                                : 'bg-white/20 hover:bg-cyan-600 hover:text-white text-gray-200 border border-white/20 hover:transform hover:scale-105'
                                                             }
                                                         `}
                                                         onClick={() => handlePowerWordClick(word)}
                                                         role="button"
+                                                        tabIndex="0"
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                                e.preventDefault();
+                                                                handlePowerWordClick(word);
+                                                            }
+                                                        }}
                                                     >
                                                         {word}
                                                     </div>
@@ -368,7 +412,27 @@ const Copywriting = () => {
                                             ))}
                                         </div>
                                         
-                                
+                                        {/* Right Scroll Button */}
+                                        <button 
+                                            aria-label="Scroll right"
+                                            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-gray-800/80 hover:bg-gray-700 text-white p-2 rounded-full shadow-lg focus:ring-2 focus:ring-cyan-500"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                if (powerWordsContainers.current[index]) {
+                                                    powerWordsContainers.current[index].scrollBy({ left: 200, behavior: 'smooth' });
+                                                }
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    if (powerWordsContainers.current[index]) {
+                                                        powerWordsContainers.current[index].scrollBy({ left: 200, behavior: 'smooth' });
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            ▶
+                                        </button>
                                     </div>
                                 </div>
                             ))}
