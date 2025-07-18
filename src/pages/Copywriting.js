@@ -193,11 +193,12 @@ const Copywriting = () => {
         };
 
     return (
-        <div className="p-6 min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white flex items-center justify-center">
-            <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-lg max-w-2xl w-full space-y-6 border border-white/10">
-                <h2 className="text-3xl font-bold mb-6 text-cyan-300 drop-shadow text-center">✨ Social media post</h2>
+        <div className="p-4 md:p-6 min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white flex items-center justify-center">
+            {/* Custom scrollbar styles now in index.css */}
+            <div className="bg-white/10 backdrop-blur-md p-4 md:p-8 rounded-2xl shadow-lg max-w-2xl w-full overflow-hidden space-y-4 md:space-y-6 border border-white/10">
+                <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-cyan-300 drop-shadow text-center">✨ Social media post</h2>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4 w-full overflow-hidden">
                     {/* Platform */}
                     <div>
                         <label className="block text-white text-sm font-bold mb-2">Platform :</label>
@@ -322,19 +323,18 @@ const Copywriting = () => {
                             {powerWordCategories.map((categoryData, index) => (
                                 <div key={index}>
                                     <h4 className="text-white text-sm font-semibold mb-2 mt-3">{categoryData.category}:</h4>
-                                    <div className="flex flex-row overflow-x-auto pb-2 custom-scrollbar-horizontal">
+                                    <div className="flex flex-nowrap md:flex-wrap gap-2 pb-3 pt-1 px-1 w-full overflow-x-auto overflow-y-hidden custom-scrollbar scroll-indicator">
                                         {categoryData.words.map(word => (
                                             <span
                                                 key={word}
                                                 className={`
                                                     inline-flex justify-center items-center
-                                                    px-4 py-2 mr-2 rounded-full text-sm cursor-pointer transition
+                                                    px-3 py-2 rounded-full text-sm cursor-pointer transition whitespace-nowrap flex-shrink-0
+                                                    min-w-[80px] md:min-w-0
                                                     ${powerWords.split(',').map(s => s.trim()).filter(Boolean).includes(word)
                                                         ? 'bg-cyan-600 text-white'
                                                         : 'bg-white/10 hover:bg-cyan-600 hover:text-white text-gray-300'
                                                     }
-                                                    min-w-max
-                                                    whitespace-nowrap
                                                 `}
                                                 onClick={() => handlePowerWordClick(word)}
                                             >
@@ -369,7 +369,7 @@ const Copywriting = () => {
                                 </span>
                             ))}
                             <input
-                                className="flex-grow p-1 bg-transparent text-white placeholder-gray-400 focus:outline-none min-w-[200px]" // 再次增加 min-w 确保显示完全
+                                className="flex-grow p-1 bg-transparent text-white placeholder-gray-400 focus:outline-none w-full md:min-w-[200px]" // 在小螢幕上使用完整寬度，大螢幕保持原有的最小寬度
                                 type="text"
                                 placeholder={hashtagSeeds.length === 0 ? "Enter the tags" : ""} // Enter the tags and press Enter to separate them.
                                 value={currentHashtagInput}
@@ -399,10 +399,10 @@ const Copywriting = () => {
                     </div>
 
                     {/* Save Button */}
-                    <div className="flex justify-end mt-6">
+                    <div className="flex justify-center md:justify-end mt-4 md:mt-6">
                         <button
                             type="submit"
-                            className="bg-cyan-500 hover:bg-cyan-600 text-white py-3 px-6 rounded-lg font-semibold shadow-lg transition duration-200 ease-in-out"
+                            className="w-full md:w-auto bg-cyan-500 hover:bg-cyan-600 text-white py-2 md:py-3 px-4 md:px-6 rounded-lg font-semibold shadow-lg transition duration-200 ease-in-out"
                         >
                             Save & Generate
                         </button>

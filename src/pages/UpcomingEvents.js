@@ -11,9 +11,23 @@ const UpcomingEvents = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [deleteMode, setDeleteMode] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // 手機版菜單開關狀態
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false); // 桌面版菜單收縮狀態
+  const [isMenuOpen, setIsMenuOpen] = useState(window.innerWidth < 768 ? true : false); // 手機版菜單預設開啟狀態
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(true); // 桌面版菜單預設收縮狀態
   // const token = localStorage.getItem("access_token");
+  
+  // 首次渲染時設置菜單初始狀態
+  useEffect(() => {
+    // 立即應用菜單縮小狀態
+    const menuElement = document.querySelector('aside[role="menu"]');
+    if (menuElement && isMenuCollapsed) {
+      // 初始化時應用縮小樣式
+      menuElement.style.width = window.innerWidth > 768 ? '3.5rem' : '3.5rem';
+      menuElement.style.padding = window.innerWidth > 768 ? '0.5rem' : '1rem';
+      
+      // 設置數據屬性
+      menuElement.dataset.collapsed = "true";
+    }
+  }, []); // 空依賴數組，只在組件掛載時執行一次
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -116,9 +130,9 @@ const UpcomingEvents = () => {
   // and handle click outside to close menu
   useEffect(() => {
     // 只在手機版時禁止背景滾動
-    // if (window.innerWidth < 768) {
-    //   document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
-    // }
+    if (window.innerWidth < 768) {
+      document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
+    }
     
     // Add event listener to close menu when clicking outside
     const handleClickOutside = (e) => {
@@ -138,13 +152,17 @@ const UpcomingEvents = () => {
     };
   }, [isMenuOpen]);
 
-  // Apply menu collapse state through direct DOM manipulation (as a fallback)
+  // 監控菜單收縮狀態變化
   useEffect(() => {
     const menuElement = document.querySelector('aside[role="menu"]');
     if (menuElement) {
+      // 更新數據屬性
+      menuElement.dataset.collapsed = isMenuCollapsed;
+      
+      // 應用樣式變化
       if (isMenuCollapsed) {
         // 收攏時更窄
-        menuElement.style.width = window.innerWidth > 768 ? '3.5rem' : '3.5rem'; // 更窄的桌機版寬度
+        menuElement.style.width = '3.5rem'; 
         menuElement.style.padding = window.innerWidth > 768 ? '0.5rem' : '1rem';
       } else {
         // 展開時正常寬度
@@ -160,7 +178,7 @@ const UpcomingEvents = () => {
     const hamburgerButton = document.querySelector('button[aria-label="切換導覽"]');
     if (hamburgerButton && window.innerWidth >= 768) {
       // 在桌機版，同步漢堡按鈕的展開/收攏視覺狀態
-      hamburgerButton.setAttribute('aria-expanded', isMenuCollapsed);
+      hamburgerButton.setAttribute('aria-expanded', !isMenuCollapsed);
     }
   }, [isMenuCollapsed]);
 
@@ -192,7 +210,7 @@ const UpcomingEvents = () => {
           }
         }}
         aria-label="切換導覽"
-        aria-expanded={isMenuOpen}
+        aria-expanded={window.innerWidth < 768 ? isMenuOpen : !isMenuCollapsed}
         className="fixed top-4 left-4 p-2 bg-gray-800 shadow-lg backdrop-blur rounded-lg z-50 border-2 border-cyan-600/70"
       >
         {/* Three-line & cross animation */}
@@ -213,13 +231,14 @@ const UpcomingEvents = () => {
       {/* Sidebar - with collapsible functionality */}
       <aside 
         role="menu"
+        data-collapsed={isMenuCollapsed}
         className={`
           fixed top-0 left-0 h-full border-r border-white/10 bg-white/5 
           flex flex-col justify-between z-40 bg-gray-900/95 backdrop-blur
-          transition-all duration-300 ease-in-out p-6
-          md:static md:translate-x-0 w-64
-          ${isMenuCollapsed ? 'md:w-20 md:p-3' : 'md:w-64'}
-          ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+          transition-all duration-300 ease-in-out 
+          md:static md:translate-x-0 
+          ${isMenuCollapsed ? 'p-3 w-[3.5rem] md:w-[3.5rem]' : 'p-6 w-64 md:w-64'}
+          ${window.innerWidth < 768 ? (isMenuOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
         `}
       >
         <div>

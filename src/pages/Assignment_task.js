@@ -261,20 +261,20 @@ const TaskAssignmentPage = () => {
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 text-white">
-      <h1 className="text-3xl font-bold mb-6 drop-shadow-md">
+      <h1 className="text-3xl font-bold mb-6 drop-shadow-md p-4 md:p-0">
         📌 Task Assignment
       </h1>
-      <main className="flex flex-row h-screen w-full px-8 gap-4">
-        <div className="w-1/6 items-start max-h-screen overflow-y-hidden">
+      <main className="flex flex-col md:flex-row h-screen w-full px-4 md:px-8 gap-4">
+        <div className="w-full md:w-1/6 items-start mb-4 md:mb-0">
           <button
             onClick={() => navigate(-1)}
-            className="h-20 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
+            className="h-12 md:h-20 w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow border border-gray-400"
           >
             ← Back
           </button>
         </div>
 
-        <div className="flex-1 flex flex-col overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-inner space-y-4 min-h-screen">
+        <div className="flex-1 flex flex-col overflow-y-auto bg-white/20 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/20 shadow-inner space-y-4 min-h-[50vh] md:min-h-screen">
           {error ? (
             <p className="text-red-500">{error}</p>
           ) : (
@@ -300,26 +300,26 @@ const TaskAssignmentPage = () => {
             ))
           )}
         </div>
-        <div className="w-1/6 flex-col gap-4 items-start max-h-screen overflow-y-hidden">
+        <div className="w-full md:w-1/6 flex-col gap-4 items-start mb-8 md:mb-0 md:max-h-screen overflow-y-hidden">
         
-          <div>
+          <div className="flex flex-col gap-2">
             <button
               onClick={handleAddTask}
-              className="h-20 bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+              className="h-12 md:h-16 w-full bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
             >
               Add
             </button>
 
-
             <button
               onClick={handleEditTask}
-              className="h-20 bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+              className="h-16 md:h-20 w-full bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
             >
               Edit
             </button>
+            
             <button
               onClick={handleDeleteTask}
-              className="h-20 bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
+              className="h-16 md:h-20 w-full bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg shadow border-cyan-400"
             >
               Delete
             </button>

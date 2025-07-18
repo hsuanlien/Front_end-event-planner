@@ -37,8 +37,22 @@ const EventDetailPage = () => {
 
   const [versions, setVersions] = useState([]); 
   const [selectedVersion, setSelectedVersion] = useState(""); 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);   // Mobile menu default closed
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);  // Desktop menu default expanded
+  const [isMenuOpen, setIsMenuOpen] = useState(window.innerWidth < 768 ? true : false);   // Mobile menu default open
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(true);  // Desktop menu default collapsed
+  
+  // 首次渲染時設置菜單初始狀態
+  useEffect(() => {
+    // 立即應用菜單縮小狀態
+    const menuElement = document.querySelector('div[role="menu"]');
+    if (menuElement && isMenuCollapsed) {
+      // 初始化時應用縮小樣式
+      menuElement.style.width = window.innerWidth > 768 ? '3.5rem' : '3.5rem';
+      menuElement.style.padding = window.innerWidth > 768 ? '0.5rem' : '1rem';
+      
+      // 設置數據屬性
+      menuElement.dataset.collapsed = "true";
+    }
+  }, []); // 空依賴數組，只在組件掛載時執行一次
 
   const sidebarItems = [
     { label: "Task assignment", key: "Task assignment", requires: [] },
@@ -257,9 +271,9 @@ const EventDetailPage = () => {
   // and handle click outside to close menu
   useEffect(() => {
     // 只在手機版時禁止背景滾動
-    // if (window.innerWidth < 768) {
-    //   document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
-    // }
+    if (window.innerWidth < 768) {
+      document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
+    }
     
     // Add event listener to close menu when clicking outside
     const handleClickOutside = (e) => {
@@ -279,27 +293,33 @@ const EventDetailPage = () => {
     };
   }, [isMenuOpen]);
 
-  // Apply menu collapse state through direct DOM manipulation (as a fallback)
+  // 監控菜單收縮狀態變化
   useEffect(() => {
-    console.log("Menu collapsed state changed:", isMenuCollapsed);
     const menuElement = document.querySelector('div[role="menu"]');
     if (menuElement) {
+      // 更新數據屬性
+      menuElement.dataset.collapsed = isMenuCollapsed;
+      
+      // 應用樣式變化
       if (isMenuCollapsed) {
         // 收攏時更窄
-        menuElement.style.width = window.innerWidth > 768 ? '3.5rem' : '5rem'; // 更窄的桌機版寬度
+        menuElement.style.width = '3.5rem'; 
         menuElement.style.padding = window.innerWidth > 768 ? '0.5rem' : '1rem';
       } else {
         // 展開時正常寬度
         menuElement.style.width = '16rem';
         menuElement.style.padding = '1.5rem';
       }
+      
+      // 確保不管菜單是收攏還是展開，頁面都可以滾動
+      document.body.style.overflow = 'auto';
     }
     
     // 同步漢堡按鈕的狀態
     const hamburgerButton = document.querySelector('button[aria-label="切換導覽"]');
     if (hamburgerButton && window.innerWidth >= 768) {
       // 在桌機版，同步漢堡按鈕的展開/收攏視覺狀態
-      hamburgerButton.setAttribute('aria-expanded', isMenuCollapsed);
+      hamburgerButton.setAttribute('aria-expanded', !isMenuCollapsed);
     }
   }, [isMenuCollapsed]);
 
@@ -309,10 +329,13 @@ const EventDetailPage = () => {
       <button
         onClick={() => {
           // 在手機版，控制菜單的顯示/隱藏
-          setIsMenuOpen((prev) => !prev);
-          
-          // 在桌機版，控制菜單的收攏/展開
-          if (window.innerWidth >= 768) {
+          if (window.innerWidth < 768) {
+            const newMenuState = !isMenuOpen;
+            setIsMenuOpen(newMenuState);
+            // 只在手機版打開菜單時禁止滾動
+            document.body.style.overflow = newMenuState ? 'hidden' : 'auto';
+          } else {
+            // 在桌機版，只控制菜單的收攏/展開，不影響滾動
             const newState = !isMenuCollapsed;
             setIsMenuCollapsed(newState);
             // 更新菜單元素的數據屬性
@@ -320,10 +343,12 @@ const EventDetailPage = () => {
             if (menuElement) {
               menuElement.dataset.collapsed = newState;
             }
+            // 確保桌機版始終可滾動
+            document.body.style.overflow = 'auto';
           }
         }}
         aria-label="切換導覽"
-        aria-expanded={isMenuOpen}
+        aria-expanded={window.innerWidth < 768 ? isMenuOpen : !isMenuCollapsed}
         className="fixed top-4 left-4 p-2 bg-gray-800 shadow-lg backdrop-blur rounded-lg z-50 border-2 border-cyan-600/70"
       >
         {/* Three-line & cross animation */}
@@ -344,13 +369,14 @@ const EventDetailPage = () => {
       {/* Left menu (Menu + Back) */}
       <div 
         role="menu"
+        data-collapsed={isMenuCollapsed}
         className={`
           fixed top-0 left-0 h-full border-r border-white/10 bg-white/5 
           flex flex-col justify-between z-40 bg-gray-900/95 backdrop-blur
-          transition-all duration-300 ease-in-out p-6
-          md:static md:translate-x-0 w-64
-          ${isMenuCollapsed ? 'md:w-20 md:p-3' : 'md:w-64'}
-          ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+          transition-all duration-300 ease-in-out 
+          md:static md:translate-x-0 
+          ${isMenuCollapsed ? 'p-3 w-[3.5rem] md:w-[3.5rem]' : 'p-6 w-64 md:w-64'}
+          ${window.innerWidth < 768 ? (isMenuOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
         `}
       >
         <div>
@@ -358,10 +384,12 @@ const EventDetailPage = () => {
             {/* 讓菜單標題可點擊，並與漢堡按鈕邏輯同步 */}
             <div 
               onClick={() => {
-                // 同步漢堡按鈕的邏輯
-                setIsMenuOpen((prev) => !prev);
+                // 在手機版控制菜單的顯示/隱藏
+                if (window.innerWidth < 768) {
+                  setIsMenuOpen((prev) => !prev);
+                }
                 
-                // 同時更新收攏狀態
+                // 更新收攏狀態（桌機版主要使用這個）
                 const newState = !isMenuCollapsed;
                 setIsMenuCollapsed(newState);
                 
@@ -370,6 +398,9 @@ const EventDetailPage = () => {
                 if (menuElement) {
                   menuElement.dataset.collapsed = newState;
                 }
+                
+                // 確保頁面可以滾動
+                document.body.style.overflow = 'auto';
               }}
               className="rounded cursor-pointer hover:bg-white/10 p-1"
               style={{ 
