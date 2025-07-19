@@ -33,27 +33,29 @@ const AddEvent = () => {
     };
 
     try {
-      const response = await axios.post(API_URL, payload, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 201) {
-        console.log("Event created successfully：", response.data);
-        navigate("/choose-name", {
-          state: {
-            eventId: response.data.event_id,
-            names: response.data.name,
-            description: response.data.description,
-            slogan: response.data.slogan,
-            expected_attendees: response.data.expected_attendees,
-            suggested_time: response.data.suggested_time,
-            suggested_event_duration: response.data.suggested_event_duration,
+      const response = await fetchWithAuth(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify(payload),
         });
-      }
+        
+      if (response.status === 201) {
+          const data = await response.json();
+          console.log("Event created successfully：", data);
+          navigate("/choose-name", {
+            state: {
+              eventId: data.event_id,
+              names: data.name,
+              description: data.description,
+              slogan: data.slogan,
+              expected_attendees: data.expected_attendees,
+              suggested_time: data.suggested_time,
+              suggested_event_duration: data.suggested_event_duration,
+            },
+          });
+        }
     } catch (error) {
       console.error("❌ Failed to create activity:", error.response || error.message);
       if (error.response?.status === 401) {
